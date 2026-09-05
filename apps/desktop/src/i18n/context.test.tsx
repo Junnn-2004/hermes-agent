@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import type { HermesConfigRecord } from '@/hermes'
 
+import { TRANSLATIONS } from './catalog'
 import { type I18nConfigClient, I18nProvider, useI18n } from './context'
 import type { Locale } from './types'
 
@@ -114,9 +115,12 @@ describe('I18nProvider', () => {
     expect(configClient.saveConfig).not.toHaveBeenCalled()
   })
 
-  it('loads ja from display.language config', async () => {
+  it.each([
+    ['ja-JP', 'ja'],
+    ['ko-KR', 'ko']
+  ] as const)('loads %s from display.language config', async (configured, locale) => {
     const configClient: I18nConfigClient = {
-      getConfig: vi.fn().mockResolvedValue({ display: { language: 'ja-JP' } }),
+      getConfig: vi.fn().mockResolvedValue({ display: { language: configured } }),
       saveConfig: vi.fn()
     }
 
@@ -128,8 +132,10 @@ describe('I18nProvider', () => {
 
     await waitFor(() => expect(screen.getByTestId('loading').textContent).toBe('false'))
 
-    expect(screen.getByTestId('locale').textContent).toBe('ja')
-    expect(screen.getByTestId('save').textContent).toBe('保存')
+    expect(screen.getByTestId('locale').textContent).toBe(locale)
+    expect(screen.getByTestId('save').textContent).toBe(TRANSLATIONS[locale].common.save)
+    expect(globalThis.document.documentElement.lang).toBe(locale)
+    expect(globalThis.document.documentElement.dir).toBe('ltr')
     expect(configClient.saveConfig).not.toHaveBeenCalled()
   })
 
@@ -184,7 +190,7 @@ describe('I18nProvider', () => {
     })
   })
 
-  it('saves newly supported locales to display.language', async () => {
+  it.each(['ja', 'ko'] as const)('saves %s to display.language', async locale => {
     const saveConfig = vi.fn().mockResolvedValue({ ok: true })
 
     const configClient: I18nConfigClient = {
@@ -197,7 +203,7 @@ describe('I18nProvider', () => {
 
     render(
       <I18nProvider configClient={configClient}>
-        <LanguageProbe target="ja" />
+        <LanguageProbe target={locale} />
       </I18nProvider>
     )
 
@@ -205,8 +211,8 @@ describe('I18nProvider', () => {
     fireEvent.click(screen.getByRole('button', { name: 'switch' }))
 
     await waitFor(() => expect(saveConfig).toHaveBeenCalledTimes(1))
-    expect(saveConfig).toHaveBeenCalledWith({ display: { language: 'ja', skin: 'mono' } })
-    expect(screen.getByTestId('locale').textContent).toBe('ja')
+    expect(saveConfig).toHaveBeenCalledWith({ display: { language: locale, skin: 'mono' } })
+    expect(screen.getByTestId('locale').textContent).toBe(locale)
   })
 
   it('applies RTL direction for Arabic and restores LTR on switch back', async () => {
