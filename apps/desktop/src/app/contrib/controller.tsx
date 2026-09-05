@@ -168,6 +168,7 @@ registry.registerMany([
     // its default-ish spot beside main, not a random same-placement stack.
     data: {
       placement: 'left',
+      tabTitle: () => translateNow('sidebar.sessions'),
       collapsible: true,
       dock: { pane: 'workspace', pos: 'left' },
       revealAliases: ['chat-sidebar'],

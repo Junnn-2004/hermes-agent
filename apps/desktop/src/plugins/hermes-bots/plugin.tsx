@@ -57,7 +57,7 @@ import {
 } from './group-chat'
 import { groupWorkspaceOwnerKey } from './group-membership'
 import { annotateOrphanedGroupChatMembers } from './hygiene'
-import { BOTS_LOCALES } from './i18n'
+import { BOTS_LOCALES, useBots } from './i18n'
 import { displayName } from './labels'
 import { startBotRelay, stopBotRelay } from './relay'
 import { $activityToasts } from './roster-actions'
@@ -75,6 +75,10 @@ import type { GroupChat, RosterRow } from './types'
 import { loadBotSections } from './user-sections'
 
 // ── plugin ───────────────────────────────────────────────────────────────────
+
+function BotsTabTitle() {
+  return useBots().roster.title
+}
 
 /** One row the composer's `@` popover renders from the roster. */
 interface MentionCompletionItem {
@@ -392,6 +396,7 @@ export default {
       // zone's tab strip, so the pane stays reachable while collapsed.
       data: {
         placement: 'left',
+        tabTitle: () => <BotsTabTitle />,
         width: '260px',
         collapsible: true,
         hideOnly: true,

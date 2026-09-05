@@ -374,7 +374,7 @@ export const ko = defineLocale({
 
   language: {
     label: '언어',
-    description: 'Desktop 인터페이스에 사용할 언어를 선택하세요.',
+    description: '데스크톱 인터페이스에 사용할 언어를 선택하세요.',
     saving: '언어 저장 중…',
     saveError: '언어를 업데이트하지 못했습니다',
     switchTo: '언어 전환',
@@ -519,6 +519,7 @@ export const ko = defineLocale({
       appearance: '모양',
       workspace: '작업공간',
       safety: '안전',
+      browser: '브라우저',
       memory: '메모리 및 컨텍스트',
       voice: '음성',
       advanced: '고급'
