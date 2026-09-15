@@ -672,6 +672,7 @@ const ko: BotsMessages = {
     deleteTitle: '그룹 대화를 삭제하시겠습니까?',
     deleteAction: '삭제',
     composerPlaceholder: '메시지를 입력하세요. 그룹의 모든 봇에게 전달됩니다.',
+    slashCommandsUnsupported: '그룹 대화에서는 슬래시 명령을 사용할 수 없습니다. 개별 봇 대화에서 사용해 주세요.',
     attachHint: '파일 첨부 — 응답하는 모든 봇이 볼 수 있습니다',
     newThread: '새 대화 묶음',
     reply: '답글',
