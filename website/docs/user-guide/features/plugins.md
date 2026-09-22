@@ -150,6 +150,10 @@ User plugins at `~/.hermes/plugins/model-providers/<name>/` override bundled mod
 
 **General plugins and user-installed backends are disabled by default** — discovery finds them (so they show up in `hermes plugins` and `/plugins`), but nothing with hooks or tools loads until you add the plugin's name to `plugins.enabled` in `~/.hermes/config.yaml`. This stops third-party code from running without your explicit consent.
 
+:::note `plugins.enabled` governs plugins only
+[Gateway event hooks](./hooks.md#gateway-event-hooks) under `~/.hermes/hooks/<name>/` are not plugins and are **not** gated by `plugins.enabled` or `plugins.disabled`. That directory is trusted by placement: any subdirectory holding a valid `HOOK.yaml` + `handler.py` is imported by the gateway at startup, and placing the files there is the opt-in. See the [gateway hook trust model](./hooks.md#gateway-hook-trust).
+:::
+
 ```yaml
 plugins:
   enabled:
@@ -371,16 +375,19 @@ Declarative plugins are symlinked with a `nix-managed-` prefix — they coexist 
 
 ```bash
 hermes plugins                               # unified interactive UI
-hermes plugins list                          # table: enabled / disabled / not enabled
+hermes plugins list                          # table: enabled / disabled / not enabled (bundled backends,
+                                             # platforms and the live memory.provider count as enabled)
 hermes plugins search <term>                 # search the Hermes plugin catalog
 hermes plugins install <name>                # install a catalog entry (repo @ reviewed pinned SHA)
 hermes plugins install user/repo             # install from Git, then prompt Enable? [y/N]
 hermes plugins install user/repo --enable    # install AND enable (no prompt)
 hermes plugins install user/repo --no-enable # install but leave disabled (no prompt)
 hermes plugins update my-plugin              # pull latest (local edits are autostashed and re-applied)
-hermes plugins remove my-plugin              # uninstall
+hermes plugins remove my-plugin              # uninstall; also drops it from plugins.enabled/disabled/entries
+                                             # and resets memory.provider when it was the live provider
 hermes plugins enable my-plugin              # add to allow-list
-hermes plugins disable my-plugin             # remove from allow-list + add to disabled
+hermes plugins disable my-plugin             # remove from allow-list + add to disabled (bundled platforms:
+                                             # either spelling works, e.g. photon-platform or platforms/photon)
 hermes plugins capabilities [my-plugin]      # declared vs granted capabilities
 ```
 
