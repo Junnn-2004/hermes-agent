@@ -428,9 +428,23 @@ def _ensure_windows_gateway_venv_imports() -> None:
 
     project_root = Path(__file__).resolve().parent.parent
     candidates: list[Path] = []
-    if os.environ.get("VIRTUAL_ENV"):
-        candidates.append(Path(os.environ["VIRTUAL_ENV"]))
-    candidates.append(project_root / "venv")
+    # A PM install runs on its committed dependency generation, as cron/scheduler_script.py
+    # already selects. The pre-PM ``venv`` left on disk belongs to another Python (cp311
+    # pydantic_core under the 3.14 runtime), so prepending it broke every later pydantic import.
+    try:
+        from hermes_cli._launchers import resolve_store_python
+        from pm.environments import running_from_selected_environment, selected_venv
+
+        if resolve_store_python(project_root) is not None:
+            if running_from_selected_environment(project_root):
+                return
+            candidates.append(selected_venv(project_root))
+    except Exception:
+        candidates = []
+    if not candidates:
+        if os.environ.get("VIRTUAL_ENV"):
+            candidates.append(Path(os.environ["VIRTUAL_ENV"]))
+        candidates.append(project_root / "venv")
 
     seen: set[str] = set()
     for venv_dir in candidates:
