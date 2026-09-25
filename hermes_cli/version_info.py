@@ -57,8 +57,12 @@ def _derived_version(
 
 def _run_git(repo_dir: Path, *args: str) -> str | None:
     try:
+        # Git emits UTF-8 (``git show`` returns the tagged pyproject's bytes); the
+        # locale default (cp949 on Korean Windows) killed the reader thread and
+        # left the base version "unknown".
         result = subprocess.run(
-            ["git", *args], capture_output=True, text=True, timeout=3, cwd=str(repo_dir)
+            ["git", *args], capture_output=True, text=True, encoding="utf-8", errors="replace",
+            timeout=3, cwd=str(repo_dir),
         )
     except (OSError, subprocess.SubprocessError):
         return None
