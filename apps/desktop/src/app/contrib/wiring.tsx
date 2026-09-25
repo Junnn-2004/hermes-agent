@@ -17,6 +17,7 @@ import { formatRefValue } from '@/components/assistant-ui/directive-text'
 import { BootFailureOverlay } from '@/components/boot-failure-overlay'
 import { ConfirmHost } from '@/components/confirm-host'
 import { DesktopInstallOverlay } from '@/components/desktop-install-overlay'
+import { ExternalOpenFailedDialog } from '@/components/external-open-failed-dialog'
 import { FindBar } from '@/components/find-bar'
 import { FreeTierSignInDialog } from '@/components/free-tier/sign-in-dialog'
 import { GatewayConnectingOverlay } from '@/components/gateway-connecting-overlay'
@@ -48,6 +49,7 @@ import { $activeConnectionId } from '@/store/connections'
 import { $cronReviewRequest, setCronFocusJobId } from '@/store/cron'
 import { requestGatewayForProfile } from '@/store/gateway'
 import { reconnectGateway } from '@/store/gateway-reconnect'
+import { $interfaceMode, shownInMode } from '@/store/interface-mode'
 import { $pinnedSessionIds, pinSession, restoreWorktree, unpinSession } from '@/store/layout'
 import { notifyError } from '@/store/notifications'
 import { $poolLimitsSettingsRequest } from '@/store/pool-limits'
@@ -133,6 +135,7 @@ import { useRouteResume } from '../session/hooks/use-route-resume'
 import { useSessionActions } from '../session/hooks/use-session-actions'
 import { useSessionListActions } from '../session/hooks/use-session-list-actions'
 import { useSessionStateCache } from '../session/hooks/use-session-state-cache'
+import { useTranscriptPeerSync } from '../session/hooks/use-transcript-peer-sync'
 import { startWorkspaceSession } from '../session/workspace-session-target'
 import { PluginInstallModal } from '../settings/plugin-install-modal'
 import { useOverlayRouting } from '../shell/hooks/use-overlay-routing'
@@ -373,7 +376,7 @@ export function ContribWiring({ children }: { children: ReactNode }) {
   const { connectionRef, gateway, gatewayRef, requestGateway: ambientRequestGateway } = useGatewayRequest()
 
   // The guide remains selected while handoff creates on another profile.
-  // Without this pin, the owner ladder sends session.create to hermes-setup
+  // Without this pin, the owner ladder sends session.create to the setup profile
   // despite the gateway switch (#89206). Scope it to the create leg so
   // concurrent session traffic keeps its recorded owner.
   const handoffCreateProfileRef = useRef<null | string>(null)
@@ -939,6 +942,13 @@ export function ContribWiring({ children }: { children: ReactNode }) {
     !!selectedStoredSessionId &&
     isMessagingSource(messagingSessions.find(s => sessionMatchesStoredId(s, selectedStoredSessionId))?.source)
 
+  useTranscriptPeerSync({
+    activeSessionIdRef,
+    busyRef,
+    selectedStoredSessionIdRef,
+    updateSessionState
+  })
+
   // sessions.changed refreshes every open transcript; only messaging retains
   // the periodic safety-net it already had before this fix.
   // Keep app data live while the gateway is open (on-connect reseed + the
@@ -1109,6 +1119,7 @@ export function ContribWiring({ children }: { children: ReactNode }) {
     onEdit: editMessage,
     onLoadMoreMessaging: loadMoreMessagingForPlatform,
     onLoadMoreSessions: loadMoreSessions,
+    onRetrySessions: () => refreshSessions().catch(() => undefined),
     onManageCronJob: jobId => {
       setCronFocusJobId(jobId)
       navigate(CRON_ROUTE)
@@ -1246,9 +1257,11 @@ export function ContribWiring({ children }: { children: ReactNode }) {
   // renderer paints its own min/max/close (main decides via customWindowControls).
   const customWindowControls = connection?.customWindowControls ?? window.hermesDesktop?.windowControls?.custom ?? false
   const appActionsSide = useStore($titlebarAppActionsSide)
-  const paneToolCount = rightTitlebarTools.filter(tool => !tool.hidden).length
-  const leftExtraCount = leftTitlebarTools.filter(tool => !tool.hidden).length
-  const clusters = titlebarAppActionsClusterCounts(appActionsSide, leftExtraCount, 0)
+  const interfaceMode = useStore($interfaceMode)
+  const shownTool = shownInMode(interfaceMode)
+  const paneToolCount = rightTitlebarTools.filter(tool => !tool.hidden && shownTool(tool)).length
+  const leftExtraCount = leftTitlebarTools.filter(tool => !tool.hidden && shownTool(tool)).length
+  const clusters = titlebarAppActionsClusterCounts(appActionsSide, leftExtraCount, 0, interfaceMode)
   const systemToolsWidth = titlebarToolsWidthCss(clusters.right)
 
   const titlebarToolsWidth =
@@ -1434,6 +1447,10 @@ export function ContribWiring({ children }: { children: ReactNode }) {
       {/* Send Diagnostics consent/upload dialog — driven by $sendDiagnostics
           (error card action); renders nothing until requested. */}
       <SendDiagnosticsHost />
+
+      {/* Fallback modal when opening an external URL fails — carries the URL
+          so a dead system-browser click is never silent. */}
+      <ExternalOpenFailedDialog />
 
       {/* Petdex floating mascot — renders nothing unless installed + enabled.
           Never in the HUD: that window is the chat bar and nothing else. */}

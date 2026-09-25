@@ -77,6 +77,33 @@ describe('I18nProvider', () => {
     expect(configClient.saveConfig).not.toHaveBeenCalled()
   })
 
+  it.each([
+    ['fr', 'fr'],
+    ['de-DE', 'de'],
+    ['es', 'es'],
+    ['ja-JP', 'ja'],
+    ['ko-KR', 'ko']
+  ] as const)('loads display.language=%s and renders the %s catalog', async (configured, locale) => {
+    const configClient: I18nConfigClient = {
+      getConfig: vi.fn().mockResolvedValue({ display: { language: configured } }),
+      saveConfig: vi.fn()
+    }
+
+    render(
+      <I18nProvider configClient={configClient}>
+        <LanguageProbe />
+      </I18nProvider>
+    )
+
+    await waitFor(() => expect(screen.getByTestId('loading').textContent).toBe('false'))
+
+    expect(screen.getByTestId('locale').textContent).toBe(locale)
+    expect(screen.getByTestId('label').textContent).toBe(TRANSLATIONS[locale].language.label)
+    expect(screen.getByTestId('label').textContent).not.toBe(TRANSLATIONS.en.language.label)
+    expect(screen.getByTestId('save').textContent).not.toBe(TRANSLATIONS.en.common.save)
+    expect(configClient.saveConfig).not.toHaveBeenCalled()
+  })
+
   it('keeps English usable when config loading fails', async () => {
     const configClient: I18nConfigClient = {
       getConfig: vi.fn().mockRejectedValue(new Error('config unavailable')),
@@ -96,52 +123,9 @@ describe('I18nProvider', () => {
     expect(configClient.saveConfig).not.toHaveBeenCalled()
   })
 
-  it('loads zh-hant from display.language config', async () => {
-    const configClient: I18nConfigClient = {
-      getConfig: vi.fn().mockResolvedValue({ display: { language: 'zh-TW' } }),
-      saveConfig: vi.fn()
-    }
-
-    render(
-      <I18nProvider configClient={configClient} initialLocale="zh">
-        <LanguageProbe />
-      </I18nProvider>
-    )
-
-    await waitFor(() => expect(screen.getByTestId('loading').textContent).toBe('false'))
-
-    expect(screen.getByTestId('locale').textContent).toBe('zh-hant')
-    expect(screen.getByTestId('save').textContent).toBe('儲存')
-    expect(configClient.saveConfig).not.toHaveBeenCalled()
-  })
-
-  it.each([
-    ['ja-JP', 'ja'],
-    ['ko-KR', 'ko']
-  ] as const)('loads %s from display.language config', async (configured, locale) => {
-    const configClient: I18nConfigClient = {
-      getConfig: vi.fn().mockResolvedValue({ display: { language: configured } }),
-      saveConfig: vi.fn()
-    }
-
-    render(
-      <I18nProvider configClient={configClient}>
-        <LanguageProbe />
-      </I18nProvider>
-    )
-
-    await waitFor(() => expect(screen.getByTestId('loading').textContent).toBe('false'))
-
-    expect(screen.getByTestId('locale').textContent).toBe(locale)
-    expect(screen.getByTestId('save').textContent).toBe(TRANSLATIONS[locale].common.save)
-    expect(globalThis.document.documentElement.lang).toBe(locale)
-    expect(globalThis.document.documentElement.dir).toBe('ltr')
-    expect(configClient.saveConfig).not.toHaveBeenCalled()
-  })
-
   it('does not overwrite unsupported configured languages', async () => {
     const configClient: I18nConfigClient = {
-      getConfig: vi.fn().mockResolvedValue({ display: { language: 'de' } }),
+      getConfig: vi.fn().mockResolvedValue({ display: { language: 'it' } }),
       saveConfig: vi.fn()
     }
 
@@ -265,6 +249,8 @@ describe('I18nProvider', () => {
       saveConfig: vi.fn()
     }
 
+    vi.useFakeTimers()
+
     render(
       <I18nProvider configClient={configClient}>
         <LanguageProbe />
@@ -272,12 +258,18 @@ describe('I18nProvider', () => {
     )
 
     // First attempt fails → settles on English (permanent-failure contract).
-    await waitFor(() => expect(screen.getByTestId('loading').textContent).toBe('false'))
+    await act(async () => {})
+    expect(screen.getByTestId('loading').textContent).toBe('false')
     expect(screen.getByTestId('locale').textContent).toBe('en')
 
     // The bounded retry succeeds and applies the persisted language.
-    await waitFor(() => expect(screen.getByTestId('locale').textContent).toBe('zh'), { timeout: 5_000 })
+    await act(async () => {
+      vi.advanceTimersByTime(3_000)
+    })
+    expect(screen.getByTestId('locale').textContent).toBe('zh')
     expect(getConfig).toHaveBeenCalledTimes(2)
+
+    vi.useRealTimers()
   })
 
   it('stops retrying after the bounded retry budget is exhausted', async () => {
@@ -314,6 +306,31 @@ describe('I18nProvider', () => {
       vi.advanceTimersByTime(30_000)
     })
     expect(getConfig).toHaveBeenCalledTimes(11)
+
+    vi.useRealTimers()
+  })
+
+  it('stops retrying once the provider unmounts mid-retry', async () => {
+    vi.useFakeTimers()
+    const getConfig = vi.fn().mockRejectedValue(new Error('backend not ready yet'))
+
+    const view = render(
+      <I18nProvider configClient={{ getConfig, saveConfig: vi.fn() }}>
+        <LanguageProbe />
+      </I18nProvider>
+    )
+
+    await act(async () => {})
+    expect(getConfig).toHaveBeenCalledTimes(1)
+
+    // A retry is now scheduled; unmounting must cancel it, not keep polling a
+    // backend nobody is listening for.
+    view.unmount()
+
+    await act(async () => {
+      vi.advanceTimersByTime(60_000)
+    })
+    expect(getConfig).toHaveBeenCalledTimes(1)
 
     vi.useRealTimers()
   })

@@ -460,6 +460,8 @@ Payload fields below are the exact event-specific fields supplied by each call s
 | `pre_api_request` | Observer | Per provider attempt, immediately before the request; return ignored. | `task_id`, `turn_id`, `api_request_id`, `session_id`, `user_message`, `conversation_history`, `platform`, `model`, `provider`, `base_url`, `api_mode`, `api_call_count`, `retry_count`, `request_messages`, `message_count`, `tool_count`, `approx_input_tokens`, `request_char_count`, `max_tokens`, `started_at`, `middleware_trace`, `request` | High sensitivity: legacy `user_message`, `conversation_history`, and `request_messages` are intentionally raw; prefer sanitized `request`. |
 | `post_api_request` | Observer | After normalized provider success; return ignored. | `task_id`, `turn_id`, `api_request_id`, `session_id`, `platform`, `model`, `provider`, `base_url`, `api_mode`, `api_call_count`, `api_duration`, `started_at`, `ended_at`, `finish_reason`, `message_count`, `response_model`, `response`, `usage`, `assistant_message`, `assistant_content_chars`, `assistant_tool_call_count` | Sanitized `response` is available, but raw normalized `assistant_message` may contain model/user content; `usage` is accounting data. |
 | `api_request_error` | Observer | On each failed provider attempt; return ignored. | `task_id`, `turn_id`, `api_request_id`, `session_id`, `platform`, `model`, `provider`, `base_url`, `api_mode`, `api_call_count`, `api_duration`, `started_at`, `ended_at`, `status_code`, `retry_count`, `max_retries`, `retryable`, `reason`, `error`, `request` | Error text may contain provider/user data; `request` is intended to be sanitized. |
+| `pre_auxiliary_call` | Observer | Per provider attempt of an auxiliary LLM call (titling, compression, MoA, vision, approval, ...), immediately before the request; return ignored. | `aux_task`, `task_id`, `turn_id`, `session_id`, `platform` (the parent turn's, empty outside a turn), `api_request_id`, `api_call_count`, `retry_count`, `streaming`, `model`, `provider`, `base_url`, `api_mode`, `request_messages`, `system_prompt`, `message_count`, `tool_count`, `approx_input_tokens`, `request_char_count`, `max_tokens`, `started_at`, `request` | `request_messages` is raw (compression sees the whole transcript); prefer sanitized `request`. |
+| `post_auxiliary_call` | Observer | After the same attempt returns or raises; return ignored. | `pre_auxiliary_call` identity fields plus `api_duration`, `ended_at`, `finish_reason`, `response_model`, `usage`, `response`, `assistant_content_chars`, `assistant_tool_call_count`, `error`, `error_type` (`None` on success; `usage`/`response` are `None` on error and for `streaming=True`) | Sanitized `response`; `usage` is accounting data; `error` may contain provider text. |
 | `on_stream_start` | Observer | Dispatched when a streaming LLM response begins; delivered off the token path via a host-owned bounded queue with one worker per callback; return ignored. | `turn_id`, `iteration`, `session_id`, `model`, `provider`, `surface` | Identifiers and routing metadata only. |
 | `on_stream_delta` | Observer | Dispatched per normalized streaming text delta via the bounded observer queue; a stalled callback drops only its own oldest events; return ignored. | `delta`, `kind` (`text` or `reasoning`), `turn_id`, `iteration`, `session_id`, `model`, `provider`, `surface` | Delta text is raw model output; reasoning deltas require the `plugins.stream_reasoning_deltas` opt-in. |
 | `on_stream_end` | Observer | Dispatched when a streaming response finishes or errors, after the stream closes; return ignored. | `final_text`, `finished`, `error`, `turn_id`, `iteration`, `session_id`, `model`, `provider`, `surface` | Full assembled response text; error text may include provider data. |
@@ -682,7 +684,7 @@ def my_callback(session_id: str, user_message: str, conversation_history: list,
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `session_id` | `str` | Unique identifier for the current session |
-| `user_message` | `str` | The user's original message for this turn (before any skill injection) |
+| `user_message` | `str \| list` | The user's original message for this turn (before any skill injection). A multimodal turn (image or other attachment) is the list of content parts, exactly as sent |
 | `conversation_history` | `list` | Copy of the full message list (OpenAI format: `[{"role": "user", "content": "..."}]`) |
 | `is_first_turn` | `bool` | `True` if this is the first turn of a new session, `False` on subsequent turns |
 | `model` | `str` | The model identifier (e.g. `"anthropic/claude-sonnet-4.6"`) |
@@ -706,6 +708,8 @@ return None
 **Where context is injected:** Always the **user message**, never the system prompt. This preserves the prompt cache — the system prompt stays identical across turns, so cached tokens are reused. The system prompt is Hermes's territory (model guidance, tool enforcement, personality, skills). Plugins contribute context alongside the user's input.
 
 The clean user-message `content` remains unchanged. For replay and prompt-cache stability, Hermes may persist the exact API-bound message, including plugin-injected context, in the row's `api_content` sidecar.
+
+On a **multimodal turn** (the user message is a list of content parts — an image attachment, or text sent as parts) there is no string sidecar: the joined context is appended to that turn's content as one extra `{"type": "text"}` part, before the first request, and the part is persisted with the turn so a resumed session, compaction and replay all see the same message the model saw. Earlier messages and the system prompt are never touched.
 
 When **multiple plugins** return context, their outputs are joined with double newlines in plugin discovery order (alphabetical by directory name).
 
@@ -1630,6 +1634,12 @@ Fires after a provider response has been normalized successfully. This is observ
 #### `api_request_error`
 
 Fires for a failed provider attempt with status/retry timing, an `error` object, and sanitized `request`. This is observer-only. Error messages may still contain provider or user data.
+
+### Auxiliary-call observer hooks
+
+#### `pre_auxiliary_call` / `post_auxiliary_call`
+
+Auxiliary LLM calls — session titling, context compression, MoA advisors and the aggregator, vision, approval classification, memory and other side tasks — run outside the main tool-calling loop and do **not** fire `pre_api_request` / `post_api_request` (those stay turn-scoped, so a trace-per-turn plugin never sees side traffic by accident). Subscribe to `pre_auxiliary_call` / `post_auxiliary_call` instead: they fire once per physical provider attempt (retries and fallbacks included) with the same payload shape plus `aux_task` (the task name, e.g. `title_generation`, `compression`, `moa_aggregator`, `vision`). `session_id` / `task_id` / `turn_id` are the parent turn's when the call runs under one, empty otherwise; `api_request_id` (`aux-…`) is shared by every attempt of one logical call and `retry_count` distinguishes them. Both are observer-only and fail-open: a raising or timed-out callback is logged and the auxiliary task proceeds. `post_auxiliary_call` carries `error` / `error_type` when the attempt raised and `streaming: True` (with `usage`/`response` `None`) when the response is handed back as a stream.
 
 ### `on_skill_lifecycle`
 
