@@ -28,6 +28,7 @@ from hermes_cli import update_receipt as _completion_receipt, update_cmd_config 
 from hermes_cli._old_updater import stop_for_relaunch
 from hermes_cli._early_recovery import interrupted_pull_marker
 from hermes_cli import update_cmd_check as _check
+from hermes_cli.update_git_process import run_network_git
 
 # Re-exports: every split-module name stays reachable (and monkeypatchable) as update_cmd.<name>.
 from hermes_cli.update_abort_recovery import (  # noqa: F401
@@ -234,12 +235,13 @@ def _git_run(git_cmd, args, cwd=None, *, check=False, network=False):
     """Run git capturing utf-8 text (default cwd: checkout); ``network=True`` disables the
     terminal prompt so an HTTP 401 fails fast instead of hanging, and bounds the wait."""
     try:
-        return subprocess.run(
+        run = run_network_git if network else subprocess.run
+        return run(
             git_cmd + args, cwd=_m().PROJECT_ROOT if cwd is None else cwd, capture_output=True,
             text=True, encoding="utf-8", errors="replace", check=check,
             **({"timeout": NETWORK_GIT_TIMEOUT_SECONDS, **_no_prompt_git_kwargs()} if network else {}))
     except subprocess.TimeoutExpired as exc:
-        # subprocess.run already killed the child; the checkout stays consistent because
+        # The contained runner already stopped the tree; the checkout stays consistent because
         # fetch writes to tmp_pack_* and only renames on success. Report as a failed run
         # so every caller's existing stderr path prints one clear line.
         result = subprocess.CompletedProcess(
@@ -888,7 +890,8 @@ def _apply_parked_branch_guard(
     """Decide how a checkout parked on another branch is brought to *branch* (stash-switch-pull-
     switch-back used to "update" main while the running code stayed behind).
 
-    By branch contents + updates.parked_branch_strategy: fully merged -> switch back;
+    An explicit update_in_place preserves the branch without a patch-equivalence scan.
+    Otherwise by branch contents: fully merged -> switch back;
     unmerged -> "switch" (default; loud "kept" notice) or "update_in_place" (merge origin/<target>
     INTO the branch, checkout never moves; --switch-branch overrides once); dirty/unverifiable ->
     touch nothing, warn, ``sys.exit(1)`` with the code update SKIPPED (also when the target is
@@ -896,8 +899,13 @@ def _apply_parked_branch_guard(
     """
     if current_branch == branch or current_branch == "HEAD":
         return False, False, None
+    in_place_requested = False
+    with _best_effort('Could not read updates.parked_branch_strategy: %s'):
+        in_place_requested = not switch_branch and (
+            _updates_config().get("parked_branch_strategy", "switch") == "update_in_place")
     switch_safe, switch_block_reason = _m()._assess_parked_branch_switch(
-        git_cmd, _m().PROJECT_ROOT, current_branch, branch)
+        git_cmd, _m().PROJECT_ROOT, current_branch, branch,
+        preserve_branch=in_place_requested)
     if not switch_safe:
         _m()._print_parked_branch_skip_warning(
             git_cmd, _m().PROJECT_ROOT, current_branch, branch, switch_block_reason)
@@ -905,14 +913,10 @@ def _apply_parked_branch_guard(
         print(f"⚠ Update finished — code update SKIPPED{_branch_head_suffix(git_cmd, _m().PROJECT_ROOT)}")
         _m()._resume_windows_gateways_after_update(_windows_gateway_resume)
         sys.exit(1)
-    if not switch_block_reason.startswith("unmerged:"):
+    if not in_place_requested and not switch_block_reason.startswith("unmerged:"):
         print(f"  ⚠ Checkout was parked on '{current_branch}' (fully merged) — switching back to {branch}...")
         return True, False, switch_block_reason
-    _in_place_configured = False
-    with _best_effort('Could not read updates.parked_branch_strategy: %s'):
-        _in_place_configured = (
-            _updates_config().get("parked_branch_strategy", "switch") == "update_in_place")
-    if not _in_place_configured or switch_branch:
+    if not in_place_requested:
         _m()._print_parked_branch_kept_notice(
             current_branch, branch, switch_block_reason.split(":", 1)[1])
         return True, False, switch_block_reason

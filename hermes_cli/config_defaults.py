@@ -2345,7 +2345,7 @@ DEFAULT_CONFIG = {
         # keep working. A DIRTY tree blocks the switch and the code update is SKIPPED with a loud
         # warning. False = never auto-switch.
         "auto_switch_parked_branch": True,
-        # Clean parked branch with unmerged commits: switch = move to the update target, commits
+        # Clean parked branch: switch = move to the update target, commits
         # stay on the branch (never conflicts). update_in_place = for a maintained custom branch:
         # merge origin/<target> INTO it after leaving a pre-update-<stamp> tag; a conflict stops the
         # update cleanly. `hermes update --switch-branch` overrides to switch for one run.

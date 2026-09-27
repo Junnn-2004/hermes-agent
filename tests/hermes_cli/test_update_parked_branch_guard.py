@@ -100,21 +100,23 @@ def test_clean_fully_merged_branch_is_safe_to_switch(repo_pair):
     assert reason == ""
 
 
-def test_dirty_tree_blocks_auto_switch(repo_pair):
+@pytest.mark.parametrize("preserve_branch", [False, True])
+def test_dirty_tree_blocks_auto_switch(repo_pair, preserve_branch):
     """Uncommitted changes on the parked branch → do not touch it."""
     (repo_pair / "a.txt").write_text("local edit\n")
     safe, reason = update_cmd._assess_parked_branch_switch(
-        GIT, repo_pair, "old-feature", "main"
+        GIT, repo_pair, "old-feature", "main", preserve_branch=preserve_branch
     )
     assert safe is False
     assert reason == "dirty"
 
 
-def test_untracked_file_blocks_auto_switch(repo_pair):
+@pytest.mark.parametrize("preserve_branch", [False, True])
+def test_untracked_file_blocks_auto_switch(repo_pair, preserve_branch):
     """Untracked files count as dirty too — they'd ride along on checkout."""
     (repo_pair / "scratch.py").write_text("wip\n")
     safe, reason = update_cmd._assess_parked_branch_switch(
-        GIT, repo_pair, "old-feature", "main"
+        GIT, repo_pair, "old-feature", "main", preserve_branch=preserve_branch
     )
     assert safe is False
     assert reason == "dirty"
@@ -149,7 +151,8 @@ def test_equivalent_cherry_picked_commit_is_still_safe(repo_pair):
     assert reason == ""
 
 
-def test_config_opt_out_blocks_auto_switch(repo_pair, monkeypatch):
+@pytest.mark.parametrize("preserve_branch", [False, True])
+def test_config_opt_out_blocks_auto_switch(repo_pair, monkeypatch, preserve_branch):
     """updates.auto_switch_parked_branch: false disables auto-switch even
     when the branch is clean and merged."""
     import hermes_cli.config as hermes_config
@@ -160,16 +163,17 @@ def test_config_opt_out_blocks_auto_switch(repo_pair, monkeypatch):
         lambda: {"updates": {"auto_switch_parked_branch": False}},
     )
     safe, reason = update_cmd._assess_parked_branch_switch(
-        GIT, repo_pair, "old-feature", "main"
+        GIT, repo_pair, "old-feature", "main", preserve_branch=preserve_branch
     )
     assert safe is False
     assert reason == "disabled"
 
 
-def test_missing_origin_ref_is_unverifiable(repo_pair):
+@pytest.mark.parametrize("preserve_branch", [False, True])
+def test_missing_origin_ref_is_unverifiable(repo_pair, preserve_branch):
     """If origin/<target> can't be resolved, the guard refuses to switch."""
     safe, reason = update_cmd._assess_parked_branch_switch(
-        GIT, repo_pair, "old-feature", "no-such-branch"
+        GIT, repo_pair, "old-feature", "no-such-branch", preserve_branch=preserve_branch
     )
     assert safe is False
     assert reason == "unverifiable"
@@ -301,6 +305,33 @@ def test_update_switches_unmerged_parked_branch_with_kept_notice(
         _git(repo_pair, "rev-parse", "old-feature").stdout.strip()
         == feature_sha
     )
+
+
+@pytest.mark.parametrize("local_commit", [False, True, "equivalent"])
+def test_explicit_in_place_preserves_branch_without_patch_scan(repo_pair, monkeypatch, local_commit):
+    import hermes_cli.config as hermes_config
+    from hermes_cli import update_cmd_git
+
+    monkeypatch.setattr(hermes_config, "load_config", lambda: {
+        "updates": {"parked_branch_strategy": "update_in_place"}})
+    monkeypatch.setattr(hermes_main, "PROJECT_ROOT", repo_pair)
+    if local_commit == "equivalent":
+        _git(repo_pair, "cherry-pick", "origin/main~1")
+    elif local_commit:
+        (repo_pair / "local.txt").write_text("local work\n")
+        _git(repo_pair, "add", "local.txt")
+        _git(repo_pair, "commit", "-qm", "local work")
+    real_git = update_cmd_git._git_run
+
+    def reject_patch_scan(git_cmd, args, *rest, **kwargs):
+        assert args[0] != "cherry", "in-place merge does not need upstream patch equivalence"
+        return real_git(git_cmd, args, *rest, **kwargs)
+
+    monkeypatch.setattr(update_cmd_git, "_git_run", reject_patch_scan)
+    switched, in_place, _ = update_cmd._apply_parked_branch_guard(
+        GIT, "main", "old-feature", switch_branch=False, _windows_gateway_resume=None)
+    assert (switched, in_place) == (False, True)
+    assert _git(repo_pair, "branch", "--show-current").stdout.strip() == "old-feature"
 
 
 def test_update_updates_unmerged_branch_in_place_when_configured(

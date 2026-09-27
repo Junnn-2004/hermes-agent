@@ -73,7 +73,7 @@ def is_shallow_repository(git_cmd: list[str], root: Path) -> bool:
 
 def _fetch(git_cmd: list[str], root: Path, depth_args: list[str], remote: str, branch: str):
     print(f"→ Fetching from {remote}...")
-    return _git(git_cmd, root, ["fetch", *depth_args, remote, branch], **_uc()._no_prompt_git_kwargs())
+    return _uc()._git_run(git_cmd, ["fetch", *depth_args, remote, branch], cwd=root, network=True)
 
 
 def fetch_compare_branch(git_cmd: list[str], root: Path, branch: str, depth_args: list[str]):

@@ -8,6 +8,7 @@ from ctypes import wintypes
 import subprocess
 import sys
 import threading
+import time
 
 import psutil
 
@@ -44,6 +45,14 @@ class _ExtendedLimits(ctypes.Structure):
     ]
 
 
+class _BasicAccounting(ctypes.Structure):
+    _fields_ = [(name, ctypes.c_longlong) for name in (
+        "TotalUserTime", "TotalKernelTime", "ThisPeriodTotalUserTime", "ThisPeriodTotalKernelTime",
+    )] + [(name, wintypes.DWORD) for name in (
+        "TotalPageFaultCount", "TotalProcesses", "ActiveProcesses", "TotalTerminatedProcesses",
+    )]
+
+
 class _WindowsJob:
     def __init__(self):
         self._lock = threading.Lock()
@@ -53,6 +62,9 @@ class _WindowsJob:
             ("SetInformationJobObject", [wintypes.HANDLE, ctypes.c_int,
                                          ctypes.c_void_p, wintypes.DWORD], wintypes.BOOL),
             ("AssignProcessToJobObject", [wintypes.HANDLE, wintypes.HANDLE], wintypes.BOOL),
+            ("TerminateJobObject", [wintypes.HANDLE, wintypes.UINT], wintypes.BOOL),
+            ("QueryInformationJobObject", [wintypes.HANDLE, ctypes.c_int, ctypes.c_void_p,
+                                           wintypes.DWORD, ctypes.c_void_p], wintypes.BOOL),
             ("CloseHandle", [wintypes.HANDLE], wintypes.BOOL),
         ):
             fn = getattr(self._api, name)
@@ -85,6 +97,25 @@ class _WindowsJob:
                 if not self._api.CloseHandle(self._handle):
                     raise ctypes.WinError(ctypes.get_last_error())
                 self._handle = None
+
+    def terminate_and_wait(self, timeout: float = 5) -> None:
+        """Stop every descendant before an updater may touch the checkout again."""
+        with self._lock:
+            if self._handle is None:
+                raise RuntimeError("Cannot verify an already closed process job")
+            if not self._api.TerminateJobObject(self._handle, 124):
+                raise ctypes.WinError(ctypes.get_last_error())
+            deadline = time.monotonic() + timeout
+            while True:
+                accounting = _BasicAccounting()
+                if not self._api.QueryInformationJobObject(
+                        self._handle, 1, ctypes.byref(accounting), ctypes.sizeof(accounting), None):
+                    raise ctypes.WinError(ctypes.get_last_error())
+                if accounting.ActiveProcesses == 0:
+                    return
+                if time.monotonic() >= deadline:
+                    raise RuntimeError("Timed-out Git process tree did not stop")
+                time.sleep(0.05)
 
 
 _CREDENTIAL_ENV_MARKERS = ("_API_KEY", "_TOKEN", "_SECRET", "PASSWORD", "_CREDENTIALS")
