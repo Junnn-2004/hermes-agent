@@ -67,7 +67,7 @@ import {
 } from './group-chat'
 import { groupWorkspaceOwnerKey } from './group-membership'
 import { annotateOrphanedGroupChatMembers } from './hygiene'
-import { BOTS_LOCALES, useBots } from './i18n'
+import { BOTS_LOCALES } from './i18n'
 import { displayName } from './labels'
 import { startBotRelay, stopBotRelay } from './relay'
 import { $activityToasts } from './roster-actions'
@@ -87,10 +87,6 @@ import type { GroupChat, RosterRow } from './types'
 import { loadBotSections } from './user-sections'
 
 // ── plugin ───────────────────────────────────────────────────────────────────
-
-function BotsTabTitle() {
-  return useBots().roster.title
-}
 
 /** One row the composer's `@` popover renders from the roster. */
 interface MentionCompletionItem {
@@ -473,7 +469,6 @@ export default {
       // zone's tab strip, so the pane stays reachable while collapsed.
       data: {
         placement: 'left',
-        tabTitle: () => <BotsTabTitle />,
         width: '260px',
         collapsible: true,
         hideOnly: true,
@@ -650,6 +645,11 @@ export default {
       // a failed re-resume (backend still down) leaves the lazy recovery on
       // next send as the backstop. Feature-detected — older shells have no
       // host.onEvent.
+      //
+      // This is a BACKGROUND wake: it refreshes in place (refreshInPlace
+      // through openBotCanonicalChat) and never navigates, so a user
+      // reading the Kanban board — or any other route — keeps their view
+      // (issue 121874).
       const stopReclaimSync =
         typeof host.onEvent === 'function'
           ? host.onEvent('session.reclaimed', event => {
@@ -682,7 +682,7 @@ export default {
               }
 
               const generation = getBotOpenGeneration()
-              void openBotCanonicalChat(bot)
+              void openBotCanonicalChat(bot, { background: true })
                 .then(opened => {
                   // A user action while the re-resume ran owns the center now.
                   if (!opened || generation !== getBotOpenGeneration()) {
