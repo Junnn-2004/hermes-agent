@@ -647,6 +647,35 @@ function Remove-MarkerIfOwned {
     } catch {}
 }
 
+function Invoke-CliWarmup {
+    # The relaunched Desktop proves the install with `hermes --version` under a
+    # 15s probe (one retry) and falls back to first-run setup when both miss.
+    # Right after a rebuild that first run can take longer (cold caches, freshly
+    # written files), so run the same read-only command once before relaunching.
+    # Best effort: a missing CLI, a failure or a 90s stall is logged, never fatal.
+    $candidates = @()
+    if ($env:HERMES_HOME) { $candidates += (Join-Path $env:HERMES_HOME 'bin\hermes.exe') }
+    if ($InstallRoot) { $candidates += (Join-Path (Split-Path -Parent $InstallRoot) 'bin\hermes.exe') }
+    $cli = $candidates | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } | Select-Object -First 1
+    if (-not $cli) { Write-HandoffLog "cli warm-up skipped: hermes.exe not found"; return }
+    try {
+        $sw = [System.Diagnostics.Stopwatch]::StartNew()
+        $p = Start-Process -FilePath $cli -ArgumentList '--version' -WorkingDirectory (Split-Path -Parent $cli) -WindowStyle Hidden -PassThru -ErrorAction Stop
+        $null = $p.Handle
+        while (-not $p.WaitForExit(250)) {
+            if ($sw.Elapsed.TotalSeconds -ge 90) {
+                & "$env:SystemRoot\System32\taskkill.exe" /PID $p.Id /T /F 2>&1 | Out-Null
+                Write-HandoffLog ("cli warm-up still running after {0:N0}s; relaunching anyway" -f $sw.Elapsed.TotalSeconds)
+                return
+            }
+            if ($script:Ui) { [System.Windows.Forms.Application]::DoEvents() }
+        }
+        Write-HandoffLog ("cli warm-up: hermes --version exited {0} after {1:N1}s" -f $p.ExitCode, $sw.Elapsed.TotalSeconds)
+    } catch {
+        Write-HandoffLog "cli warm-up skipped: $($_.Exception.Message)"
+    }
+}
+
 function Start-DesktopRelaunch {
     # Returns $true only when a launch VERIFIABLY happened (WMI accepted and
     # the pid exists, or the fallback spawn returned a live process). The
@@ -665,6 +694,7 @@ function Start-DesktopRelaunch {
         Start-Sleep -Milliseconds 500
         if ($script:Ui) { [System.Windows.Forms.Application]::DoEvents() }
     }
+    Invoke-CliWarmup
     Write-HandoffLog "relaunching desktop: $RelaunchExe"
     # DO NOT spawn Hermes.exe as our child: Electron/Chromium calls
     # AttachConsole(ATTACH_PARENT_PROCESS) at boot, so a Desktop launched
