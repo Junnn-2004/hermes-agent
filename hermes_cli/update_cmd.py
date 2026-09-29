@@ -778,9 +778,23 @@ def _reconcile_diverged_checkout(git_cmd, branch: str, pre_pull_sha, *, target_r
             f"merging origin/{branch} instead of resetting so local commits survive...")
         # Best-effort safety tag as a recovery anchor.
         _git_run(git_cmd, ["tag", f"pre-update-{_time.strftime('%Y%m%d-%H%M%S')}"])
-        if _git_run(git_cmd, ["merge", "--no-edit", merge_ref]).returncode != 0:
+        merge = _git_run(git_cmd, ["merge", "--no-edit", merge_ref])
+        if merge.returncode != 0:
+            # Only a content conflict leaves unmerged index entries. A merge that never got that
+            # far (index.lock, a file held open, an untracked file in the way) must not be
+            # reported as a conflict, and git's own words are the only record of why it failed.
+            unmerged = (_git_run(git_cmd, ["diff", "--name-only", "--diff-filter=U"]).stdout or "").split()
             _git_run(git_cmd, ["merge", "--abort"])
-            print("✗ Merge conflict between local commits and upstream — update stopped, nothing was changed.")
+            if unmerged:
+                print("✗ Merge conflict between local commits and upstream — update stopped, nothing was changed.")
+                shown = ", ".join(unmerged[:10]) + (f" (+{len(unmerged) - 10} more)" if len(unmerged) > 10 else "")
+                print(f"  Conflicting files: {shown}")
+            else:
+                print(f"✗ git merge failed (exit {merge.returncode}) without a content conflict — "
+                      "update stopped; retrying the update may be enough.")
+            detail = "\n".join(p.strip() for p in (merge.stdout, merge.stderr) if p and p.strip())
+            for line in detail.splitlines()[-15:]:
+                print(f"    git: {line}")
             print(f"  Resolve manually: cd {_m().PROJECT_ROOT} && git merge origin/{branch}")
             print("  Then re-run the update. Local work is untouched.")
             sys.exit(1)
