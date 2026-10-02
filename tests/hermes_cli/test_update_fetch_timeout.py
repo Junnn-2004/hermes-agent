@@ -17,6 +17,30 @@ import hermes_cli.update_cmd as update_cmd
 
 
 @pytest.mark.platforms("windows")
+def test_network_git_preserves_caller_flags_and_captures_output(monkeypatch):
+    from hermes_cli import update_git_process
+    from hermes_cli._subprocess_compat import windows_hide_flags
+
+    real_spawn = update_git_process.spawn_server
+    seen_flags = []
+
+    def observe_spawn(argv, **kwargs):
+        seen_flags.append(kwargs["creationflags"])
+        return real_spawn(argv, **kwargs)
+
+    monkeypatch.setattr(update_git_process, "spawn_server", observe_spawn)
+    result = update_git_process.run_network_git(
+        [sys.executable, "-c", "import sys; print('ready'); print('detail', file=sys.stderr)"],
+        timeout=10, check=True, text=True, encoding="utf-8",
+        creationflags=subprocess.CREATE_NEW_PROCESS_GROUP,
+    )
+    assert result.returncode == 0
+    assert result.stdout.strip() == "ready"
+    assert result.stderr.strip() == "detail"
+    assert seen_flags == [subprocess.CREATE_NEW_PROCESS_GROUP | windows_hide_flags()]
+
+
+@pytest.mark.platforms("windows")
 @pytest.mark.parametrize("check", [False, True])
 def test_fetch_timeout_reaps_pipe_inheriting_descendant(tmp_path, monkeypatch, check):
     pid_file = tmp_path / "descendant.pid"

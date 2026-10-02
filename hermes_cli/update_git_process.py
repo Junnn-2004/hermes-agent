@@ -12,8 +12,10 @@ def run_network_git(argv, *, timeout, check=False, capture_output=True, **kwargs
                               capture_output=capture_output, **kwargs)
     # subprocess.run kills only git.exe, then waits without a bound for inherited
     # pipes. A stalled remote-https/credential helper can hold them indefinitely.
+    # The updater also supplies flags; preserve them and hide the console once.
+    kwargs["creationflags"] = kwargs.get("creationflags", 0) | windows_hide_flags()
     proc, job = spawn_server(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                             creationflags=windows_hide_flags(), **kwargs)
+                             **kwargs)
     try:
         try:
             stdout, stderr = proc.communicate(timeout=timeout)
