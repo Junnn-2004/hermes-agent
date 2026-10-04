@@ -161,6 +161,54 @@ def test_counts_are_honest_without_fetch(installation, tip_kind, compare, expect
         assert requests == [MAIN_CHANNEL, "/repos/fixture/fork/commits/main"]
 
 
+@pytest.mark.parametrize("clone_kind,expected", [("full", 3), ("partial", 3), ("shallow", -1), ("unrelated", -1)])
+def test_local_custom_merge_counts_when_github_cannot_compare(installation, clone_kind, expected):
+    from hermes_cli.source_check import check_for_updates
+
+    root, linked, home, base, head, responses, requests, git = installation
+    git("checkout", "-b", "published", base)
+    for i in range(6):
+        git("commit", "--allow-empty", "-m", f"published history {i}")
+    git("checkout", "-b", "local/korean-desktop", head)
+    git("merge", "--no-edit", "published")
+    git("checkout", "published")
+    if clone_kind == "unrelated":
+        git("checkout", "--orphan", "unrelated")
+    for i in range(3):
+        (root / "upstream.txt").write_text(f"upstream change {i}\n")
+        git("add", "upstream.txt")
+        git("commit", "-m", f"upstream change {i}")
+    target = git("rev-parse", "HEAD")
+    git("checkout", "local/korean-desktop")
+    if clone_kind in {"partial", "shallow"}:
+        git("config", "uploadpack.allowFilter", "true")
+        clone = root.parent / clone_kind
+        options = ["--filter=tree:0"] if clone_kind == "partial" else ["--depth=4", "--no-single-branch"]
+        git("clone", "--no-checkout", *options, root.as_uri(), str(clone))
+        root = clone
+        git("remote", "set-url", "origin", "https://github.com/fixture/fork.git", cwd=root)
+        assert git("rev-parse", "--is-shallow-repository", cwd=root) == str(clone_kind == "shallow").lower()
+        if clone_kind == "partial":
+            from hermes_cli.source_check import source_git_env
+            assert list((root / ".git" / "objects" / "pack").glob("*.promisor"))
+            objects = subprocess.check_output(
+                ["git", "rev-list", "--objects", "--missing=print", "--all"],
+                cwd=root, text=True, env=source_git_env())
+            assert any(line.startswith("?") for line in objects.splitlines())
+    responses["/repos/fixture/fork/commits/main"] = (200, target)
+    # The local-only merge SHA has no GitHub compare response (the fixture returns 404).
+    before = {str(p.relative_to(root)): p.read_bytes() for p in (root / ".git").rglob("*") if p.is_file()}
+    status = check_for_updates(install_root=root, home=home, branch="main", force=True)
+    assert status["behind"] == expected
+    assert status["updateAvailable"] is True
+    assert {str(p.relative_to(root)): p.read_bytes() for p in (root / ".git").rglob("*") if p.is_file()} == before
+    if clone_kind == "full":
+        git("merge", "--no-edit", "published")
+        status = check_for_updates(install_root=root, home=home, branch="main", force=True)
+        assert status["behind"] == 0
+        assert status["updateAvailable"] is False
+
+
 def test_cache_force_expiry_and_passive_opt_out(installation, monkeypatch):
     from hermes_cli import source_check
     root, linked, home, base, head, responses, requests, git = installation

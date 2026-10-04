@@ -83,9 +83,9 @@ def _git_ok(args: list[str], **kw) -> bool:
     return result is not None and result.returncode == 0
 
 
-def _git_count(args: list[str], *, cwd: Path) -> Optional[int]:
+def _git_count(args: list[str], *, cwd: Path, git: str = "git") -> Optional[int]:
     """``int`` of a successful ``git rev-list --count``-style command, else None."""
-    result = _git_run(args, cwd=cwd)
+    result = _git_run(args, cwd=cwd, git=git)
     if result is not None and result.returncode == 0:
         return _quiet(lambda: int(result.stdout.strip()))
     return None
@@ -339,6 +339,15 @@ def _behind_count(co: _Checkout, target: str) -> tuple[int, list[dict]]:
         ahead = (payload or {}).get("ahead_by")
         if isinstance(ahead, int) and not isinstance(ahead, bool) and ahead >= 0:
             return ahead, (_quiet(lambda: _commits(payload), []) if ahead else [])
+    # GitHub cannot compare a locally customized merge SHA. A complete local
+    # commit graph still knows the exact difference, without fetching anything.
+    # Shallow boundaries can hide parents even when a common ancestor is visible.
+    if (not co.embedded
+            and _git_stdout(["rev-parse", "--is-shallow-repository"], cwd=co.root, git=co.git) == "false"
+            and _git_ok(["merge-base", co.head, target], cwd=co.root, git=co.git)):
+        behind = _git_count(["rev-list", "--count", f"{co.head}..{target}"], cwd=co.root, git=co.git)
+        if behind is not None and behind >= 0:
+            return behind, []
     return UPDATE_AVAILABLE_NO_COUNT, []
 
 
