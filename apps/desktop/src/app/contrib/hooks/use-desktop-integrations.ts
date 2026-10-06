@@ -70,7 +70,7 @@ interface DesktopIntegrationsParams {
 
 /**
  * All the Electron-main / OS / cross-window integrations the shell listens for:
- * update polling, the ⌘W close shortcut, deep links, native-notification
+ * manual-update progress, the ⌘W close shortcut, deep links, native-notification
  * navigation, preview-shortcut enablement, remembered-session restore, and
  * cross-window session-list sync. Kept out of the wiring controller so the
  * "talks to the desktop shell" surface reads as one unit.
@@ -87,9 +87,8 @@ export function useDesktopIntegrations({
   runtimeIdByStoredSessionId,
   sessions
 }: DesktopIntegrationsParams): void {
-  // Update polling — populates $desktopVersion/$updateStatus, which feed the
-  // statusbar version pill and the update toasts. Also honors the main
-  // process's "open updates" menu request.
+  // Show the installed version and listen for manually requested updates.
+  // Startup, focus, and profile changes must not trigger update checks.
   useEffect(() => {
     startUpdatePoller()
     // Background MCP health: HTTP/SSE servers only (never spawns stdio),

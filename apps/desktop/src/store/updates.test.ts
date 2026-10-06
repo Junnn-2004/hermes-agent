@@ -105,8 +105,7 @@ const {
   resetUpdateApplyState,
   startUpdatePoller,
   stopUpdatePoller,
-  $updateStatus,
-  BACKGROUND_UPDATE_CHECK_MS
+  $updateStatus
 } = await import('./updates')
 
 const { setConnection } = await import('./session')
@@ -1617,27 +1616,27 @@ describe('startUpdatePoller', () => {
     vi.useRealTimers()
   })
 
-  it('calls checkUpdates() on startup so the version pill populates immediately', async () => {
+  it('initializes local version and progress without checking for updates on startup', async () => {
+    const getVersion = vi.fn().mockResolvedValue({ version: '0.21.5' })
+    window.hermesDesktop!.getVersion = getVersion
     startUpdatePoller()
 
     // checkUpdates() is async — flush microtasks without advancing the daily interval.
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(checkMock).toHaveBeenCalled()
-    expect($updateStatus.get()?.behind).toBe(5)
+    expect(checkMock).not.toHaveBeenCalled()
+    expect($updateStatus.get()).toBeNull()
+    expect(getVersion).toHaveBeenCalledTimes(1)
+    expect(onProgressMock).toHaveBeenCalledTimes(1)
+    onProgressMock.mock.calls[0][0]({ stage: 'error', message: 'manual update failed', at: 1 })
+    expect($updateApply.get().message).toBe('manual update failed')
   })
 
-  it('polls once per day and never forces past the caches', async () => {
+  it('does not check automatically after several days', async () => {
     startUpdatePoller()
     await vi.advanceTimersByTimeAsync(0)
-    expect(checkMock).toHaveBeenCalledWith({ force: false })
-    checkMock.mockClear()
-
-    await vi.advanceTimersByTimeAsync(BACKGROUND_UPDATE_CHECK_MS - 1)
+    await vi.advanceTimersByTimeAsync(3 * 24 * 60 * 60 * 1000)
     expect(checkMock).not.toHaveBeenCalled()
-
-    await vi.advanceTimersByTimeAsync(1)
-    expect(checkMock).toHaveBeenCalledTimes(1)
   })
 
   it('passes an explicit manual check through to the main process', async (): Promise<void> => {
@@ -1645,7 +1644,7 @@ describe('startUpdatePoller', () => {
     expect(checkMock).toHaveBeenCalledWith({ force: true })
   })
 
-  it('window focus only re-checks once the daily cadence has elapsed', async () => {
+  it('does not check for updates when focus returns after a day', async () => {
     startUpdatePoller()
     await vi.advanceTimersByTimeAsync(0)
     checkMock.mockClear()
@@ -1656,16 +1655,13 @@ describe('startUpdatePoller', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(checkMock).not.toHaveBeenCalled()
 
-    vi.setSystemTime(Date.now() + BACKGROUND_UPDATE_CHECK_MS)
+    vi.setSystemTime(Date.now() + 24 * 60 * 60 * 1000)
     listeners['focus']?.()
     await vi.advanceTimersByTimeAsync(0)
-    expect(checkMock).toHaveBeenCalledTimes(1)
+    expect(checkMock).not.toHaveBeenCalled()
   })
 
-  it('re-checks backend updates when switching directly between two remote profiles', async () => {
-    // Both profiles resolve to mode: 'remote' — only baseUrl differs. A
-    // mode-only comparison would treat this as "no change" and never
-    // re-check, leaving profile A's stale status on screen for profile B.
+  it('does not check backend updates on startup or switching remote hosts', async () => {
     checkHermesUpdateSpy.mockReset()
     checkHermesUpdateSpy.mockResolvedValue({
       install_method: 'git',
@@ -1690,7 +1686,7 @@ describe('startUpdatePoller', () => {
 
     startUpdatePoller()
     await vi.advanceTimersByTimeAsync(0)
-    checkHermesUpdateSpy.mockClear()
+    expect(checkHermesUpdateSpy).not.toHaveBeenCalled()
 
     setConnection({
       baseUrl: 'http://profile-b:9119',
@@ -1704,14 +1700,10 @@ describe('startUpdatePoller', () => {
     })
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(checkHermesUpdateSpy).toHaveBeenCalled()
+    expect(checkHermesUpdateSpy).not.toHaveBeenCalled()
   })
 
-  it('re-checks backend updates when switching between two profiles on the same remote backend', async () => {
-    // Pooled profiles share a baseUrl; only the profile field differs. The
-    // update check is profile-scoped (per-profile overrides can pin a
-    // different channel/branch), so a baseUrl-only key would treat this as
-    // "no change" and keep the first profile's status on screen.
+  it('does not check backend updates when switching pooled profiles', async () => {
     checkHermesUpdateSpy.mockReset()
     checkHermesUpdateSpy.mockResolvedValue({
       install_method: 'git',
@@ -1738,15 +1730,15 @@ describe('startUpdatePoller', () => {
     setConnection(pooled('alpha'))
     startUpdatePoller()
     await vi.advanceTimersByTimeAsync(0)
-    checkHermesUpdateSpy.mockClear()
+    expect(checkHermesUpdateSpy).not.toHaveBeenCalled()
 
     setConnection(pooled('beta'))
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(checkHermesUpdateSpy).toHaveBeenCalled()
+    expect(checkHermesUpdateSpy).not.toHaveBeenCalled()
   })
 
-  it('discards a stale in-flight response and re-checks after switching to B before A resolves', async () => {
+  it('discards a stale response when a manual check for B follows a pending check for A', async () => {
     // A's check is still in flight when the switch to B happens — B's
     // trigger is locked out by $backendUpdateChecking. Once A's (now stale)
     // response lands it must not overwrite the display with A's result, and
@@ -1781,7 +1773,7 @@ describe('startUpdatePoller', () => {
       windowButtonPosition: null
     })
 
-    startUpdatePoller()
+    void checkBackendUpdates({ force: true })
     // A's checkHermesUpdate() call is now in flight (aPending unresolved).
     // Switch profiles before it settles.
 
@@ -1796,6 +1788,7 @@ describe('startUpdatePoller', () => {
       windowButtonPosition: null
     })
 
+    void checkBackendUpdates({ force: true })
     // Now A's slow response lands.
     resolveA({
       install_method: 'git',

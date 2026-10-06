@@ -462,8 +462,8 @@ export async function refreshDesktopVersion(): Promise<DesktopVersionInfo | null
     return null
   }
 
-  // Best-effort UI sync: callers (checkUpdates, startUpdatePoller, window
-  // focus handler) all kick this off with `void refreshDesktopVersion()`,
+  // Best-effort UI sync: callers (checkUpdates and startUpdatePoller)
+  // kick this off with `void refreshDesktopVersion()`,
   // so any rejection from the IPC bridge (e.g. main process shutting down
   // mid-reload, or the bridge not yet ready on first paint) would surface
   // as an unhandled promise rejection in the renderer. Swallow it.
@@ -1228,9 +1228,6 @@ function ingestProgress(payload: DesktopUpdateProgress): void {
 }
 
 let pollerStarted = false
-let backgroundTimer: ReturnType<typeof setInterval> | null = null
-let connectionUnsub: (() => void) | null = null
-let lastConnectionKey: string | undefined
 
 // mode alone can't tell two remote backends apart — switching directly from
 // remote profile A to remote profile B leaves mode === 'remote' both times.
@@ -1246,22 +1243,7 @@ function connectionKey(conn: HermesConnection | null): string {
   return conn.profile ? `remote:${conn.baseUrl}:${conn.profile}` : `remote:${conn.baseUrl}`
 }
 
-export const BACKGROUND_UPDATE_CHECK_MS = 24 * 60 * 60 * 1000
-const FOCUS_RECHECK_KEY = 'hermes.updates.last-passive-check'
-
-function passiveCheckDue(now: number): boolean {
-  const last = Number(storedString(FOCUS_RECHECK_KEY) ?? 0)
-
-  return !Number.isFinite(last) || now - last >= BACKGROUND_UPDATE_CHECK_MS
-}
-
-function runPassiveChecks(): void {
-  persistString(FOCUS_RECHECK_KEY, String(Date.now()))
-  void checkUpdates()
-  void checkBackendUpdates()
-}
-
-/** Wire up background polling + progress streaming. Idempotent. */
+/** Initialize installed-version display and manual-update progress. No automatic checks. */
 export function startUpdatePoller(): void {
   if (pollerStarted || typeof window === 'undefined') {
     return
@@ -1274,49 +1256,10 @@ export function startUpdatePoller(): void {
   }
 
   pollerStarted = true
-  runPassiveChecks()
   void refreshDesktopVersion()
   bridge.onProgress(ingestProgress)
-
-  // The poller starts at mount, before the gateway connects — so the first
-  // backend check above sees mode≠remote and no-ops. Re-check once the
-  // connection resolves to remote, and again whenever the remote target
-  // itself changes (switching between two remote profiles).
-  connectionUnsub = $connection.subscribe((conn: HermesConnection | null): void => {
-    const key = connectionKey(conn)
-
-    if (key === lastConnectionKey) {
-      return
-    }
-
-    lastConnectionKey = key
-
-    if (conn?.mode === 'remote') {
-      void checkBackendUpdates()
-    }
-  })
-
-  window.addEventListener('focus', onFocus)
-  backgroundTimer = setInterval(runPassiveChecks, BACKGROUND_UPDATE_CHECK_MS)
 }
 
 export function stopUpdatePoller(): void {
-  if (backgroundTimer !== null) {
-    clearInterval(backgroundTimer)
-    backgroundTimer = null
-  }
-
-  connectionUnsub?.()
-  connectionUnsub = null
-  lastConnectionKey = undefined
-  window.removeEventListener('focus', onFocus)
   pollerStarted = false
-}
-
-function onFocus(): void {
-  void refreshDesktopVersion()
-
-  if (passiveCheckDue(Date.now())) {
-    runPassiveChecks()
-  }
 }
