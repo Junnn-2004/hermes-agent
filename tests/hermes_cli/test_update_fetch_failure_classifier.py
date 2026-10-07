@@ -7,6 +7,8 @@ classifier must call out rate limiting / outages explicitly, and the raw
 stderr line must always be printed alongside the diagnosis.
 """
 
+import pytest
+
 from hermes_cli import update_cmd
 
 
@@ -124,7 +126,7 @@ def test_update_network_git_calls_never_prompt_for_credentials():
 
 
 def test_update_and_upstream_network_calls_disable_terminal_prompts(monkeypatch, tmp_path):
-    """Exercise origin fetch and fork fetch/pull/push, not their source spelling."""
+    """Exercise origin fetch and fork fetch/merge/push, not their source spelling."""
     import subprocess
     from hermes_cli import update_cmd_git
 
@@ -135,20 +137,30 @@ def test_update_and_upstream_network_calls_disable_terminal_prompts(monkeypatch,
     monkeypatch.setenv("GIT_CONFIG_KEY_0", "credential.helper")
     monkeypatch.setenv("GIT_CONFIG_VALUE_0", "fixture-helper")
     monkeypatch.setattr(update_cmd, "_has_upstream_remote", lambda *a: True)
+    upstream = "c" * 40
     monkeypatch.setattr(update_cmd, "_count_commits_between",
-                        lambda git, cwd, base, head: 2 if head == "upstream/main" else 0)
+                        lambda git, cwd, base, head: 2 if head == upstream else 0)
     calls = []
 
     def run(cmd, **kwargs):
         calls.append((cmd[1:], kwargs))
-        return subprocess.CompletedProcess(cmd, 0, "", "")
+        return subprocess.CompletedProcess(cmd, 0, upstream if "rev-parse" in cmd else "", "")
 
     monkeypatch.setattr(subprocess, "run", run)
     monkeypatch.setattr(update_cmd, "run_network_git", run)
+    (tmp_path / ".git").mkdir()  # the fork ff's recovery marker lives there: no marker, no move
     update_cmd._git_run(["git"], ["fetch", "origin", "main"], cwd=tmp_path, network=True, check=True)
     assert update_cmd_git._sync_with_upstream_if_needed(["git"], tmp_path, assume_yes=True)
-    assert [args[0] for args, _ in calls] == ["fetch", "fetch", "pull", "push"]
-    for args, kwargs in calls:
+    from hermes_cli.update_custody import git_subcommand
+
+    # The fork push runs only after the update is validated (_push_synced_fork), never inside the sync.
+    update_cmd_git._sync_fork_with_upstream(["git"], tmp_path)
+    # The fork's fast-forward is local (`merge --ff-only` after the fetch): no credential helper ever
+    # runs under the checkout lock fd a mutator inherits (R2).
+    network = [(args, kwargs) for args, kwargs in calls if git_subcommand(args) in {"fetch", "pull", "push", "merge"}]
+    assert [git_subcommand(args) for args, _ in network] == ["fetch", "fetch", "merge", "push"]
+    assert network[2][0][-1] == upstream  # the counted commit, not a name a local branch can shadow
+    for args, kwargs in network:
         assert kwargs["stdin"] is subprocess.DEVNULL, args
         env = kwargs["env"]
         assert env["GIT_TERMINAL_PROMPT"] == "0", args
@@ -156,3 +168,41 @@ def test_update_and_upstream_network_calls_disable_terminal_prompts(monkeypatch,
         assert env["GIT_ASKPASS"] == "fixture-askpass", args
         assert env["GIT_CONFIG_COUNT"] == "1", args
         assert env["GIT_CONFIG_VALUE_0"] == "fixture-helper", args
+
+
+@pytest.mark.parametrize("locked", [False, True])
+@pytest.mark.parametrize("network", [False, True])
+def test_git_calls_keep_update_custody_and_bound_unlocked_network(monkeypatch, tmp_path, locked, network):
+    import subprocess
+    from hermes_cli import update_custody
+    from hermes_cli._subprocess_compat import windows_hide_flags
+
+    calls = []
+
+    def network_run(argv, **kwargs):
+        calls.append(("network", argv, kwargs))
+        return subprocess.CompletedProcess(argv, 0, "ok", "")
+
+    def custody_run(git_cmd, args, **kwargs):
+        calls.append(("custody", git_cmd + args, kwargs))
+        return subprocess.CompletedProcess(git_cmd + args, 0, "ok", "")
+
+    monkeypatch.setattr(update_custody, "_held", lambda: {"fd": None} if locked else None)
+    monkeypatch.setattr(update_custody, "run_git", custody_run)
+    monkeypatch.setattr(update_cmd, "run_network_git", network_run)
+    args = ["fetch", "origin", "main"] if network else ["rev-parse", "HEAD"]
+    result = update_cmd._git_run(["git"], args, cwd=tmp_path, network=network, check=True)
+
+    assert result.stdout == "ok"
+    assert len(calls) == 1
+    kind, argv, kwargs = calls[0]
+    assert kind == ("network" if network and not locked else "custody")
+    if kind == "network":
+        assert argv == update_custody.git_argv(["git"], args)
+    assert kwargs["creationflags"] == windows_hide_flags()
+    assert kwargs["check"] is True
+    if network:
+        assert kwargs["timeout"] == update_cmd.NETWORK_GIT_TIMEOUT_SECONDS
+        assert kwargs["env"]["GIT_TERMINAL_PROMPT"] == "0"
+    else:
+        assert "timeout" not in kwargs
