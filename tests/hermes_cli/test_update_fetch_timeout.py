@@ -13,7 +13,7 @@ from unittest.mock import MagicMock, patch
 import psutil
 import pytest
 
-import hermes_cli.update_cmd as update_cmd
+from hermes_cli import update_cmd
 
 
 @pytest.mark.platforms("windows")

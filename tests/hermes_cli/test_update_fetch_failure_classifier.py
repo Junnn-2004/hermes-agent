@@ -128,7 +128,16 @@ def test_update_network_git_calls_never_prompt_for_credentials():
 def test_update_and_upstream_network_calls_disable_terminal_prompts(monkeypatch, tmp_path):
     """Exercise origin fetch and fork fetch/merge/push, not their source spelling."""
     import subprocess
+    from types import SimpleNamespace
     from hermes_cli import update_cmd_git
+    from hermes_cli.main_install_repair import _pytest_owns_live_checkout
+
+    # Keep commit/fleet obligations real without booting the installed CLI from this fake repo.
+    fake_main = SimpleNamespace(
+        PROJECT_ROOT=tmp_path,
+        _pytest_owns_live_checkout=_pytest_owns_live_checkout,
+    )
+    monkeypatch.setattr(update_cmd, "_m", lambda: fake_main)
 
     monkeypatch.setenv("GIT_TERMINAL_PROMPT", "1")
     monkeypatch.setenv("GCM_INTERACTIVE", "Always")
