@@ -4137,7 +4137,7 @@ export const zhOverrides = {
       toggleFreeTier: 'Free tier',
       toggleWorkspace: '工作区',
       cacheHitRateTitle: '本会话的提示缓存命中率 — 缓存 token 更便宜，越高越省',
-      tokensPerSecondTitle: '每秒输出 token 数，取最近 10 次模型调用的平均值',
+      tokensPerSecondTitle: '生成时显示当前每秒输出 token 数（~ 表示估算）；空闲时显示最近 10 次调用的平均值',
       agents: '代理',
       closeAgents: '关闭代理',
       openAgents: '打开代理',

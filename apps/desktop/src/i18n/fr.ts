@@ -4728,7 +4728,7 @@ export const frOverrides = {
       toggleWorkspace: 'Espace de travail',
       cacheHitRateTitle:
         'Taux de cache des prompts pour cette session — les tokens en cache coûtent moins cher, un taux élevé est donc plus économique',
-      tokensPerSecondTitle: 'Tokens de sortie par seconde, moyenne calculée sur les 10 derniers appels au modèle',
+      tokensPerSecondTitle: 'Tokens de sortie par seconde pendant la génération (~ indique une estimation) ; au repos, moyenne des 10 derniers appels',
       agents: 'Agents',
       closeAgents: 'Fermer les agents',
       openAgents: 'Ouvrir les agents',

@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { ClientSessionState } from '@/app/types'
 import { createClientSessionState } from '@/lib/chat-runtime'
+import { tokensPerSecondLabel } from '@/lib/statusbar'
 import { $currentUsage } from '@/store/session'
 
 import { type MessageStreamHarness, renderMessageStream } from './test-harness'
@@ -28,6 +29,26 @@ describe('useMessageStream status-bar usage scoping', () => {
   afterEach(() => {
     cleanup()
     vi.restoreAllMocks()
+  })
+
+  it('clears a previous live rate during prefill and returns to the average at completion', () => {
+    $currentUsage.set({ ...BASELINE, streaming: false, live_tps: 90, avg_tps: 35 })
+    mountStream()
+
+    const tick = (usage: Record<string, unknown>) =>
+      act(() => stream.handleEvent({ type: 'session.usage', session_id: SID, payload: { usage } }))
+
+    tick({ streaming: true, live_tps: null, live_tps_estimated: null })
+    expect(tokensPerSecondLabel($currentUsage.get())).toBe('')
+    expect(tokensPerSecondLabel(sessionStates.get(SID)!.usage!)).toBe('')
+
+    tick({ streaming: true, live_tps: 42, live_tps_estimated: true })
+    expect(tokensPerSecondLabel($currentUsage.get())).toBe('~42 t/s')
+    expect(tokensPerSecondLabel(sessionStates.get(SID)!.usage!)).toBe('~42 t/s')
+
+    tick({ streaming: false, live_tps: null, live_tps_estimated: null, avg_tps: 35 })
+    expect(tokensPerSecondLabel($currentUsage.get())).toBe('35 t/s')
+    expect(tokensPerSecondLabel(sessionStates.get(SID)!.usage!)).toBe('35 t/s')
   })
 
   it('merges a live session.usage tick from the focused session', () => {

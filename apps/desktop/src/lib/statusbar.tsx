@@ -68,11 +68,12 @@ export function cacheHitLabel(usage: UsageStats): string {
   return typeof pct === 'number' && Number.isFinite(pct) ? `${Math.round(pct)}%` : ''
 }
 
-/** `42 t/s` for the rolling throughput; '' before the first completed call. */
+/** Live output rate while streaming; rolling throughput while idle. */
 export function tokensPerSecondLabel(usage: UsageStats): string {
-  const tps = usage.avg_tps
+  const tps = usage.streaming ? usage.live_tps : usage.avg_tps
+  const prefix = usage.streaming && usage.live_tps_estimated ? '~' : ''
 
-  return typeof tps === 'number' && Number.isFinite(tps) && tps > 0 ? `${Math.round(tps)} t/s` : ''
+  return typeof tps === 'number' && Number.isFinite(tps) && tps > 0 ? `${prefix}${Math.round(tps)} t/s` : ''
 }
 
 export function LiveDuration({ since }: { since: number | null | undefined }) {

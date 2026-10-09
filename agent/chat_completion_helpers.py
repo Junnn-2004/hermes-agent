@@ -32,6 +32,7 @@ from agent.error_classifier import (
 from agent.sdk_transform_bypass import bypass_chat_sdk_request_transform
 from agent.errors import EmptyStreamError
 from agent.chat_completion_stream_monitor import StreamingWaitMonitor
+from agent.stream_delivery import with_stream_emitters
 from agent.transports.chat_completions import is_router_timeout_shim, router_timeout_shim_may_follow
 from agent.fast_mode import effective_request_overrides
 from agent.turn_context import substitute_api_content
@@ -2492,49 +2493,13 @@ def _relay_stream_metadata(agent, api_mode: str) -> dict:
         "call_role": call_role}
 
 
-def _stream_final_text(response) -> str:
-    with contextlib.suppress(Exception):
-        choices = getattr(response, "choices", None)
-        first_choice = choices[0] if isinstance(choices, (list, tuple)) and choices else None
-        content = getattr(getattr(first_choice, "message", None), "content", None)
-        if isinstance(content, str):
-            return content
-    with contextlib.suppress(Exception):
-        content = getattr(response, "content", None)
-        if isinstance(content, str):
-            return content
-        if isinstance(content, list):
-            return "".join(t for t in (getattr(part, "text", None) for part in content) if isinstance(t, str))
-    return ""
-
-
-def _with_stream_emitters(agent, run):
-    """Bracket ``run()`` with the agent's ``_emit_stream_start`` / ``_emit_stream_end``
-    hooks when present (end carries the final text on success, the error string on
-    failure) and re-raise."""
-    start = getattr(agent, "_emit_stream_start", None)
-    if start is not None:
-        start()
-    try:
-        response = run()
-    except Exception as exc:
-        end = getattr(agent, "_emit_stream_end", None)
-        if end is not None:
-            end(final_text="", finished=False, error=str(exc))
-        raise
-    end = getattr(agent, "_emit_stream_end", None)
-    if end is not None:
-        end(final_text=_stream_final_text(response), finished=True, error=None)
-    return response
-
-
 def _stream_codex_passthrough(agent, api_kwargs: dict, on_first_delta):
     """Codex streams internally via _run_codex_stream (reached through
     _interruptible_api_call); park ``on_first_delta`` on the agent so it can pick
     it up, and bracket the call with the stream start/end emitters."""
     agent._codex_on_first_delta = on_first_delta
     try:
-        return _with_stream_emitters(agent, lambda: agent._interruptible_api_call(api_kwargs))
+        return with_stream_emitters(agent, lambda: agent._interruptible_api_call(api_kwargs))
     finally:
         agent._codex_on_first_delta = None
 
@@ -2715,7 +2680,7 @@ class _BedrockStream:
         # Cross-turn stale-stream circuit breaker (#58962), as on the OpenAI/
         # Anthropic path.
         _check_stale_giveup(self.agent)
-        return _with_stream_emitters(self.agent, self._poll)
+        return with_stream_emitters(self.agent, self._poll)
 
 
 class _ToolCallAccumulator:
@@ -3158,6 +3123,8 @@ class _StreamingCall(StreamingWaitMonitor):
             if upstream_provider is None and isinstance(getattr(chunk, "provider", None), str) and chunk.provider:
                 upstream_provider = chunk.provider  # OpenRouter stamps who served
                 _diag["serving_provider"] = upstream_provider.strip()[:64]  # attribute a mid-stream drop (#90216)
+            self._quiet(getattr(self.agent, "_note_stream_velocity_tokens", None),
+                        getattr(getattr(chunk, "usage", None), "completion_tokens", None))
             if not chunk.choices:
                 usage, finish_reason = self._choiceless_chunk(chunk, finish_reason)
                 usage_obj = usage or usage_obj
@@ -3247,6 +3214,8 @@ class _StreamingCall(StreamingWaitMonitor):
             if delta_tool_calls:
                 _flush_pending_stream_text()
                 for tc_delta in delta_tool_calls:
+                    self._quiet(getattr(self.agent, "_note_stream_velocity_chars", None),
+                                getattr(getattr(tc_delta, "function", None), "arguments", None))
                     name = tool_calls.feed(tc_delta)
                     if name is not None:
                         self._emit_tool_started(name)
@@ -3494,6 +3463,8 @@ class _StreamingCall(StreamingWaitMonitor):
                             self.result["partial_tool_names"].append(block.name)
                 elif event_type == "content_block_delta":
                     delta = getattr(event, "delta", None)
+                    self._quiet(getattr(self.agent, "_note_stream_velocity_chars", None),
+                                getattr(delta, "partial_json", ""))
                     delta_type = getattr(delta, "type", None) if delta else None
                     if delta_type == "text_delta":
                         text = getattr(delta, "text", "")
@@ -3764,7 +3735,7 @@ class _StreamingCall(StreamingWaitMonitor):
             # The failed attempt already emitted its terminal on_stream_end(finished=False),
             # so the recovered delivery opens and closes its OWN stream pair — consumers must
             # never see deltas after that error event.
-            replayed = _with_stream_emitters(self.agent, lambda: self._replay_final_response(probe))
+            replayed = with_stream_emitters(self.agent, lambda: self._replay_final_response(probe))
         except Exception as replay_err:
             # A response we cannot replay must not escape into _call()'s except block.
             logger.exception("Non-streaming unmask probe response could not be replayed: %s", replay_err)
@@ -3797,7 +3768,7 @@ class _StreamingCall(StreamingWaitMonitor):
                     self._cancel_current_stream_attempt("interrupt_before_stream_retry")
                     raise InterruptedError("Agent interrupted before stream retry")
                 try:
-                    self.result["response"] = _with_stream_emitters(
+                    self.result["response"] = with_stream_emitters(
                         self.agent, lambda: self._call_wire(stream_attempt_id))
                     return  # success
                 except Exception as e:

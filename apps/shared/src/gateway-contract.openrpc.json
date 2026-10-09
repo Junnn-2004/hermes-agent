@@ -32652,6 +32652,42 @@
             "default": null,
             "title": "Avg Tps"
           },
+          "streaming": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Streaming"
+          },
+          "live_tps": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Live Tps"
+          },
+          "live_tps_estimated": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Live Tps Estimated"
+          },
           "active_subagents": {
             "anyOf": [
               {
@@ -37846,6 +37882,42 @@
             ],
             "default": null,
             "title": "Avg Tps"
+          },
+          "streaming": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Streaming"
+          },
+          "live_tps": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Live Tps"
+          },
+          "live_tps_estimated": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Live Tps Estimated"
           },
           "active_subagents": {
             "anyOf": [

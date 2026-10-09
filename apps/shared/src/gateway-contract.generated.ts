@@ -575,6 +575,9 @@ export interface Usage {
   cache_write?: number | null
   avg_latency_s?: number | null
   avg_tps?: number | null
+  streaming?: boolean | null
+  live_tps?: number | null
+  live_tps_estimated?: boolean | null
   active_subagents?: number | null
   dev_credits_spent_micros?: number | null
   cost_usd?: number | null
@@ -3419,6 +3422,9 @@ export interface SessionUsageResult {
   cache_write?: number | null
   avg_latency_s?: number | null
   avg_tps?: number | null
+  streaming?: boolean | null
+  live_tps?: number | null
+  live_tps_estimated?: boolean | null
   active_subagents?: number | null
   dev_credits_spent_micros?: number | null
   cost_usd?: number | null

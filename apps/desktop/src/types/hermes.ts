@@ -864,6 +864,11 @@ export interface SessionRuntimeInfo {
 export interface UsageStats {
   /** Rolling tokens-per-second over the last ~10 API calls (tui_gateway `_get_usage`). */
   avg_tps?: number
+  /** The current model request is streaming, including its first-token wait. */
+  streaming?: boolean
+  /** Current output rate; estimated from raw deltas unless cumulative usage is streamed. */
+  live_tps?: number | null
+  live_tps_estimated?: boolean | null
   /** Session prompt-cache hit rate, 0–100. Omitted (not 0) when the provider reports no cache reads. */
   cache_hit_pct?: number
   calls: number

@@ -4717,7 +4717,7 @@ export const deOverrides = {
       toggleWorkspace: 'Workspace',
       cacheHitRateTitle:
         'Prompt-Cache-Trefferquote dieser Session — gecachte Tokens kosten weniger, also ist höher günstiger',
-      tokensPerSecondTitle: 'Ausgabe-Tokens pro Sekunde, gemittelt über die letzten 10 Modell-Aufrufe',
+      tokensPerSecondTitle: 'Aktuelle Ausgabe-Tokens pro Sekunde während der Generierung (~ bedeutet geschätzt); im Leerlauf Durchschnitt der letzten 10 Aufrufe',
       agents: 'Agents',
       closeAgents: 'Agents schließen',
       openAgents: 'Agents öffnen',

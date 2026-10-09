@@ -3,6 +3,7 @@
 Single-writer stream ownership, delta/reasoning hook fan-out, and interim assistant text dedup.
 Extracted from ``run_agent.py``; every method resolves through ``AIAgent``'s MRO unchanged.
 """
+import contextlib
 import logging
 import re
 import threading
@@ -11,9 +12,46 @@ from typing import Any, Dict, List
 from agent.memory_manager import sanitize_context
 from agent.message_content import flatten_message_text
 from agent.history_commentary import visible_commentary
+from agent.stream_velocity import StreamVelocity
 
 # Same logger name as the origin module so log records / caplog filters are unchanged.
 logger = logging.getLogger("run_agent")
+
+
+def _stream_final_text(response) -> str:
+    with contextlib.suppress(Exception):
+        choices = getattr(response, "choices", None)
+        first_choice = choices[0] if isinstance(choices, (list, tuple)) and choices else None
+        content = getattr(getattr(first_choice, "message", None), "content", None)
+        if isinstance(content, str):
+            return content
+    with contextlib.suppress(Exception):
+        content = getattr(response, "content", None)
+        if isinstance(content, str):
+            return content
+        if isinstance(content, list):
+            return "".join(t for t in (getattr(part, "text", None) for part in content) if isinstance(t, str))
+    return ""
+
+
+def with_stream_emitters(agent, run):
+    """Bracket ``run()`` with the agent's ``_emit_stream_start`` / ``_emit_stream_end``
+    hooks when present (end carries the final text on success, the error string on
+    failure) and re-raise."""
+    start = getattr(agent, "_emit_stream_start", None)
+    if start is not None:
+        start()
+    try:
+        response = run()
+    except Exception as exc:
+        end = getattr(agent, "_emit_stream_end", None)
+        if end is not None:
+            end(final_text="", finished=False, error=str(exc))
+        raise
+    end = getattr(agent, "_emit_stream_end", None)
+    if end is not None:
+        end(final_text=_stream_final_text(response), finished=True, error=None)
+    return response
 
 
 class StreamDeliveryMixin:
@@ -290,10 +328,25 @@ class StreamDeliveryMixin:
         }
 
     def _emit_stream_start(self) -> None:
+        if getattr(self, "_stream_velocity", None) is None:
+            self._stream_velocity = StreamVelocity()
+        self._stream_velocity.start()
         self._enqueue_stream_hook("on_stream_start")
 
     def _emit_stream_end(self, *, final_text: str, finished: bool, error: str | None) -> None:
+        if not self._stream_writer_superseded() and getattr(self, "_stream_velocity", None) is not None:
+            self._stream_velocity.stop(finished=finished)
         self._enqueue_stream_hook("on_stream_end", final_text=final_text, finished=finished, error=error)
+
+    def _note_stream_velocity_chars(self, text: str) -> None:
+        velocity = getattr(self, "_stream_velocity", None)
+        if velocity is not None and not self._stream_writer_superseded():
+            velocity.note_text(text)
+
+    def _note_stream_velocity_tokens(self, tokens: int) -> None:
+        velocity = getattr(self, "_stream_velocity", None)
+        if velocity is not None and not self._stream_writer_superseded():
+            velocity.note_tokens(tokens)
 
     def _fire_stream_delta(self, text: str) -> None:
         """Fire all registered stream delta callbacks (display + TTS)."""
@@ -302,6 +355,8 @@ class StreamDeliveryMixin:
             # See #65991.
             self._note_dropped_stream_writer("_fire_stream_delta")
             return
+        # Count the raw wire text before think-tag stripping or UI-only breaks.
+        self._note_stream_velocity_chars(text)
         # One paragraph break before the first text delta after a tool iteration, without
         # stacking blank lines across back-to-back tool iterations.
         prepended_break = bool(getattr(self, "_stream_needs_break", False) and text and text.strip())
@@ -345,6 +400,8 @@ class StreamDeliveryMixin:
             # content deltas.
             self._note_dropped_stream_writer("_fire_reasoning_delta")
             return
+        if not inline:
+            self._note_stream_velocity_chars(text)
         self._call_quietly(self.reasoning_callback, text)
         # Resolve the opt-in once per stream, not per token: each lookup took _CONFIG_LOCK and
         # serialized every streaming thread in the process behind a config cache hit.

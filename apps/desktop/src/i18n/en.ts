@@ -4273,7 +4273,7 @@ export const en: Translations = {
       toggleFreeTier: 'Free tier',
       toggleWorkspace: 'Workspace',
       cacheHitRateTitle: 'Prompt cache hit rate this session — cached tokens cost less, so higher is cheaper',
-      tokensPerSecondTitle: 'Output tokens per second, averaged over the last 10 model calls',
+      tokensPerSecondTitle: 'Current output tokens per second while generating (~ means estimated); average over the last 10 calls while idle',
       agents: 'Agents',
       closeAgents: 'Close agents',
       openAgents: 'Open agents',

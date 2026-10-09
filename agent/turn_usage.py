@@ -16,6 +16,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, List
 
 from agent.image_token_cost import calibrate_from_usage
+from agent.stream_velocity import calibrate_stream_velocity
 from agent.usage_anchor import capture_usage_anchor, set_usage_anchor
 from agent.usage_pricing import estimate_usage_cost, normalize_usage, with_served_service_tier
 
@@ -179,6 +180,7 @@ def record_response_usage(
     agent.session_cache_read_tokens += canonical_usage.cache_read_tokens
     agent.session_cache_write_tokens += canonical_usage.cache_write_tokens
     agent.session_reasoning_tokens += canonical_usage.reasoning_tokens
+    calibrate_stream_velocity(agent, aggregator_usage.output_tokens)
     # Rolling history for status-bar averages (last 10).
     with suppress(Exception):
         hist = getattr(agent, "_api_latency_history", None)

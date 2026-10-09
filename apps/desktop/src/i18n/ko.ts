@@ -3414,7 +3414,7 @@ export const ko = defineLocale({
       toggleVersion: '버전 및 업데이트',
       toggleWorkspace: '작업 공간',
       cacheHitRateTitle: '이 대화의 프롬프트 캐시 적중률입니다. 캐시된 토큰은 비용이 더 낮으므로 높을수록 저렴합니다',
-      tokensPerSecondTitle: '최근 10번의 모델 호출에서 평균을 낸 초당 출력 토큰 수입니다',
+      tokensPerSecondTitle: '생성 중에는 현재 출력 속도를 1초마다 갱신합니다. ~는 추정값이며, 대기 중에는 최근 10번 호출의 평균입니다',
       agents: '에이전트',
       closeAgents: '에이전트 닫기',
       openAgents: '에이전트 열기',

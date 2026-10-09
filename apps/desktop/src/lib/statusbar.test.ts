@@ -14,4 +14,13 @@ describe('statusbar usage readouts', () => {
     expect(cacheHitLabel({ ...base, cache_hit_pct: 87 })).toBe('87%')
     expect(tokensPerSecondLabel({ ...base, avg_tps: 41.6 })).toBe('42 t/s')
   })
+
+  it('shows live throughput before completion and marks estimates', () => {
+    expect(tokensPerSecondLabel({ ...base, streaming: true, live_tps: 85.6 })).toBe('86 t/s')
+    expect(tokensPerSecondLabel({ ...base, streaming: true, live_tps: 41.6, live_tps_estimated: true })).toBe(
+      '~42 t/s'
+    )
+    expect(tokensPerSecondLabel({ ...base, streaming: true, avg_tps: 99 })).toBe('')
+    expect(tokensPerSecondLabel({ ...base, streaming: false, avg_tps: 41.6 })).toBe('42 t/s')
+  })
 })

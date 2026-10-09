@@ -38,6 +38,9 @@ class Usage(OpenModel):
     cache_write: int | None = None
     avg_latency_s: float | None = None
     avg_tps: float | None = None
+    streaming: bool | None = None
+    live_tps: float | None = None
+    live_tps_estimated: bool | None = None
     active_subagents: int | None = None
     dev_credits_spent_micros: int | None = None
     cost_usd: float | None = None
