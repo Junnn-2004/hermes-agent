@@ -809,12 +809,20 @@ def _merge_user_path(existing: str, entry: str) -> str | None:
 
 
 def _register_windows_user_path(entry: Path) -> str:
-    """Put ``entry`` on the User PATH. Returns 'present' or 'added'.
+    """Put ``entry`` on the User PATH. Returns 'present', 'added' or 'test-isolated'.
 
     Preserves the stored value type: install.ps1 writes expandable entries
     (``%LOCALAPPDATA%\\...``), and rewriting the value as a plain string would
     freeze those.
+
+    A test run (or a child it spawned) returns 'test-isolated' without touching
+    the registry. Its HERMES_HOME is a temp dir, and those dead entries piled up
+    on the operator's real PATH until Explorer, past 4094 characters of machine
+    + user PATH, dropped the whole user PATH on its next environment refresh.
+    Same markers as hermes_state_guard._running_under_pytest.
     """
+    if any(os.environ.get(name) for name in ("HERMES_TEST_ISOLATION", "PYTEST_CURRENT_TEST", "PYTEST_VERSION")):
+        return "test-isolated"
     import winreg  # type: ignore
 
     with winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Environment", 0,

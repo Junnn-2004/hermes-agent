@@ -1,6 +1,9 @@
-"""The repo-root conftest keeps Windows test runs off the real HKCU\\Environment."""
+"""A test run never registers its temp HERMES_HOME on the operator's real User PATH."""
 
 from __future__ import annotations
+
+import subprocess
+import sys
 
 import pytest
 
@@ -10,28 +13,32 @@ pytestmark = pytest.mark.platforms("windows")
 def _real_user_path() -> str:
     import winreg
 
-    with winreg.OpenKey.__wrapped__(winreg.HKEY_CURRENT_USER, "Environment") as key:
+    with winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Environment") as key:
         return winreg.QueryValueEx(key, "Path")[0]
 
 
-def test_user_path_registration_stays_in_the_sandbox(tmp_path):
-    import winreg
-
+def test_registration_in_the_test_process_leaves_the_real_path_alone(tmp_path):
     from hermes_cli import _launchers
 
-    entry = tmp_path / "hermes_test" / "bin"
-    real_before = _real_user_path()
-
-    assert _launchers._register_windows_user_path(entry) == "added"
-
-    with winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Environment") as key:
-        assert winreg.QueryValueEx(key, "Path")[0].split(";")[0] == str(entry)
-    assert _real_user_path() == real_before
+    before = _real_user_path()
+    assert (
+        _launchers._register_windows_user_path(tmp_path / "hermes_test" / "bin")
+        == "test-isolated"
+    )
+    assert _real_user_path() == before
 
 
-def test_environment_broadcast_is_muted():
-    import ctypes
-
-    send = ctypes.windll.user32.SendMessageTimeoutW
-    assert hasattr(send, "__wrapped__")
-    assert send(0xFFFF, 0x1A, 0, "Environment", 0x0002, 5000, None) == 1
+def test_registration_in_a_child_process_leaves_the_real_path_alone(tmp_path):
+    before = _real_user_path()
+    code = (
+        "import sys; from pathlib import Path; from hermes_cli import _launchers; "
+        "print(_launchers._register_windows_user_path(Path(sys.argv[1])))"
+    )
+    child = subprocess.run(
+        [sys.executable, "-c", code, str(tmp_path / "hermes_test" / "bin")],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert child.stdout.strip() == "test-isolated"
+    assert _real_user_path() == before
