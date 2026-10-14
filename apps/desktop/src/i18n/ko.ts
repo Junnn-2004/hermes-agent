@@ -46,64 +46,51 @@ export const ko = defineLocale({
     off: '꺼짐'
   },
 
-  catalog: {
-    add: '추가',
-    added: '추가됨',
-    discover: '둘러보기',
-    featured: '추천',
-    explorePlugins: '플러그인 둘러보기',
-    exploreSkills: '스킬 둘러보기',
-    mostStarred: '스타 많은 순',
-    newest: '최신순',
-    recentlyUpdated: '최근 업데이트순',
-    alphabetical: '이름순',
-    sortBy: '정렬 기준',
-    seeAll: '모두 보기',
-    related: '비슷한 항목',
-    tags: '태그',
-    screenshots: '스크린샷',
-    listView: '목록 보기',
-    cardView: '카드 보기',
-    installTitle: name => `“${name}”을(를) 설치할까요?`,
-    installDescription: '이 스킬은 새 대화부터 사용할 수 있습니다. 신뢰하는 출처만 설치하세요.',
-    installTo: '설치 위치',
-    thisComputer: '이 컴퓨터',
-    installing: '설치 중…',
-    installComplete: name => `“${name}”을(를) 설치했습니다`,
-    destinationChanged: '설치 위치가 바뀌었습니다. 이 창을 닫고 설치 링크를 다시 여세요.',
+  firstRun: {
+    beats: {
+      name: '이름',
+      theme: '강조 색상',
+      layout: '레이아웃',
+      connectors: '앱',
+      plugins: '플러그인',
+      tour: '둘러보기',
+      build: '첫 작업'
+    },
+    namePlaceholder: '이름 입력',
+    useName: name => `“${name}” 사용`,
+    install: '설치',
     installed: '설치됨',
-    searchSkills: '스킬 검색',
-    searchPlugins: '플러그인 검색',
-    allSources: '모든 출처',
-    allCategories: '모든 범주',
-    about: '정보',
-    author: '작성자',
-    source: '출처',
-    category: '범주',
-    version: '버전',
-    platforms: '플랫폼',
-    requires: '요구 사항',
-    tools: '도구',
-    hooks: '훅',
-    middleware: '미들웨어',
-    commands: '명령',
-    license: '라이선스',
-    addedDate: '추가일',
-    updatedDate: '업데이트일',
-    repository: '저장소',
-    documentation: '문서',
-    noResults: '일치하는 항목이 없습니다',
-    tryAnother: '다른 검색어를 입력하거나 필터를 지우세요.',
-    clearFilters: '필터 지우기',
-    filters: '필터',
-    loadFailed: '카탈로그를 불러오지 못했습니다',
-    retry: '다시 시도',
-    more: '더 보기',
-    pinned: '검토된 커밋',
-    snapshotHint: 'Hermes 카탈로그에서 가져온 정보입니다. 둘러볼 때는 원본 저장소에 접속하지 않습니다.',
-    installHint: '설치하기 전에 출처를 검토하세요. 변경 사항은 새 대화부터 적용됩니다.',
-    results: count => `결과 ${count.toLocaleString()}개`,
-    back: '결과로 돌아가기'
+    loading: '불러오는 중…',
+    noPlugins: '지금은 표시할 플러그인이 없습니다.',
+    noneChosen: '없음',
+    noAnswer: '답변 없음',
+    answerRefused: '답변이 받아들여지지 않았습니다',
+    tours: {
+      quick: '빠르게 둘러보기',
+      full: '전부 보여 주세요',
+      skip: '건너뛰고 바로 만들기'
+    },
+    skippedAll: '설정을 건너뛰었습니다',
+    skip: '설정 건너뛰기',
+    skipTip: '안내 설정을 끝내고 새 대화를 엽니다.',
+    skipFailed: '설정을 건너뛰지 못했습니다',
+    localModel: {
+      title: '이 컴퓨터에서 모델을 로컬로 실행할 수 있습니다',
+      text: (model, size) =>
+        `${model}(${size})이(가) 이 하드웨어에 맞습니다. 무료로 실행되며 대화는 이 컴퓨터에만 남습니다.`,
+      setUp: '설정하기',
+      notNow: '나중에'
+    },
+    intro: {
+      greeting: '안녕하세요, Hermes입니다.',
+      plan: '먼저 쓰실 환경을 맞춰 드릴게요. 그다음 멋진 일을 함께 해 보죠.'
+    },
+    rerun: {
+      title: '온보딩 다시 실행',
+      description: '현재 모델로 첫 실행 단계를 안내하는 새 설정 대화를 엽니다.',
+      action: '다시 실행',
+      failed: '온보딩을 시작하지 못했습니다'
+    }
   },
 
   fileMenu: {
@@ -223,8 +210,7 @@ export const ko = defineLocale({
       methodNotAllowed:
         'Desktop 백엔드에서 요청을 거부했습니다(405 Method Not Allowed). Hermes Desktop을 다시 시작해 보세요.',
       microphonePermission: '마이크 권한이 거부되었습니다.',
-      openaiRejectedApiKey: 'OpenAI에서 API 키를 거부했습니다.',
-      openaiRejectedApiKeyWithStatus: status => `OpenAI에서 API 키를 거부했습니다(${status} invalid_api_key).`,
+      openaiRejectedApiKey: 'OpenAI에서 API 키를 받아들이지 않았습니다. 설정 → 키에서 키를 바꾼 뒤 다시 시도하세요.',
       openaiTtsNeedsKey: 'OpenAI TTS에 VOICE_TOOLS_OPENAI_KEY 또는 OPENAI_API_KEY가 필요합니다.',
       codeSkewRestartRequired:
         '업데이트 후에도 이 백엔드가 이전 코드를 실행하고 있습니다. 새 코드를 불러오려면 다시 시작하세요.'
@@ -267,6 +253,27 @@ export const ko = defineLocale({
   remoteDisplayBanner: {
     message: reason =>
       `소프트웨어 렌더링을 사용 중입니다. 원격 디스플레이가 감지되었습니다(${reason}). 깜박임을 방지하기 위해 GPU 가속을 비활성화했습니다.`
+  },
+
+  promptNotices: {
+    legacySendUnconfirmed:
+      '이 서버가 이 메시지의 이전 전송을 확인하지 못했습니다. 이미 실행되었을 수 있으니 다시 보내기 전에 대화를 확인하세요.',
+    sessionCommands: {
+      undoUsage: '사용법: /undo [N]',
+      undoNothing: '되돌릴 내용이 없습니다',
+      undidOne: count => `메시지 ${count}개를 되돌렸습니다 — 지운 메시지는 작성란에 있습니다`,
+      undidOther: count => `메시지 ${count}개를 되돌렸습니다 — 지운 메시지는 작성란에 있습니다`,
+      retryNothing: '다시 시도할 내용이 없습니다',
+      retryUnsupported: '/retry: 미디어나 알 수 없는 내용이 든 메시지는 다시 시도할 수 없습니다',
+      steerUsage: '사용법: /steer <프롬프트>',
+      steerQueued: preview => `지시 전달 대기 — 다음 도구 호출 뒤에 도착합니다: "${preview}"`,
+      steerNoActiveTurn: preview => `진행 중인 턴이 없어 다음 턴으로 대기합니다: "${preview}"`,
+      steerRejected: '지시 전달 거부됨 — 진행 중인 턴이 없어 다음 턴으로 대기합니다',
+      queued: preview => `대기열에 추가함: "${preview}"`,
+      queueFailed: '메시지를 대기열에 넣지 못했습니다',
+      countOne: count => `대기 중인 메시지 ${count}개`,
+      countOther: count => `대기 중인 메시지 ${count}개`
+    }
   },
 
   billingBlock: {
@@ -345,7 +352,7 @@ export const ko = defineLocale({
       'nav.commandCenter': '명령 센터 열기',
       'nav.settings': '설정 열기',
       'nav.profiles': '프로필 열기',
-      'nav.skills': '스킬 열기',
+      'nav.capabilities': '기능 열기',
       'nav.messaging': '메시지 연동 열기',
       'nav.artifacts': '산출물 열기',
       'nav.cron': '예약 작업 열기',
@@ -477,51 +484,57 @@ export const ko = defineLocale({
     },
     plugins: {
       title: '데스크톱 플러그인',
-      blurb: '기본 제공되거나 desktop-plugins 폴더에 추가된 플러그인입니다. 끄면 실행 중에도 언로드됩니다.',
-      count: n => `${n}개 설치됨`,
       openFolder: '플러그인 폴더 열기',
       rescan: '다시 검색',
       reveal: '파일 관리자에서 보기',
-      enable: '켜기',
-      disable: '끄기',
       failed: '실패',
-      empty: '설치된 데스크톱 플러그인이 아직 없습니다.',
       kinds: { bundled: '기본 제공', disk: '디스크', runtime: '런타임' },
-      agent: {
-        title: '에이전트 플러그인',
-        blurb:
-          'Hermes 백엔드에 설치한 플러그인입니다. 도구, 스킬, MCP 서버, 훅, 슬래시 명령이 포함됩니다. 이식 가능한 플러그인은 다른 에이전트에서도 작동하는 스킬과 MCP 묶음인 Agent Plugins 패키지입니다. 변경 사항은 새 대화부터 적용됩니다.',
-        appliesTo: '적용 대상:',
-        empty: '설치된 에이전트 플러그인이 아직 없습니다.',
-        loadFailed: '에이전트 플러그인을 불러올 수 없습니다',
-        portable: '이식 가능',
-        search: '플러그인 검색…',
-        noMatches: '검색 조건에 맞는 플러그인이 없습니다.',
-        toggleFailed: (name: string) => `${name} 상태를 전환할 수 없습니다`,
-        updateBackendToManage: '데스크톱에서 이 플러그인을 관리하려면 Hermes 백엔드를 업데이트하세요.',
-        sources: { bundled: '기본 제공', user: '사용자', git: 'git', project: '프로젝트', entrypoint: 'pip' }
-      },
       installModal: {
+        installFromGit: 'Git에서 설치',
+        reviewRepository: '저장소 검토',
+        repoPlaceholder: 'https://github.com/owner/repo',
         title: '플러그인 설치',
         description: '설치하기 전에 이 저장소에 무엇이 들어 있는지 검토하세요.',
         repoLabel: '저장소',
+        verified: '검증됨',
+        unverified: '검증되지 않음',
+        reviewedByNous: 'Nous가 검토했습니다.',
+        installsAndEnables: profile => `${profile}에 설치하고 바로 켭니다.`,
+        installsOnly: profile => `${profile}에 설치합니다.`,
+        advanced: '고급',
+        versionLabel: '버전',
+        reviewedPin: sha => (sha ? `검토된 고정 커밋 ${sha}` : '검토된 고정 커밋'),
+        latestCommit: '최신 커밋',
+        nothingToInstall: '이 패키지에는 여기에 설치할 항목이 없습니다.',
         includesHeading: '이 패키지에 포함된 항목',
         agentLabel: '에이전트 플러그인',
         desktopLabel: '데스크톱 UI',
-        agentTargetLocal: profile => `${profile} 백엔드(~/.hermes/plugins/)에 설치됩니다`,
+        profileLabel: '설치할 프로필',
+        agentTargetLocal: (profile, dir) => `${profile} 백엔드(${dir})에 설치됩니다`,
         agentTargetRemote: profile => `연결된 ${profile} 백엔드에 설치됩니다`,
+        toolsConnected: n => `도구 ${n}개 연결됨`,
+        skillsReady: names => (names.length === 1 ? `스킬 ${names[0]} 준비됨` : `스킬 ${names.length}개 준비됨`),
+        nextChat: '다음 대화부터 더 많은 도구를 사용할 수 있습니다',
+        serverNotConnected: (server, reason) =>
+          `MCP 서버 ${server}이(가) 연결되지 않았습니다${reason ? `: ${reason}` : '.'}`,
+        missingEnvAction: '설정하기',
+        alreadyInstalled: name => `${name}은(는) 이미 설치되어 있습니다.`,
         desktopTarget: '이 앱의 로컬 desktop-plugins 폴더에 설치됩니다',
+        desktopTargetFromPackage: '위 패키지에서 이 앱으로 불러옵니다. 모든 프로필에 똑같이 적용됩니다',
         desktopOnlyNote: '데스크톱 전용 패키지는 백엔드 에이전트 플러그인을 설치하지 않습니다.',
         insecureWarning:
           '이 URL은 안전하지 않거나 로컬인 스킴을 사용합니다. 운영 환경에서는 https:// 또는 git@을 사용하세요.',
-        securityHeading: '설치 전 확인',
         securityIntro: '신뢰하는 출처에서만 설치하세요. 추가될 내용을 확인하려면 아래 저장소를 검토하세요.',
         sourceHeading: '소스 코드',
         viewRepository: '저장소 보기',
         viewPluginFiles: '플러그인 파일 보기',
-        gitCloneLabel: 'Git 복제 URL',
         enableAgent: '설치 후 에이전트 플러그인 켜기',
         forceReinstall: '강제 재설치(이미 설치되어 있으면 교체)',
+        pinToCommit: '커밋 고정(선택 사항)',
+        pinToCommitPlaceholder: '40자 전체 커밋 SHA',
+        pinToCommitHint:
+          '이 SHA로 설치하는 모든 사람이 같은 코드를 받습니다. 그 뒤로는 다시 고정할 때까지 플러그인이 업데이트를 거부합니다. 최신 커밋을 쓰려면 비워 두세요.',
+        pinToCommitInvalid: '40자 전체 커밋 SHA여야 합니다(브랜치와 태그는 받지 않습니다).',
         install: '설치',
         installing: '설치 중…',
         probing: '저장소 검사 중…',
@@ -531,8 +544,11 @@ export const ko = defineLocale({
         agentSuccess: name => `에이전트 플러그인 ${name}을(를) 설치했습니다`,
         desktopSuccess: name => `데스크톱 플러그인 ${name}을(를) 설치했습니다`,
         agentFailed: '에이전트 플러그인 설치에 실패했습니다',
+        installUncertain:
+          'Hermes가 설치 결과를 더 기다리지 않았지만 플러그인은 아직 설치 중일 수 있습니다. 이 창을 닫고 플러그인에서 다시 검색을 누른 뒤 설치를 다시 시도하세요.',
         desktopFailed: '데스크톱 플러그인 설치에 실패했습니다',
-        missingEnv: vars => `환경 변수 누락: ${vars}. 설정 → 키에서 추가하세요.`
+        missingEnv: (name, vars) =>
+          `${name}은(는) 설치되었지만 작동하려면 키가 필요합니다: ${vars}. 지금 추가하지 않으면 플러그인 도구가 실패합니다.`
       }
     },
     notifications: {
@@ -704,8 +720,6 @@ export const ko = defineLocale({
           '앱 위를 떠다니며 Hermes의 동작에 반응하는 움직이는 petdex 마스코트를 입양하세요. 도구가 실행되는 동안 달리고, 성공하면 축하하며, 오류가 나면 시무룩해집니다.',
         restartHint:
           '펫을 사용하려면 한 번 빠르게 재시작해야 합니다. 현재 앱이 이 기능이 추가되기 전에 시작되었습니다. Hermes를 종료하고 다시 연 다음 이곳으로 돌아오세요.',
-        on: '켜기',
-        off: '끄기',
         scaleTitle: '크기',
         scaleDesc: '떠다니는 마스코트의 크기를 바꿉니다. 모든 곳에 즉시 적용됩니다.',
         roamTitle: '돌아다니기',
@@ -800,7 +814,6 @@ export const ko = defineLocale({
         maxSnapshots: '체크포인트 한도'
       },
       voice: {
-        recordKey: '음성 단축키',
         maxRecordingSeconds: '최대 녹음 시간',
         autoTts: '응답 읽어 주기'
       },
@@ -991,41 +1004,27 @@ export const ko = defineLocale({
       }
     }),
     about: {
-      heading: 'Hermes Desktop',
-      version: value => `버전 ${value}`,
-      versionUnavailable: '버전 정보를 확인할 수 없습니다',
-      bundleOutOfSync: '앱 빌드가 오래되었습니다',
-      bundleOutOfSyncDesc:
-        'Hermes 런타임은 업데이트되었지만 데스크톱 앱 자체는 이전 빌드입니다. 앱을 업데이트하기 전까지 Bot Mode 같은 새 인터페이스 기능이 표시되지 않습니다. 아래에서 업데이트를 실행해 앱을 다시 빌드하세요. 그래도 이 경고가 사라지지 않으면 최신 데스크톱 설치 프로그램으로 다시 설치하세요.',
-      bundleOutOfSyncAction: '설치 프로그램 받기',
-      bundleSwapPending: '재시작하여 업데이트 완료',
-      bundleSwapPendingDesc:
-        '업데이트된 앱이 이미 설치되었습니다. Hermes를 재시작하면 새 빌드를 불러옵니다. 대화와 설정은 그대로 유지됩니다.',
-      bundleSwapPendingAction: 'Hermes 재시작',
       updates: '업데이트',
-      checkNow: '지금 확인',
-      checking: '확인 중…',
-      seeWhatsNew: '새로운 기능 보기',
-      updateNow: '지금 업데이트',
-      releaseNotes: '릴리스 노트',
-      onLatest: '최신 버전을 사용 중입니다.',
-      installing: '현재 업데이트를 설치하고 있습니다.',
-      cantUpdate: '이 빌드는 앱 안에서 자체 업데이트할 수 없습니다.',
-      cantReach: '업데이트 서버에 연결할 수 없습니다.',
-      tapCheck: '업데이트를 찾으려면 “지금 확인”을 누르세요.',
-      updateReady: count =>
-        `새 업데이트가 준비되었습니다(${count}개의 ${count === 1 ? '변경 사항' : '변경 사항'} 포함).`,
-      updateReadyUnknown: '새 업데이트가 준비되었습니다.',
-      lastChecked: age => `마지막 확인: ${age}`,
-      justNowSuffix: ' · 방금',
-      automaticUpdates: '자동 업데이트',
-      automaticUpdatesDesc: 'Hermes가 백그라운드에서 업데이트를 자동으로 확인하고 준비되면 알려 줍니다.',
-      branchCommit: (branch, commit) => `브랜치 ${branch} · 커밋 ${commit}`,
-      never: '없음',
-      justNow: '방금',
-      minAgo: count => `${count}분 전`,
-      hoursAgo: count => `${count}시간 전`,
-      daysAgo: count => `${count}일 전`
+      channel: {
+        title: '업데이트 채널',
+        description:
+          '안정판은 게시된 릴리스만 설치합니다. 모든 커밋은 변경 사항이 들어오는 대로 main 브랜치를 따라갑니다.',
+        stable: '안정판 릴리스',
+        main: '모든 커밋',
+        stableConfirmTitle: '안정판 릴리스로 바꿀까요?',
+        stableConfirmBody:
+          'Hermes가 최신 게시 릴리스로 이동합니다. 지금 실행 중인 코드보다 오래된 버전일 수 있습니다. 새 코드가 기록한 데이터를 제대로 읽지 못할 수 있으니 먼저 백업하세요.',
+        stableConfirm: '안정판으로 바꾸기',
+        failed: '업데이트 채널을 바꾸지 못했습니다',
+        detailsLabel: '채널',
+        branch: b => `브랜치: ${b}`,
+        change: '변경',
+        latestRelease: v => `최신 안정판 릴리스(${v})를 사용 중입니다.`,
+        rollbackTitle: v => `안정판 릴리스 ${v}(으)로 돌아가기`,
+        rollbackBody: v => `이 빌드는 안정판 릴리스 ${v}보다 새 버전입니다. 설치하면 Hermes가 그 릴리스로 돌아갑니다.`,
+        rollbackAction: v => `${v}(으)로 되돌리기`,
+        allChanges: '모든 변경 사항 보기'
+      }
     },
     config: {
       none: '없음',
@@ -1325,94 +1324,6 @@ export const ko = defineLocale({
       appliesTo: '적용 대상',
       editsProfile: profile => `이 페이지의 변경 사항은 “${profile}” 프로필에 적용됩니다.`
     },
-    mcp: {
-      loading: 'MCP 서버 불러오는 중...',
-      failedLoad: 'MCP 구성을 불러오지 못했습니다',
-      nameRequiredTitle: '이름이 필요합니다',
-      nameRequiredMessage: '이 MCP 서버에 구성 키를 지정하세요.',
-      objectRequired: '서버 구성은 JSON 객체여야 합니다',
-      invalidJson: '잘못된 MCP JSON',
-      saveFailed: '저장에 실패했습니다',
-      removeFailed: '제거에 실패했습니다',
-      gatewayUnavailableTitle: '게이트웨이를 사용할 수 없습니다',
-      gatewayUnavailableMessage: 'MCP를 다시 불러오기 전에 게이트웨이를 다시 연결하세요.',
-      reloadedTitle: 'MCP 도구를 다시 불러왔습니다',
-      reloadedMessage: '새 도구 스키마는 새로운 턴부터 적용됩니다.',
-      reloadFailed: 'MCP 다시 불러오기에 실패했습니다',
-      savedTitle: 'MCP 서버를 저장했습니다',
-      savedMessage: name => `${name}은(는) MCP를 다시 불러온 뒤 적용됩니다.`,
-      newServer: '새 서버',
-      reload: 'MCP 다시 불러오기',
-      reloading: '다시 불러오는 중...',
-      emptyTitle: 'MCP 서버 없음',
-      emptyDesc: 'MCP 도구를 제공하려면 stdio 또는 HTTP 서버를 추가하세요.',
-      disabled: '꺼짐',
-      editServer: '서버 편집',
-      name: '이름',
-      serverJson: '서버 JSON',
-      remove: '제거',
-      saveServer: '서버 저장',
-      test: '연결 테스트',
-      testing: '테스트 중...',
-      testOk: count => `연결됨 — ${count}개의 ${count === 1 ? '도구' : '도구'} 사용 가능`,
-      testFailed: '연결에 실패했습니다',
-      enableServer: name => `${name} 켜기`,
-      disableServer: name => `${name} 끄기`,
-      serverEnabled: name => `${name}을(를) 켰습니다. 새 대화부터 적용됩니다.`,
-      serverDisabled: name => `${name}을(를) 껐습니다. 새 대화부터 적용됩니다.`,
-      toggleFailed: (name, enabled) => `${name}을(를) ${enabled ? '켜지' : '끄지'} 못했습니다`,
-      tabServers: '서버',
-      tabCatalog: '카탈로그',
-      catalogLoading: 'MCP 카탈로그 불러오는 중...',
-      catalogLoadFailed: 'MCP 카탈로그를 불러오지 못했습니다',
-      catalogEmpty: '사용할 수 있는 카탈로그 항목이 없습니다.',
-      catalogInstalled: '설치됨',
-      catalogEnabled: '켜짐',
-      catalogNeedsInstall: '빌드 필요',
-      catalogInstall: '설치',
-      catalogInstalling: '설치 중...',
-      catalogInstallStarted: name => `${name} 설치 중... 완료되면 새 대화부터 적용됩니다.`,
-      catalogInstallFailed: name => `${name} 설치에 실패했습니다`,
-      catalogEnvPrompt: name => `${name}에 자격 증명이 필요합니다`,
-      catalogEnvRequired: '설치하기 전에 필수 값을 입력하세요.',
-      capabilitySummary: (tools, prompts, resources) =>
-        `${[`${tools}개 도구`, ...(prompts ? [`${prompts}개 프롬프트`] : []), ...(resources ? [`${resources}개 리소스`] : [])].join(', ')} 활성화됨`,
-      costTokens: tokens => `호출당 약 ${tokens}토큰`,
-      usage30d: uses => `30일간 ${uses}회 사용`,
-      unusedPill: '사용 안 함',
-      statusConnecting: '연결 중…',
-      statusNeedsAuth: '인증 필요',
-      statusError: '오류',
-      statusOff: '꺼짐',
-      allServers: '모든 서버',
-      authenticatedTitle: '인증됨',
-      authenticatedMessage: (server, count) => `${server}: 도구 ${count}개`,
-      waitingForBrowser: '브라우저 기다리는 중…',
-      authenticate: '인증',
-      unsavedConnect: '저장되지 않음 — 연결하려면 mcp.json을 저장하세요.',
-      enableTool: tool => `${tool} 켜기`,
-      disableTool: tool => `${tool} 끄기`,
-      noOutput: '아직 출력이 없습니다.',
-      deepLinkTitle: 'MCP 서버를 추가하시겠습니까?',
-      deepLinkDescription:
-        '링크에서 이 MCP 서버를 Hermes에 추가하도록 요청했습니다. 아래의 정확한 구성을 검토하세요. 이 구성은 Hermes가 아니라 링크에서 가져왔습니다.',
-      deepLinkStdioWarning:
-        '이 서버는 아래에 표시된 명령으로 컴퓨터에서 로컬 프로세스를 실행합니다. 출처를 신뢰하는 경우에만 계속하세요.',
-      deepLinkConfirm: '서버 추가',
-      deepLinkNameInvalid: '이름에는 1~64자의 문자, 숫자, 점, 대시 또는 밑줄을 사용할 수 있습니다.',
-      deepLinkNameConflict: name => `${name}이라는 서버가 이미 있습니다. 다른 이름을 선택하거나 취소하세요.`,
-      deepLinkErrorTitle: 'MCP 설치 링크가 거부되었습니다',
-      deepLinkErrorName: '링크의 서버 이름이 없거나 올바르지 않습니다.',
-      deepLinkErrorConfig: '링크의 구성이 올바른 base64 인코딩 JSON이 아닙니다.',
-      deepLinkErrorShape: '구성은 문자열 `url` 또는 `command` 필드가 있는 JSON 객체여야 합니다.',
-      deepLinkErrorUrl: 'http:// 및 https:// 서버 URL만 허용됩니다.',
-      deepLinkErrorTooLarge: '구성 페이로드가 32KB 한도를 초과합니다.',
-      importButton: '가져오기',
-      importPlaceholder: 'mcp.json 조각, npx/docker 명령, claude mcp add 줄, URL 또는 Cursor 링크를 붙여 넣으세요…',
-      importNoMatch: '붙여 넣은 텍스트에서 서버 구성을 찾지 못했습니다.',
-      importConfirm: 'mcp.json에 추가',
-      importConfirmMany: count => `${count}개 서버를 mcp.json에 추가`
-    },
     model: {
       loading: '모델 구성 불러오는 중...',
       appliesDesc: '새 대화에 적용됩니다. 현재 대화의 모델을 바로 바꾸려면 입력창의 모델 선택기를 사용하세요.',
@@ -1479,10 +1390,7 @@ export const ko = defineLocale({
           'GPU에서 전부 실행되며 최고 속도를 내는 모델 중 품질이 가장 좋습니다. 이 하드웨어에서 예상되는 속도와 품질을 함께 고려해 선택합니다.',
         'speed-gated-quality':
           '더 높은 품질의 모델도 이 컴퓨터에 들어가지만 메모리 대역폭 때문에 응답이 너무 느립니다. 빠른 속도를 유지하는 모델 중 가장 좋습니다.',
-        'fastest-resident':
-          '이 하드웨어에서 최고 속도에 도달하는 모델은 없습니다. 이 모델은 GPU 메모리 안에서 전부 실행되는 모델 중 가장 빠릅니다.',
-        'least-painful-spilled':
-          'GPU 메모리에 완전히 들어가는 모델이 없습니다. 이 모델이 시스템 RAM에서 가장 원활하게 실행됩니다.'
+        'product-default': '제조사가 이 컴퓨터용으로 정한 기본 모델입니다.'
       } as Record<string, string>,
       downloaded: '다운로드됨',
       downloadAction: size => `다운로드 · ${size}`,
@@ -1510,7 +1418,6 @@ export const ko = defineLocale({
       updating: '엔진 업데이트 중…',
       upToDateTitle: '엔진이 최신 상태입니다',
       upToDateDetail: (tag, backend) => `llama.cpp ${tag}(${backend}) 실행 중 — Hermes가 제공하는 최신 빌드입니다.`,
-      updateToast: next => `새 로컬 엔진 빌드(${next})를 사용할 수 있습니다. 설정 → 로컬 모델에서 업데이트하세요.`,
       activeDetail: '새 대화에서 이 모델을 사용합니다. 첫 메시지를 보내면 불러옵니다',
       activeNotLoaded: '첫 메시지를 보낼 때 불러옵니다',
       loadedPill: '메모리에 불러옴',
@@ -1731,11 +1638,21 @@ export const ko = defineLocale({
       }
     }
   },
+  skillDeepLink: {
+    installTitle: name => `“${name}”을(를) 설치할까요?`,
+    installDescription: '이 스킬은 새 대화부터 사용할 수 있습니다. 신뢰하는 출처만 설치하세요.',
+    installTo: '설치 위치',
+    thisComputer: '이 컴퓨터',
+    installing: '설치 중…',
+    installComplete: name => `“${name}”을(를) 설치했습니다`,
+    destinationChanged: '설치 위치가 바뀌었습니다. 이 창을 닫고 설치 링크를 다시 여세요.',
+    installed: '설치됨',
+    source: '출처'
+  },
   skills: {
     tabSkills: '스킬',
     tabToolsets: '도구',
     configuringProfile: '설정 중:',
-    tabMcp: 'MCP',
     all: '전체',
     searchSkills: '스킬 검색...',
     searchToolsets: '도구 검색...',
@@ -1981,16 +1898,10 @@ export const ko = defineLocale({
     mcpServers: 'MCP 서버',
     archivedChats: '보관된 채팅',
     sections: { maintenance: '유지 관리', sessions: '대화', system: '시스템', usage: '사용량' },
-    sectionDescriptions: {
-      maintenance: '진단, 백업, 큐레이터 및 메모리 데이터',
-      sessions: '대화 검색 및 관리',
-      system: '상태, 로그 및 시스템 작업',
-      usage: '시간대별 토큰, 비용 및 스킬 활동'
-    },
     nav: {
       newChat: { title: '새 대화', detail: '새 대화 시작' },
       settings: { title: '설정', detail: 'Hermes Desktop 설정' },
-      skills: { title: '기능', detail: '스킬, 도구 및 MCP 서버' },
+      capabilities: { title: '기능', detail: '스킬, 도구, MCP 서버 및 플러그인' },
       messaging: { title: '메시징', detail: 'Telegram, Slack, Discord 등을 설정' },
       artifacts: { title: '산출물', detail: '생성된 결과 둘러보기' }
     },
@@ -2445,21 +2356,18 @@ export const ko = defineLocale({
     failedRename: '프로필 이름을 변경하지 못했습니다'
   },
 
+  modelAssignment: {
+    saveFailed: 'Hermes가 모델 변경 사항을 저장하지 못했습니다.',
+    confirmTitle: '모델 선택 경고',
+    confirmDetail: '이 절충 사항을 받아들이는 경우에만 확인하세요.',
+    confirmAction: '확인',
+    declined: '데이터 학습 요금제 경고를 거부하여 모델 변경을 취소했습니다.'
+  },
+
   cron: {
     close: '예약 작업 닫기',
     title: '예약 작업',
     count: count => `예약 작업 ${count}${count === 1 ? '개' : '개'}`,
-    modelImpact: {
-      title: '예약 작업을 검토해야 합니다',
-      message: count => `${count}개의 예약 ${count === 1 ? '작업은' : '작업은'} 모델 설정을 검토할 때까지 건너뜁니다.`,
-      detailMore: (names, remaining) => `${names} 외 ${remaining}개`,
-      review: '예약 작업 검토',
-      saveFailed: 'Hermes가 모델 변경 사항을 저장하지 못했습니다.',
-      confirmTitle: '모델 선택 경고',
-      confirmDetail: '이 절충 사항을 받아들이는 경우에만 확인하세요.',
-      confirmAction: '확인',
-      declined: '데이터 학습 요금제 경고를 거부하여 모델 변경을 취소했습니다.'
-    },
     search: '예약 작업 검색...',
     loading: '예약 작업을 불러오는 중...',
     states: {
@@ -2650,7 +2558,7 @@ export const ko = defineLocale({
   sidebar: {
     nav: {
       'new-session': '새 대화',
-      skills: '기능',
+      capabilities: '기능',
       messaging: '메시징',
       artifacts: '산출물',
       cron: '예약 작업'
@@ -2706,6 +2614,7 @@ export const ko = defineLocale({
       movedTo: name => `${name} 프로젝트로 이동했습니다`,
       moveFailed: '대화를 이동하지 못했습니다',
       moveNoFolder: '해당 프로젝트에는 이동할 폴더가 없습니다',
+      moveBusy: '실행 중인 턴을 중지한 뒤 대화를 옮기세요',
       moveNoProjects: '다른 프로젝트가 없습니다',
       reveal: '폴더에서 보기',
       copyPath: '경로 복사',
@@ -2842,6 +2751,7 @@ export const ko = defineLocale({
     openDirective: '열기',
     queueMessage: '메시지를 대기열에 추가',
     steer: '현재 실행에 지시 전달',
+    redirect: '현재 실행의 방향 바꾸기',
     stop: '중지',
     send: '보내기',
     speaking: '말하는 중',
@@ -2906,6 +2816,12 @@ export const ko = defineLocale({
     queueSteer: '지시 전달 — 실행 중인 턴의 방향을 지금 바꾸기',
     queueSend: '보내기',
     queueDelete: '삭제',
+    queueLostNote: '재시작 중에 턴이 사라졌습니다',
+    restoreImageDraft: '이미지 초안 복원',
+    queueCancelFailed: '대기 중인 턴을 제거하지 못했습니다',
+    queueLostDiscard: '버리기',
+    queueLostDiscardTip:
+      '턴 도중 게이트웨이가 다시 시작되어 이 턴을 끝낼 수 없습니다. 이 턴을 버려야 뒤에 대기 중인 턴이 실행됩니다.',
     queueResume: '재개',
     queueResumeTip: '중지로 일시 중지됨 — 대기 중인 턴 전송 재개',
     queueStuckTitle: '대기 중인 메시지를 보내지 못했습니다',
@@ -3073,6 +2989,32 @@ export const ko = defineLocale({
     notAvailableTitle: '업데이트를 사용할 수 없습니다',
     unsupportedMessage: '이 버전의 Hermes는 앱 안에서 자체 업데이트할 수 없습니다.',
     connectionRetry: '연결 상태를 확인하고 다시 시도하세요.',
+    version: value => `버전 ${value}`,
+    versionUnavailable: '버전 정보를 확인할 수 없습니다',
+    bundleOutOfSync: '앱 빌드가 오래되었습니다',
+    bundleOutOfSyncDesc:
+      'Hermes 런타임은 업데이트되었지만 데스크톱 앱 자체는 아직 이전 빌드입니다. 최신 수정 사항을 받으려면 앱을 업데이트하세요.',
+    bundleOutOfSyncAction: '설치 프로그램 받기',
+    bundleSwapPending: '재시작하여 업데이트 완료',
+    bundleSwapPendingDesc:
+      '업데이트된 앱이 이미 설치되었습니다. Hermes를 재시작하면 새 빌드를 불러옵니다. 대화와 설정은 그대로 유지됩니다.',
+    bundleSwapPendingAction: 'Hermes 재시작',
+    checkNow: '지금 확인',
+    seeWhatsNew: '새로운 기능 보기',
+    releaseNotes: '릴리스 노트',
+    onLatest: '최신 버전을 사용 중입니다.',
+    installing: '현재 업데이트를 설치하고 있습니다.',
+    cantReach: '업데이트 서버에 연결할 수 없습니다.',
+    tapCheck: '업데이트를 찾으려면 “지금 확인”을 누르세요.',
+    updateReady: count => `새 업데이트가 준비되었습니다(변경 사항 ${count}개 포함).`,
+    updateReadyUnknown: '새 업데이트가 준비되었습니다.',
+    lastChecked: age => `마지막 확인: ${age}`,
+    justNowSuffix: ' · 방금',
+    never: '없음',
+    justNow: '방금',
+    minAgo: count => `${count}분 전`,
+    hoursAgo: count => `${count}시간 전`,
+    daysAgo: count => `${count}일 전`,
     latestBody: '최신 버전을 사용하고 있습니다.',
     latestBodyBackend: '백엔드가 최신 버전입니다.',
     allSetTitle: '모두 준비됐습니다',
@@ -3268,9 +3210,6 @@ export const ko = defineLocale({
     copyAuthCode: '인증 코드를 복사하여 아래에 붙여넣으세요.',
     pasteAuthCode: '인증 코드 붙여넣기',
     reopenAuthPage: '인증 페이지 다시 열기',
-    autoBrowser: provider =>
-      `브라우저에서 ${provider}을(를) 열었습니다. 해당 페이지에서 Hermes를 승인하면 자동으로 연결됩니다. 복사하거나 붙여넣을 내용은 없습니다.`,
-    reopenSignInPage: '로그인 페이지 다시 열기',
     waitingAuthorize: '승인을 기다리는 중...',
     externalPending: provider =>
       `${provider}은(는) 자체 CLI를 통해 로그인합니다. 터미널에서 이 명령을 실행한 다음 돌아와 "로그인했습니다"를 선택하세요:`,
@@ -3456,7 +3395,6 @@ export const ko = defineLocale({
         title: '컨텍스트 사용량',
         tokenSummary: (used, max) => `${used} / ${max} 토큰`
       },
-      session: '대화',
       yoloOn: 'YOLO 켜짐 — 위험한 명령을 자동으로 승인합니다. Shift+클릭하면 전체 설정을 전환합니다.',
       yoloOff: 'YOLO 꺼짐. Shift+클릭하면 전체 설정을 전환합니다.',
       modelNone: '없음',
@@ -3770,43 +3708,50 @@ export const ko = defineLocale({
     },
     clarify: {
       notReady: '아직 확인 요청이 준비되지 않았습니다',
-      gatewayDisconnected: 'Hermes 게이트웨이가 연결되어 있지 않습니다',
+      gatewayDisconnected: 'Hermes가 지금 오프라인입니다. 다시 연결한 뒤 다시 보내세요.',
       sendFailed: '확인 응답을 보내지 못했습니다',
       loadingQuestion: '질문 불러오는 중…',
       other: '기타(답변 직접 입력)',
       placeholder: '답변을 입력하세요…',
       skip: '건너뛰기',
       skipped: '건너뜀',
-      continueLabel: '계속',
+      noAnswer: '답변 없음',
       confirmAndContinueLabel: '확인 후 계속',
-      answeredBadge: '답변함',
+      singleSelectHint: '하나를 고르세요',
+      multiSelectHint: '해당하는 항목을 모두 고르세요',
+      oneQuestion: '질문 1개',
       questionProgress: (answered, total) => `${answered}개 답변함 / 전체 ${total}개`,
-      lateAnswer: (question, choice) => `"${question}"에 대한 답변: ${choice}`,
-      lateAnswerTip: '이 답변을 후속 메시지 초안으로 작성',
-      lateAnswerHint:
-        '이 프롬프트는 더 이상 답변을 기다리지 않습니다. 후속 메시지 초안을 만들려면 선택 항목을 고르세요.'
+      notDelivered:
+        '이 질문이 앱에 전달되지 않아 여기서는 답할 수 없습니다. 중지를 눌러 턴을 끝낸 뒤 채팅으로 답하세요.'
+    },
+    themePicker: {
+      accent: '강조 색상',
+      layout: '레이아웃',
+      mode: '모양',
+      customColor: '사용자 지정 색상',
+      themeAccent: '테마 기본값',
+      basic: '기본',
+      basicDetail: 'Hermes와 대화하는 용도입니다.',
+      elite: '전문가',
+      eliteDetail: '개발자용: 터미널, 파일, 변경 비교.',
+      noPick: '선택 안 함'
     },
     mcpSetup: {
-      installTitle: server => `${server} MCP 서버를 추가할까요?`,
-      enableTitle: server => `${server} MCP 서버를 활성화할까요?`,
-      authorizeTitle: server => `${server} MCP 서버를 승인할까요?`,
+      installTitle: 'MCP 서버 추가',
+      enableTitle: 'MCP 서버 활성화',
+      authorizeTitle: 'MCP 서버 승인',
       installAction: '설치',
       enableAction: '활성화',
       authorizeAction: '승인',
-      decline: '나중에',
-      declined: '거절함',
       installed: server => `${server} 설치됨`,
       enabled: server => `${server} 활성화됨`,
       authorized: server => `${server} 승인됨`,
       failed: server => `${server} 설정에 실패했습니다`,
-      unanswered: '응답 없음',
       toolCount: count => (count === 1 ? '도구 1개' : `도구 ${count}개`),
-      notInCatalog: server => `“${server}”은(는) MCP 카탈로그에 없습니다`,
-      catalogSource: 'Nous 승인 카탈로그에서 제공',
       envRequired: '먼저 필수 자격 증명을 입력하세요',
       sendFailed: 'MCP 설정 응답을 보내지 못했습니다',
       reloadFailed: '서버를 저장했지만 MCP 도구를 다시 불러오지 못했습니다. 다음 대화에서 불러옵니다',
-      gatewayDisconnected: 'Hermes 게이트웨이가 연결되어 있지 않습니다'
+      gatewayDisconnected: 'Hermes가 지금 오프라인입니다. 다시 연결한 뒤 다시 보내세요.'
     },
     tool: {
       copyCode: '코드 복사',
@@ -4021,10 +3966,10 @@ export const ko = defineLocale({
         title: '첨부하고 명령하기',
         text: '@를 입력하여 파일을 대화에 가져오고 /를 입력하여 명령을 실행하세요.'
       },
-      'local-setup': {
-        title: '이 컴퓨터에서 모델을 로컬로 실행할 수 있습니다',
-        text: '사용 중인 하드웨어에서 로컬 모델을 제공할 수 있습니다. 채팅은 컴퓨터에 남으며 비용이 들지 않습니다.',
-        action: '설정하기'
+      'local-runtime-update': {
+        title: '로컬 엔진 업데이트가 있습니다',
+        text: '로컬 모델을 실행하는 엔진을 업데이트합니다. 진행 중인 로컬 요청이 중단될 수 있습니다.',
+        action: '지금 업데이트'
       },
       'right-pane': {
         title: '작업 창',

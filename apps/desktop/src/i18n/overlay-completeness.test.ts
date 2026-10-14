@@ -23,6 +23,7 @@ import { zhHantOverrides } from './zh-hant'
 // lacked it when this check landed. It only ratchets: translating a listed key passes
 // untouched, while a key missing from a locale and not listed fails. Prune it with
 // `OVERLAY_GAPS_UPDATE=1 npx vitest run src/i18n/overlay-completeness.test.ts`.
+// ko is this branch's local overlay; upstream's gap ledger does not track it.
 const OVERLAYS = {
   ar: arOverrides,
   de: deOverrides,
@@ -32,7 +33,7 @@ const OVERLAYS = {
   ru: ruOverrides,
   zh: zhOverrides,
   'zh-hant': zhHantOverrides
-} satisfies Record<Exclude<BundledLocale, 'en'>, TranslationOverrides>
+} satisfies Record<Exclude<BundledLocale, 'en' | 'ko'>, TranslationOverrides>
 
 // `intro` is display-only; intro.test.tsx covers its translated rotation.
 const translatable = (tree: TranslationOverrides) => flattenMessageKeys(tree).filter(key => !key.startsWith('intro.'))

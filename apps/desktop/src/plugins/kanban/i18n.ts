@@ -578,6 +578,20 @@ const ko: KanbanMessages = {
   metaCreatedBy: '작성자',
   metaCreated: '생성 시각',
   metaWorkerPid: '담당 프로세스 ID',
+  blockKindTip: kind =>
+    kind === 'needs_input'
+      ? '담당 에이전트가 사용자 입력을 요청했습니다.'
+      : kind === 'capability'
+        ? '담당 에이전트가 넘을 수 없는 기능 한계에 부딪혔습니다.'
+        : kind === 'transient'
+          ? '담당 에이전트가 일시적인 오류로 실패했습니다.'
+          : '담당 에이전트가 기다려야 하는 선행 조건을 보고했습니다.',
+  blockReason: '중단 유형',
+  blockRecurrences: '중단 반복 횟수',
+  blockRecurrencesTip: '사용자가 중단을 해제한 뒤 같은 이유로 다시 중단된 횟수입니다.',
+  consecutiveFailures: '연속 실패',
+  lastFailureError: '마지막 실패',
+  unblockedMessage: id => `${id}의 중단을 해제했습니다. 다음 배정 주기에 실행할 수 있습니다.`,
   readyUnassignedTitle: '준비됐지만 담당자가 없어 실행되지 않습니다.',
   readyUnassignedBody:
     '작업 배정기는 담당자가 지정된 준비 상태의 카드만 실행합니다. 위의 담당자 항목에서 프로필을 선택하거나 작업 배정 설정에서 기본 담당자를 지정하면 1분 이내에 실행됩니다.',
@@ -619,6 +633,7 @@ const ko: KanbanMessages = {
   working: '작업 중',
   board: '보드',
   newBoard: '새 보드',
+  switchBoard: '보드 전환',
   newBoardDots: '새 보드…',
   exportDots: '내보내기…',
   importDots: '가져오기…',
@@ -657,6 +672,7 @@ const ko: KanbanMessages = {
     blockedTitle: '작업 중단 — 사용자 입력 필요',
     blockLoopTitle: '작업이 구체화 단계로 이동됨 — 판단 필요',
     gaveUpTitle: '작업을 완료하지 못했습니다',
+    gaveUpBody: 'Hermes가 이 작업을 끝내지 못했습니다. 작업 보드를 열어 이유를 확인하고 다시 배정하세요.',
     crashedTitle: '작업 프로세스 오류 — 재시도 예정',
     timedOutTitle: '작업 시간 초과 — 재시도 예정',
     openKanban: '작업 보드 열기',

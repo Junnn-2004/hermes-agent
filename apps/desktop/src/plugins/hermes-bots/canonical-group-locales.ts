@@ -57,6 +57,26 @@ export const CANONICAL_GROUP_LOCALES = {
     removeAttachment: '添付ファイルを削除',
     uploadFailed: 'アップロードに失敗しました'
   },
+  ko: {
+    refreshGroups: '게이트웨이 그룹 대화 새로 고침',
+    loadingGroup: '그룹 대화 불러오는 중…',
+    loadingGroups: '게이트웨이 그룹 대화 불러오는 중…',
+    emptyGroups: '게이트웨이 그룹 대화가 없습니다.',
+    driverUnavailable:
+      '그룹 대화 실행기를 사용할 수 없습니다. 이 그룹 대화를 가진 게이트웨이를 업데이트하거나 다시 연결하세요.',
+    invalidLogCursor: '대화방 기록 커서가 올바르지 않습니다',
+    allowOnce: '이번만 허용',
+    deny: '거부',
+    discardUnknown: '결과를 알 수 없는 작업 버리기',
+    discardWarning: '이미 실제 변경이 일어났을 수 있습니다. 버려도 되돌려지지 않습니다.',
+    confirmDiscard: '버리기 확인',
+    unconfirmedSend: '이전 전송이 확인되지 않았습니다. 다른 메시지를 보내기 전에 원래 내용으로 다시 시도하세요.',
+    restoredPendingSend: '확인되지 않은 전송을 복원했습니다. 다른 메시지를 보내기 전에 다시 시도하세요.',
+    groupMessage: '그룹 메시지',
+    attachFiles: '파일 첨부',
+    removeAttachment: '첨부 파일 제거',
+    uploadFailed: '업로드 실패'
+  },
   zh: {
     refreshGroups: '刷新网关群组',
     loadingGroup: '正在加载群组…',
