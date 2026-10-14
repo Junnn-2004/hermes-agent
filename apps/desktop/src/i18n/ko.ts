@@ -18,6 +18,7 @@ export const ko = defineLocale({
     connect: '연결',
     connecting: '연결 중',
     continue: '계속',
+    bots: '봇',
     copied: '복사됨',
     copy: '복사',
     copyFailed: '복사하지 못했습니다',

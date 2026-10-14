@@ -108,6 +108,7 @@ const {
   $updateStatus
 } = await import('./updates')
 
+const { CANONICAL_GATEWAY_PROTOCOL } = await import('@/api/canonical-protocol')
 const { setConnection } = await import('./session')
 
 const registryOf = (ids: string[]) => ({
@@ -309,6 +310,18 @@ describe('reportBackendContract', () => {
     reportBackendContract(REQUIRED_BACKEND_CONTRACT)
     expect(dismissSpy).toHaveBeenCalledWith('backend-contract-skew')
     expect(notifySpy).not.toHaveBeenCalled()
+  })
+
+  it('accepts only the matching canonical gateway protocol without claiming the legacy contract', () => {
+    reportBackendContract(undefined, CANONICAL_GATEWAY_PROTOCOL)
+    expect(dismissSpy).toHaveBeenCalledWith('backend-contract-skew')
+    expect(notifySpy).not.toHaveBeenCalled()
+
+    reportBackendContract(undefined, 'hermes-gateway-v0')
+    expect(notifySpy).toHaveBeenCalledTimes(1)
+
+    reportBackendContract(Number.MAX_SAFE_INTEGER, 'hermes-gateway-v0')
+    expect(notifySpy).toHaveBeenCalledTimes(2)
   })
 
   it('warns when the backend is behind (or reports no contract)', () => {
