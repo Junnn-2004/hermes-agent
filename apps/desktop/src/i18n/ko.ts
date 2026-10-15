@@ -109,7 +109,9 @@ export const ko = defineLocale({
     renameLabel: '새 이름',
     deleteTitle: name => `${name}을(를) 삭제할까요?`,
     deleteBody: '휴지통으로 이동하며, 휴지통에서 복원할 수 있습니다.',
-    pathCopied: '경로가 복사되었습니다'
+    pathCopied: '경로가 복사되었습니다',
+    revealMissing: '그 폴더는 이 컴퓨터에 없습니다',
+    revealUnavailable: '그 경로는 이 컴퓨터가 아니라 백엔드 컴퓨터에 있습니다. “파일 트리에서 보기”를 사용하세요.'
   },
 
   boot: {
@@ -132,7 +134,13 @@ export const ko = defineLocale({
       gatewayConnectionLostDetail:
         '백그라운드에서 계속 다시 연결하고 있습니다. 내용을 읽거나 초안을 작성할 수 있으며, 문제가 계속되면 게이트웨이 설정을 여세요.',
       gatewaySignInRequired: '게이트웨이 로그인이 필요합니다',
-      ipcBridgeUnavailable: 'Desktop IPC 브리지를 사용할 수 없습니다.'
+      ipcBridgeUnavailable: 'Desktop IPC 브리지를 사용할 수 없습니다.',
+      connectionSettings: '연결 설정',
+      gatewaySignInRequiredDetail: '다시 연결하려면 다시 로그인하세요. 대화와 설정은 안전합니다.',
+      openLogs: '로그 열기',
+      reconnectNow: '지금 다시 연결',
+      restartHermes: 'Hermes 다시 시작',
+      signInAgain: '다시 로그인'
     },
     failure: {
       title: 'Hermes를 시작할 수 없습니다',
@@ -167,7 +175,43 @@ export const ko = defineLocale({
       signInFailed: '로그인하지 못했습니다',
       signInToRemoteGateway: '원격 게이트웨이에 로그인',
       signInWithProvider: provider => `${provider}(으)로 로그인`,
-      identityProvider: 'ID 제공업체'
+      identityProvider: 'ID 제공업체',
+      bundledReinstallHint:
+        '함께 설치된 이 설치본은 앱 안에서 스스로 복구할 수 없습니다. 백엔드를 되살리려면 앱을 다시 설치하세요.',
+      details: '세부 정보',
+      reinstallApp: '앱 다시 설치'
+    },
+    causes: {
+      diskFull: '디스크가 가득 차서 Hermes를 시작하지 못했습니다.',
+      exitedEarly: 'Hermes 백그라운드 서비스가 시작 직후 멈췄습니다.',
+      installMissing: 'Hermes 설치의 일부가 없습니다. 설치 복구를 눌러 되살리세요.',
+      permission: 'Hermes가 데이터 폴더에 쓰지 못했습니다(권한 문제).',
+      portInUse: 'Hermes에 필요한 네트워크 포트를 다른 프로그램이 쓰고 있습니다.',
+      timedOut: 'Hermes 백그라운드 서비스가 제시간에 응답하지 않았습니다.'
+    },
+    updateHold: {
+      checkAgain: '다시 확인',
+      confirmBody:
+        '남아 있는 업데이트 프로세스가 아직 Hermes 파일을 바꾸고 있을 수 있습니다. 지금 시작하면 반쯤 업데이트된 설치본을 불러올 수 있고, 업데이트를 다시 실행할 때까지 제대로 작동하지 않을 수 있습니다. Hermes는 이 선택을 로그에 기록하고 업데이트 표시는 그대로 둡니다.',
+      confirmKeepWaiting: '계속 기다리기',
+      confirmStart: '그래도 시작',
+      confirmTitle: '업데이트가 아직 붙잡고 있는데 Hermes를 시작할까요?',
+      description:
+        '업데이트가 아직 바꾸고 있을 수 있는 파일을 불러오지 않도록 Hermes가 시작을 미루고 있습니다. 대기가 끝나면 자동으로 시작합니다.',
+      heldByProcess: pid =>
+        `업데이트(프로세스 ${pid})는 끝났지만 그 업데이트가 시작한 프로세스가 아직 Hermes 설치를 붙잡고 있습니다.`,
+      heldUnknown: '업데이트는 끝났지만 그 업데이트가 시작한 프로세스가 아직 Hermes 설치를 붙잡고 있습니다.',
+      lastChecked: time => `마지막 확인 ${time}`,
+      openLogs: '로그 열기',
+      quit: 'Hermes 종료',
+      recoveryHint:
+        '보통 몇 분 안에 풀립니다. 풀리지 않으면 Hermes를 종료하고 남아 있는 git 또는 hermes 프로세스를 끝낸 뒤(또는 컴퓨터를 다시 시작한 뒤) Hermes를 다시 여세요.',
+      since: time => `${time}부터 기다리는 중`,
+      startAnyway: '그래도 시작…',
+      startAnywayRefused: 'Hermes가 시작하기 전에 설치를 붙잡고 있는 대상이 바뀌었습니다. 확인한 뒤 다시 시도하세요.',
+      title: '이전 업데이트가 아직 Hermes를 붙잡고 있습니다',
+      titleUnverified: 'Hermes가 지난 업데이트 완료를 확인할 수 없습니다',
+      unverified: '업데이트 도우미가 지금 Hermes 설치를 누가 쓰고 있는지 확인하지 못했습니다. Hermes가 계속 확인합니다.'
     }
   },
 
@@ -200,7 +244,10 @@ export const ko = defineLocale({
       errorTitle: 'MCP 서버에 연결할 수 없습니다',
       errorMessage: name => `${name} MCP 상태 확인에 실패했습니다.`,
       signIn: '로그인',
-      view: '보기'
+      view: '보기',
+      disable: '비활성화',
+      disableFailed: name => `${name} MCP를 비활성화하지 못했습니다.`,
+      disabledMessage: name => `${name} MCP를 비활성화했습니다. 기능 → MCP에서 언제든 다시 켤 수 있습니다.`
     },
     errors: {
       elevenLabsNeedsKey: 'ElevenLabs STT에 ELEVENLABS_API_KEY가 필요합니다.',
@@ -213,7 +260,10 @@ export const ko = defineLocale({
       openaiRejectedApiKey: 'OpenAI에서 API 키를 받아들이지 않았습니다. 설정 → 키에서 키를 바꾼 뒤 다시 시도하세요.',
       openaiTtsNeedsKey: 'OpenAI TTS에 VOICE_TOOLS_OPENAI_KEY 또는 OPENAI_API_KEY가 필요합니다.',
       codeSkewRestartRequired:
-        '업데이트 후에도 이 백엔드가 이전 코드를 실행하고 있습니다. 새 코드를 불러오려면 다시 시작하세요.'
+        '업데이트 후에도 이 백엔드가 이전 코드를 실행하고 있습니다. 새 코드를 불러오려면 다시 시작하세요.',
+      restartHermesFailed: 'Hermes를 다시 시작하지 못했습니다',
+      rpcOutOfSync: '앱과 백엔드의 버전이 다릅니다. 둘 다 업데이트하세요.',
+      storageFailure: 'Hermes가 데이터 폴더에 저장하지 못했습니다. 유지 관리를 열어 확인하고 복구하세요.'
     },
     voice: {
       configureSpeechToText: '음성 모드를 사용하려면 음성 인식을 설정하세요.',
@@ -233,7 +283,13 @@ export const ko = defineLocale({
       transcriptionFailed: '음성을 텍스트로 변환하지 못했습니다',
       transcriptionUnavailable: '아직 음성 텍스트 변환을 사용할 수 없습니다.',
       tryRecordingAgain: '다시 녹음해 보세요.',
-      unavailable: '음성을 사용할 수 없습니다'
+      unavailable: '음성을 사용할 수 없습니다',
+      liveDelegationFailed: 'Hermes에 요청을 넘기지 못했습니다',
+      liveEnded: '실시간 음성 대화가 끝났습니다',
+      liveEndedClosed: '서비스가 실시간 음성 대화를 닫았습니다.',
+      liveEndedConnectionLost: '실시간 음성 대화의 연결이 끊겼습니다.',
+      liveError: '실시간 음성',
+      liveUnavailable: reason => `GPT-Live 음성 대화를 사용할 수 없습니다: ${reason}. 대신 음성 인식을 사용합니다.`
     },
     native: {
       approvalTitle: '승인이 필요합니다',
@@ -246,8 +302,20 @@ export const ko = defineLocale({
       turnErrorTitle: '작업에 실패했습니다',
       backgroundDoneTitle: '백그라운드 작업이 완료되었습니다',
       backgroundFailedTitle: '백그라운드 작업에 실패했습니다',
-      creditsTitle: '크레딧'
-    }
+      creditsTitle: '크레딧',
+      approvalTitleNamed: session => `승인 필요 — ${session}`,
+      inputTitleNamed: session => `입력 필요 — ${session}`
+    },
+    actions: {
+      openGateways: '게이트웨이 열기',
+      openKeys: '키 열기',
+      openMaintenance: '유지 관리 열기',
+      restartHermes: 'Hermes 다시 시작'
+    },
+    compressDeferredDone: '컨텍스트 압축이 끝났습니다',
+    sharedProfileWarning:
+      '다른 Hermes 설치가 이 프로필을 사용하고 있습니다. 두 설치가 설정과 데이터를 함께 쓰므로 변경 사항이 충돌할 수 있습니다. 계속하거나, 변경하기 전에 다른 설치를 닫으세요.',
+    updateReadyMessageAppInstaller: '새 버전의 Hermes가 준비되었습니다. 지금 업데이트하면 Windows가 마무리합니다.'
   },
 
   remoteDisplayBanner: {
@@ -437,8 +505,24 @@ export const ko = defineLocale({
       'composer.slash': '슬래시 명령 팔레트',
       'composer.help': '빠른 도움말',
       'composer.history': '팝오버 또는 기록 순환',
-      'composer.cancel': '팝오버 닫기 · 실행 취소'
-    }
+      'composer.cancel': '팝오버 닫기 · 실행 취소',
+      'composer.dictate': '음성 입력 시작/중지',
+      'composer.reasoningDown': '추론 수준 낮추기',
+      'composer.reasoningUp': '추론 수준 높이기',
+      'view.cycleSidebarGrouping': '대화 묶기 방식 순환',
+      'view.tabSlot.1': '탭 1로 전환',
+      'view.tabSlot.2': '탭 2로 전환',
+      'view.tabSlot.3': '탭 3으로 전환',
+      'view.tabSlot.4': '탭 4로 전환',
+      'view.tabSlot.5': '탭 5로 전환',
+      'view.tabSlot.6': '탭 6으로 전환',
+      'view.tabSlot.7': '탭 7로 전환',
+      'view.tabSlot.8': '탭 8로 전환',
+      'view.tabSlot.9': '탭 9로 전환',
+      'view.toggleProfileRail': '프로필 레일 표시/숨기기',
+      'view.toggleSimpleMode': '간단 모드 전환'
+    },
+    clear: '지우기'
   },
 
   findInPage: {
@@ -480,7 +564,9 @@ export const ko = defineLocale({
       about: '정보',
       billing: '결제',
       notifications: '알림',
-      plugins: '플러그인'
+      plugins: '플러그인',
+      sessions: '대화',
+      vault: '암호 및 로그인'
     },
     plugins: {
       title: '데스크톱 플러그인',
@@ -750,7 +836,39 @@ export const ko = defineLocale({
         noneAvailable: '지금 켤 수 있는 펫이 없습니다.',
         turnOnFailed: '펫을 켤 수 없습니다.',
         turnOffFailed: '펫을 끌 수 없습니다.'
-      }
+      },
+      appActionsDesc: '제목 표시줄에서 설정, 레이아웃, HUD를 둘 위치입니다. 오른쪽을 고르면 왼쪽에 탭 자리가 남습니다.',
+      appActionsLeft: '왼쪽',
+      appActionsRight: '오른쪽',
+      appActionsTitle: '앱 동작 버튼',
+      chatFontDesc:
+        '채팅과 앱 전체에 쓸 설치된 글꼴을 고르세요. OpenDyslexic 같은 가독성 글꼴에 유용합니다. 비워 두면 테마 글꼴을 씁니다.',
+      chatFontPlaceholder: 'OpenDyslexic 또는 CSS 글꼴 목록',
+      chatFontPreview: '미리보기',
+      chatFontReset: '테마 글꼴 사용',
+      chatFontSample: '다람쥐 헌 쳇바퀴에 타고파. The quick brown fox jumps over the lazy dog. 0123456789',
+      chatFontTitle: '채팅 글꼴',
+      chatTextScaleDesc:
+        'UI 배율을 기준으로 대화 텍스트와 메시지 편집기의 크기를 조절합니다. 사이드바와 컨트롤 크기는 그대로입니다.',
+      chatTextScaleTitle: '채팅 글자 크기',
+      fileBrowserDesc:
+        '작업공간이 열려 있으면 채팅 옆에 파일 탐색기를 표시합니다. 제목 표시줄의 전환 버튼으로도 바뀝니다.',
+      fileBrowserTitle: '파일 탐색기',
+      hideCodeDiffsDesc: '파일 편집을 코드 없이 추가·삭제된 줄 수만 담은 인라인 도구 행으로 표시합니다.',
+      hideCodeDiffsTitle: '코드 변경 비교 숨기기',
+      hideThreadTimelineDesc: '각 대화의 오른쪽 가장자리에 있는 탐색 막대를 숨깁니다.',
+      hideThreadTimelineTitle: '대화 타임라인 막대 숨기기',
+      modelPricingDesc: '모델 선택기에 100만 토큰당 입력, 출력, 캐시 읽기 가격을 표시합니다.',
+      modelPricingTitle: '모델 가격',
+      textDirection: {
+        auto: '자동',
+        ltr: '왼쪽에서 오른쪽',
+        rtl: '오른쪽에서 왼쪽'
+      },
+      textDirectionDesc:
+        '채팅 메시지와 작성란의 쓰기 방향을 정하는 방식입니다. 자동은 각 문단의 첫 글자를 따릅니다. 섞인 텍스트가 잘못 정렬되면 방향을 직접 고르세요. 코드는 항상 왼쪽에서 오른쪽입니다.',
+      textDirectionTitle: '텍스트 방향',
+      themeSearchPlaceholder: '내 테마 또는 VS Code Marketplace 검색…'
     },
     fieldLabels: defineFieldCopy({
       model: '기본 모델',
@@ -917,7 +1035,16 @@ export const ko = defineLocale({
       },
       updates: {
         nonInteractiveLocalChanges: '앱 내 업데이트 시 로컬 변경 사항'
-      }
+      },
+      'auxiliary.compression.timeout': '압축 모델 제한 시간(초)',
+      'compression.codexGpt55Autoraise': 'Codex 압축 자동 상향',
+      'stt.deepinfra.model': 'DeepInfra 음성 인식 모델',
+      'stt.openai.streamingModel': 'OpenAI 실시간 받아쓰기 모델',
+      'stt.streaming': '실시간 받아쓰기',
+      'stt.xai.model': 'xAI 음성 인식 모델',
+      'voice.gptLive.instructions': 'GPT-Live 페르소나',
+      'voice.gptLive.voice': 'GPT-Live 음성',
+      'voice.voiceChatMode': '음성 대화 모드'
     }),
     fieldDescriptions: defineFieldCopy({
       model: '입력창에서 다른 모델을 선택하지 않으면 새 대화에 사용됩니다.',
@@ -1001,7 +1128,16 @@ export const ko = defineLocale({
       updates: {
         nonInteractiveLocalChanges:
           'Hermes가 앱에서 자체 업데이트할 때(터미널 프롬프트 없음) 로컬 소스 편집 내용을 유지(stash)하거나 버립니다(discard). 터미널 업데이트에서는 항상 확인합니다.'
-      }
+      },
+      'auxiliary.compression.timeout':
+        '보조 압축 모델의 호출당 대기 시간(초, 기본값 120)입니다. 느린 로컬 모델이면 늘리세요.',
+      'compression.codexGpt55Autoraise': '지원되는 ChatGPT Codex OAuth 모델은 압축 기준을 85%로 올립니다.',
+      'stt.streaming': '말하는 동안 텍스트를 표시합니다(OpenAI, xAI, ElevenLabs). 실패하면 녹음본으로 대체합니다.',
+      'voice.gptLive.instructions':
+        '실시간 음성 페르소나에 덧붙일 문장(말투, 속도, 언어)입니다. Hermes는 자체 시스템 프롬프트를 유지합니다.',
+      'voice.gptLive.voice': 'GPT-Live 모드의 음성입니다. 사용자 지정 음성 ID도 쓸 수 있습니다.',
+      'voice.voiceChatMode':
+        'chained: 아래 제공업체로 음성 인식 → Hermes → 음성 합성. gpt-live: 전이중 OpenAI 음성 모델 하나(gpt-live-1)가 듣고 말하며, 실제 요청은 모두 Hermes에 넘깁니다 — 선택한 모델이 전체 도구 모음으로 답합니다. OpenAI API 키가 필요하며 음성 계층은 분당 $0.05가 청구됩니다.'
     }),
     about: {
       updates: '업데이트',
@@ -1053,7 +1189,22 @@ export const ko = defineLocale({
       attachmentSizeDesc:
         '데스크톱이 미리 보기와 이미지 첨부를 위해 불러올 로컬 파일 크기(MB)입니다. 기본값은 16입니다. 원격 비이미지 첨부 파일에는 별도의 256MB 한도가 적용됩니다. 값을 매우 높게 설정하면 전체 파일을 메모리에 불러와 앱이 멈추거나 종료될 수 있습니다.',
       attachmentSizeUnit: 'MB',
-      attachmentSizeLabel: '최대 미리 보기/이미지 불러오기 크기(메가바이트)'
+      attachmentSizeLabel: '최대 미리 보기/이미지 불러오기 크기(메가바이트)',
+      alwaysExternalLinksDesc:
+        '클릭한 모든 링크를 앱 내 브라우저 대신 시스템 브라우저에서 엽니다. 오른쪽 클릭 메뉴의 "앱 내 브라우저에서 열기"는 계속 작동합니다.',
+      alwaysExternalLinksTitle: '링크를 항상 외부 브라우저에서 열기',
+      keepAwakeAlways: '항상',
+      keepAwakeOff: '끔',
+      keepAwakeWhileWorking: '작업 중일 때',
+      minimizeToTrayDesc:
+        '창을 최소화하거나 기본 창을 닫으면 시스템 트레이(macOS는 메뉴 막대)로 숨기고 Hermes를 계속 실행합니다. 종료하려면 트레이 메뉴의 Hermes 종료나 Cmd+Q를 쓰세요. 기본값은 꺼짐이며 이 기기에만 적용됩니다.',
+      minimizeToTrayTitle: '트레이로 최소화',
+      minimizeToTrayUnavailable:
+        '시스템 트레이를 사용할 수 없습니다. 창은 평소처럼 최소화되고 닫힙니다. 다시 시도하려면 이 설정을 껐다 켜세요.',
+      showOptions: '옵션 보기',
+      voiceShortcutHintDesc:
+        '음성 녹음 단축키는 설정 → 키보드 단축키("음성 대화 시작/중지")에서 정하세요. voice.record_key 구성 값은 CLI와 TUI에만 적용됩니다.',
+      voiceShortcutHintTitle: '음성 녹음 단축키'
     },
     quickEntry: {
       enabledTitle: '빠른 입력',
@@ -1309,7 +1460,14 @@ export const ko = defineLocale({
         '지원하지 않는 원격 플랫폼입니다. Hermes Desktop SSH 모드는 Linux, macOS 및 Windows 원격 호스트를 지원합니다.',
       sshErrTimeout: 'SSH 연결 시간이 초과되었습니다. 호스트에 접근할 수 없거나 절전 상태일 수 있습니다.',
       sshErrUpdateRequired: 'Desktop SSH로 연결하기 전에 원격 호스트의 Hermes를 업데이트하세요.',
-      sshErrUnknown: 'SSH 연결에 실패했습니다.'
+      sshErrUnknown: 'SSH 연결에 실패했습니다.',
+      cloudActive: '이 창에서 사용 중',
+      cloudSavedDesc:
+        '기본값을 바꾸지 않고 저장된 게이트웨이를 사용합니다. 인스턴스를 추가하려면 아래에서 로그인하세요. 이름과 로그인은 저장된 연결 목록에서 관리하세요.',
+      cloudSavedTitle: '저장된 Cloud 게이트웨이',
+      cloudUseSaved: '게이트웨이 사용',
+      sshErrInteractiveAuth:
+        'Tailscale SSH는 대화형 브라우저 확인이 필요합니다. 터미널에서 `ssh <host> true`를 실행해 확인을 마친 뒤 다시 시도하세요. Hermes는 SSH를 비대화형으로 실행합니다.'
     },
     keys: {
       loading: 'API 키와 자격 증명 불러오는 중...',
@@ -1358,8 +1516,55 @@ export const ko = defineLocale({
         mcp: { label: 'MCP', hint: 'MCP 도구 라우팅' },
         title_generation: { label: '제목 생성', hint: '대화 제목' },
         review: { label: '검토', hint: '/review 검토 하위 에이전트' },
-        curator: { label: '큐레이터', hint: '스킬 사용 검토' }
-      }
+        curator: { label: '큐레이터', hint: '스킬 사용 검토' },
+        kanban_decomposer: {
+          hint: '작업 분해',
+          label: '칸반 분해기'
+        },
+        profile_describer: {
+          hint: '프로필 설명 자동 생성',
+          label: '프로필 설명기'
+        },
+        triage_specifier: {
+          hint: '칸반 명세 구체화',
+          label: '분류 명세기'
+        },
+        voice_chat: {
+          hint: '음성 모드의 말하기 답변',
+          label: '음성 대화'
+        }
+      },
+      chooseFromList: '목록에서 선택',
+      customModel: '사용자 지정 모델…',
+      customModelPlaceholder: '모델 ID',
+      followTask: task => `${task} 따르기`,
+      inheritMainEffort: '상속 · 기본 모델의 추론 수준',
+      inheritsFrom: task => `${task} 상속`,
+      mainAppliedMessage: model => `새 대화에서 ${model}을(를) 사용합니다.`,
+      mainAppliedTitle: '기본 모델을 업데이트했습니다',
+      moaAddPreset: '프리셋 추가',
+      moaAddReference: '참고 모델 추가',
+      moaAggregator: '종합 모델',
+      moaAggregatorBilled: '실행 모델 · 실행 비용이 청구됨',
+      moaDefault: '기본값:',
+      moaDescription:
+        'Mixture of Agents 제공업체 아래에 모델로 표시될 이름 있는 프리셋을 구성합니다. 종합 모델이 실제로 실행하는 모델로, 도구 루프의 모든 단계를 수행하며 실행 비용 대부분이 그 제공업체에 청구됩니다. 참고 모델은 기본적으로 사용자 턴마다 한 번만 조언합니다.',
+      moaEnabled: '사용',
+      moaNewPresetPlaceholder: '새 프리셋',
+      moaPreset: '프리셋',
+      moaReferenceHint: '기본적으로 턴마다 한 번 조언',
+      moaReferenceTitle: index => `참고 모델 ${index}`,
+      moaReferenceToggle: (enabled, index) => `참고 모델 ${index} ${enabled ? '끄기' : '켜기'}`,
+      moaSetDefault: '기본값으로 설정',
+      moaTitle: 'Mixture of Agents',
+      setUpProvider: name => `${name} 설정`,
+      setupProviderFallback: '제공업체',
+      speed: '속도',
+      speedStandard: '표준',
+      staleAuxAfter: '에서 실행됩니다.',
+      staleAuxBefore: (count, names) => `보조 작업 ${count}개(${names})가 기본 모델이 아니라 아직 `,
+      staleAuxDismiss: '다시 표시 안 함',
+      staleAuxOtherProviders: '다른 제공업체'
     },
     localModels: {
       title: '로컬 모델',
@@ -1474,7 +1679,23 @@ export const ko = defineLocale({
       deleteAction: '모델 삭제',
       deleteConfirm: model => `${model}을(를) 디스크에서 삭제하시겠습니까?`,
       deleted: model => `${model}을(를) 삭제했습니다.`,
-      deleteFailed: '삭제에 실패했습니다'
+      deleteFailed: '삭제에 실패했습니다',
+      connectionChanged: '로컬 모델 연결이 바뀌었습니다',
+      downloadEta: time => `약 ${time} 남음`,
+      downloadEtaHours: (hours, minutes) => (minutes ? `${hours}시간 ${minutes}분` : `${hours}시간`),
+      downloadEtaMinutes: count => `${count}분`,
+      downloadEtaSeconds: count => `${count}초`,
+      downloadPauseAction: '일시 중지',
+      downloadPauseFailed: model => `${model} 다운로드를 일시 중지하지 못했습니다`,
+      downloadPausedLabel: '일시 중지됨',
+      downloadResumeAction: '재개',
+      downloadResumeFailed: model => `${model} 다운로드를 재개하지 못했습니다`,
+      downloadSpeed: rate => `${rate}`,
+      downloadStatusRunning: '다운로드 중',
+      noRecommendationAction: '모델 둘러보기',
+      noRecommendationDetail:
+        '자동 설정은 GPU나 통합 메모리 안에서 최고 속도로 완전히 실행되는 엄선된 모델이 있어야 합니다. 아래에서 모델을 직접 고르거나 더 많은 모델을 둘러볼 수 있습니다.',
+      noRecommendationTitle: '이 컴퓨터에 맞는 자동 추천이 없습니다'
     },
     providers: {
       connectAccount: '계정 연결',
@@ -1614,7 +1835,19 @@ export const ko = defineLocale({
         selectedTitle: '백엔드를 선택했습니다',
         selectedMessage: backend => `이제 터미널 명령을 ${backend}을(를) 통해 실행합니다. 새 대화부터 적용됩니다.`,
         failedSelect: backend => `${backend}을(를) 선택하지 못했습니다`,
-        needsSetupHint: '지금 이 백엔드를 선택할 수 있지만 설정이 끝나기 전에는 명령이 실패합니다.'
+        needsSetupHint: '지금 이 백엔드를 선택할 수 있지만 설정이 끝나기 전에는 명령이 실패합니다.',
+        needsSetupConfirmAction: '그래도 선택',
+        needsSetupConfirmDescription: detail =>
+          `${detail} 이 변경 뒤 시작하는 대화는 설정을 마칠 때까지 터미널과 파일 도구를 쓸 수 없습니다.`,
+        needsSetupConfirmDescriptionGeneric:
+          '이 백엔드는 아직 설정되지 않았습니다. 이 변경 뒤 시작하는 대화는 설정을 마칠 때까지 터미널과 파일 도구를 쓸 수 없습니다.',
+        needsSetupConfirmTitle: backend => `그래도 ${backend}을(를) 선택할까요?`,
+        openBackendSettings: '터미널 설정 열기',
+        switchedToLocal: '이제 터미널 명령이 로컬에서 실행됩니다. 새 대화에 적용됩니다.',
+        unavailableMessage: backend =>
+          `지금은 Hermes가 셸 명령을 실행할 수 없습니다: ${backend}이(가) 준비되지 않았습니다. 로컬로 전환하거나 ${backend} 설정을 마친 뒤 다시 시도하세요.`,
+        unavailableTitle: '터미널 명령을 사용할 수 없습니다',
+        useLocal: '로컬 사용'
       },
       browserRealProfile: {
         label: '내 실제 브라우저 프로필 사용',
@@ -1635,7 +1868,586 @@ export const ko = defineLocale({
           notNow: '나중에',
           enable: '내 프로필 사용'
         }
-      }
+      },
+      nousAuthFailedMessage: '다시 시도하세요.',
+      nousAuthTryAgain: '다시 시도',
+      postSetupOpenLogs: '로그 열기',
+      postSetupRunAgain: '다시 실행'
+    },
+    billing: {
+      amountValidation: {
+        decimal: label => `${label}: 소수점 둘째 자리까지의 달러 금액을 입력하세요.`,
+        greaterThanThreshold: '충전 목표 금액은 기준 금액보다 커야 합니다.',
+        maximum: (label, amount) => `${label}: 최대 ${amount}입니다.`,
+        minimum: (label, amount) => `${label}: 최소 ${amount}입니다.`,
+        positive: label => `${label}: 금액은 $0보다 커야 합니다.`,
+        reloadTo: '충전 목표 금액'
+      },
+      autoReload: {
+        cancel: '취소',
+        disable: '비활성화',
+        manage: '관리',
+        reloadTo: '충전 목표 금액',
+        reloadToAria: '자동 충전 목표 금액',
+        save: '저장',
+        saving: '저장 중…',
+        threshold: '기준 금액',
+        thresholdAria: '자동 충전 기준 금액',
+        turnOff: '끄기',
+        turnOffConfirm: '자동 충전을 끌까요?',
+        turnedOff: '자동 충전을 껐습니다.',
+        updated: '자동 충전을 업데이트했습니다.'
+      },
+      buyCredits: {
+        added: amount => `${amount}을(를) 추가했습니다. 잔액을 새로 고치는 중입니다.`,
+        buyButton: '구매',
+        customAmount: '직접 입력한 크레딧 금액',
+        openPortal: '포털 열기',
+        processing: '처리 중… 결제 확정을 확인하는 중',
+        retry: '다시 시도',
+        title: '지금 크레딧 구매'
+      },
+      charge: {
+        added: amount => (amount ? `$${amount}을(를) 추가했습니다.` : '크레딧을 추가했습니다.'),
+        authenticationRequired: '은행에서 본인 확인(3DS)을 요구합니다. 구매를 마치려면 포털에서 확인을 완료하세요.',
+        checkBody: '결제 상태를 확인하지 못했습니다.',
+        checkTitle: '결제를 확인하지 못함',
+        declined: '카드가 거절되었습니다. 포털에서 다른 카드로 시도하세요.',
+        expired: '카드가 만료되었습니다. 포털에서 업데이트하세요.',
+        failedBody: reason => `결제가 처리되지 않았습니다(${reason}).`,
+        failedTitle: '결제 실패',
+        timeoutBody: '결제가 아직 확정될 수 있습니다. 다시 시도하기 전에 포털을 확인하세요.',
+        timeoutTitle: '5분이 지나도 처리 중',
+        unconfirmedBody: message =>
+          `${message} 마지막 결제 결과가 확인되지 않았습니다. 다시 시도하기 전에 잔액과 내역을 확인하세요.`,
+        unconfirmedTitle: '결제 결과 미확인',
+        untrackedBody: '결제 서비스가 요청을 받았지만 결제 ID를 돌려주지 않았습니다.',
+        untrackedTitle: '결제를 추적할 수 없음'
+      },
+      creditsPerMonth: amount => `월 ${amount} 크레딧`,
+      errors: {
+        cliBillingDisabled: {
+          message: '이 계정은 원격 지출이 꺼져 있습니다. 결제 관리자가 포털의 Hermes Agent 페이지에서 켤 수 있습니다.',
+          title: '원격 지출이 꺼져 있습니다'
+        },
+        consentRequired: {
+          message: '포털에서 이 카드를 터미널 결제용으로 확인하세요',
+          title: '카드 확인 필요'
+        },
+        default: {
+          message: '결제 요청에 실패했습니다.',
+          title: '결제 요청 실패'
+        },
+        endpointUnavailable: {
+          message: '결제 엔드포인트가 JSON이 아닌 응답을 돌려주었습니다(이 배포에서는 사용할 수 없을 수 있습니다).',
+          title: '결제 엔드포인트를 사용할 수 없음'
+        },
+        idempotencyConflict: {
+          message: '🔴 그 결제 키는 이미 다른 금액에 쓰였습니다. 충전을 새로 시작하세요.',
+          title: '충전 새로 시작'
+        },
+        insufficientScope: {
+          message: '원격 지출 허용이 필요합니다. 충전을 시작해 허용한 뒤 다시 시도하세요.',
+          title: '원격 지출 승인 필요'
+        },
+        monthlyCapExceeded: {
+          messageHeadroom: remaining => `🔴 월 지출 한도에 도달했습니다 — 여유분 $${remaining} 남음.`,
+          messageReached: '🔴 월 지출 한도에 도달했습니다.',
+          title: '월 지출 한도 도달'
+        },
+        noPaymentMethod: {
+          message:
+            '💳 아직 터미널 결제용으로 저장된 카드가 없습니다. 포털에서 설정하세요(일회성 크레딧 구매로는 재사용 카드가 저장되지 않습니다).',
+          title: '저장된 카드 없음'
+        },
+        orgAccessDenied: {
+          message: '이 토큰은 관리할 수 있는 조직에 연결되어 있지 않습니다',
+          title: '조직 접근 거부'
+        },
+        rateLimited: {
+          message: mins =>
+            mins > 0
+              ? `🟡 지금 결제 요청이 너무 많습니다(약 ${mins}분 뒤 다시 시도). 결제 실패가 아닙니다.`
+              : '🟡 지금 결제 요청이 너무 많습니다. 결제 실패가 아닙니다.',
+          title: '지금 결제 요청이 너무 많음'
+        },
+        remoteSpendingReconnect: who => `${who} 이 기기를 다시 승인하려면 설정 -> 게이트웨이에서 다시 연결하세요.`,
+        remoteSpendingRevoked: {
+          messageByAdmin: '관리자가 이 터미널의 원격 지출을 중지했습니다.',
+          messageBySelf: '이 터미널의 원격 지출을 직접 중지했습니다.',
+          title: '원격 지출이 중지되었습니다'
+        },
+        roleRequired: {
+          message:
+            '금액을 추가하려면 조직 관리자 또는 소유자 권한이 필요합니다. 관리자에게 요청하거나 포털에서 관리하세요.',
+          title: '관리자 역할 필요'
+        },
+        sessionRevoked: {
+          message: '로그아웃되었습니다. 설정 → 게이트웨이에서 다시 로그인하세요.',
+          title: '로그아웃됨'
+        },
+        stripeUnavailable: {
+          message: mins =>
+            mins > 0
+              ? `Stripe에 문제가 있습니다 — 약 ${mins}분 뒤 다시 시도하세요`
+              : 'Stripe에 문제가 있습니다 — 잠시 뒤 다시 시도하세요',
+          title: 'Stripe에 문제가 있음'
+        },
+        timeout: {
+          message: '결제 요청 시간이 초과되었습니다.',
+          title: '결제 요청 시간 초과'
+        },
+        transport: {
+          message: '결제 요청이 게이트웨이에 닿기 전에 실패했습니다.',
+          title: '결제 연결 실패'
+        },
+        upgradeCapExceeded: {
+          message: '하루 요금제 변경 한도에 도달했습니다 — 내일 다시 시도하세요',
+          title: '하루 요금제 변경 한도 도달'
+        }
+      },
+      freeTier: {
+        caption:
+          '커넥터가 포함된 nous/welcome에서 실행됩니다. 로그인하면 커넥터는 그대로 두고 계정이 필요한 도구와 다른 모든 모델이 추가됩니다.',
+        connectors: '커넥터',
+        footnote: '무료 등급에는 잔액도 결제할 금액도 없습니다. Nous 계정으로 로그인하면 결제와 사용량이 표시됩니다.',
+        included: '포함',
+        message: 'Nous 계정으로 로그인하면 더 많은 모델과 도구를 쓸 수 있습니다.',
+        model: '모델',
+        name: 'Nous · 무료 등급',
+        plan: '무료 등급',
+        signIn: '로그인',
+        title: 'Nous 무료 등급을 쓰고 있습니다'
+      },
+      perMonth: amount => `월 ${amount}`,
+      plan: {
+        alreadyOn: name => `이미 ${name} 요금제입니다. 바꿀 것이 없습니다.`,
+        backAria: '결제로 돌아가기',
+        cancel: '취소',
+        cannotChange: '여기서는 그 변경을 할 수 없습니다.',
+        changePlan: '요금제 변경',
+        checkingChange: '변경 내용 확인 중…',
+        confirmDowngrade: '하향 확인',
+        current: '현재 요금제',
+        downgrade: '하향',
+        effectScheduled: (targetName, effectiveAt, creditsDelta) =>
+          `${targetName}(으)로 변경 — ${effectiveAt}에 적용됩니다. 지금은 결제되지 않으며 그때까지 현재 요금제를 유지합니다.${creditsDelta ? ` 월 크레딧 변화: ${creditsDelta}.` : ''}`,
+        empty: '지금은 바꿀 수 있는 요금제가 없습니다.',
+        notScheduleable: '여기서는 이 변경을 예약할 수 없습니다.',
+        scheduled: '예약됨',
+        scheduling: '예약 중…',
+        title: '요금제',
+        tryAgain: '다시 시도',
+        undo: '실행 취소',
+        undoing: '되돌리는 중…',
+        viewPlans: '요금제 보기'
+      },
+      preview: '미리보기',
+      sections: {
+        invoices: '청구서',
+        paymentAndCredits: '결제 및 크레딧',
+        plan: '요금제',
+        usage: '사용량'
+      },
+      state: {
+        autoRefill: {
+          chargesDescription: (reloadTo, threshold) =>
+            `잔액이 ${threshold} 아래로 떨어지면 자동으로 ${reloadTo}을(를) 결제합니다.`,
+          distinctCardCaption: cardLabel => `자동 충전은 ${cardLabel}(으)로 결제됩니다 — 포털에서 맞추세요`,
+          distinctCardFallback: '다른 카드',
+          enabledPill: '사용 중',
+          genericDescription: '잔액이 기준 금액 아래로 떨어지면 채워 둡니다.',
+          manageCaption: '자동 충전은 포털에서 관리하세요.',
+          notAvailablePill: '—',
+          offPill: '꺼짐',
+          reconcileAction: '맞추기 ↗',
+          title: '잔액이 적을 때 충전',
+          turnOnCaption: '자동 충전은 포털에서 켜세요'
+        },
+        buyCredits: {
+          description: '카드로 한 번 결제하며 오늘 잔액에 추가됩니다.'
+        },
+        notice: {
+          loggedOut: {
+            action: '로그인',
+            message: '잔액, 요금제, 사용량을 여기서 보려면 Nous 계정으로 로그인하세요.',
+            title: 'Nous 계정 연결'
+          },
+          noCard: {
+            action: '카드 추가 ↗',
+            message: '등록된 카드가 있어야 충전 크레딧 구매와 자동 충전을 쓸 수 있습니다. 포털에서 카드를 추가하세요.',
+            title: '등록된 결제 수단 없음'
+          },
+          openPortal: '포털 열기 ↗'
+        },
+        paymentMethod: {
+          addAction: '결제 수단 추가',
+          description: '충전과 구독 갱신에 쓰는 카드를 관리합니다.',
+          provenance: {
+            autoRefill: '자동 충전 카드',
+            customerDefault: '고객 기본 카드',
+            subPin: '구독 카드',
+            suffix: label => ` - ${label}`
+          },
+          title: '결제 수단',
+          updateAction: '업데이트'
+        },
+        planCard: {
+          adjustPlanAction: '요금제 조정 ↗',
+          cancellationCaption: when => `${when}에 해지됩니다.`,
+          chooseAction: '선택 ↗',
+          downgradeCaption: (tierName, when) => `${when}에 ${tierName}(으)로 바뀝니다.`,
+          freeTier: '무료',
+          noSubscriptionCaption: '활성 구독이 없습니다 — 유료 모델은 충전 크레딧에서 차감됩니다.',
+          renewsCaption: date => `${date}에 갱신`,
+          unavailableCaption: '구독 정보를 불러올 수 없습니다. 포털은 계속 열 수 있습니다.'
+        },
+        usage: {
+          monthlyCap: {
+            barLabel: '월 지출 한도 사용량',
+            captionDefault: '기본 상한',
+            captionSpending: '월 원격 지출',
+            title: '월 지출 한도',
+            valueUsed: (spent, limit) => `${limit} 중 ${spent} 사용`
+          },
+          subscriptionCredits: {
+            barLabel: '남은 구독 크레딧',
+            captionResets: date => `${date}에 초기화`,
+            title: '구독 크레딧',
+            valueOf: (remaining, monthly) => `${monthly} 중 ${remaining} 남음`,
+            valueOver: (remaining, monthly, over) => `${monthly} 중 ${remaining} 남음 · ${over} 초과`
+          },
+          topupCredits: {
+            caption: '만료되지 않음',
+            title: '충전 크레딧'
+          }
+        }
+      },
+      stepUp: {
+        deniedBody: '본인 확인이 끝났지만 이 터미널의 원격 지출은 허용되지 않았습니다.',
+        deniedTitle: '본인 확인이 승인되지 않았습니다',
+        dismiss: '닫기',
+        openVerification: '본인 확인 페이지 열기',
+        successBody: '이 터미널의 원격 지출이 허용되었습니다.',
+        successTitle: '본인 확인 완료',
+        verify: '계속하려면 본인 확인',
+        waiting: '본인 확인 링크를 기다리는 중…'
+      },
+      summary: {
+        autoRefill: '자동 충전',
+        balance: '잔액',
+        plan: '요금제'
+      },
+      title: '결제',
+      usage: {
+        title: '사용량'
+      },
+      usageLabel: label => `${label} 사용량`
+    },
+    computerUse: {
+      accessibility: '손쉬운 사용',
+      driverHealth: '드라이버 상태',
+      screenRecording: '화면 기록'
+    },
+    customEndpoints: {
+      activationFailed: '활성화 실패',
+      active: '사용 중',
+      addTitle: '엔드포인트 추가',
+      apiKeySet: 'API 키 설정됨',
+      apiMode: 'API 모드',
+      autoDetect: '자동 감지',
+      contextPlaceholder: '자동',
+      couldNotLoad: '사용자 지정 엔드포인트를 불러오지 못했습니다',
+      deleteConfirm: name => `${name}을(를) 삭제할까요?`,
+      deleteEndpoint: '엔드포인트 삭제',
+      deleteFailed: '삭제 실패',
+      editTitle: '엔드포인트 편집',
+      emptyDescription: '아래에서 OpenAI 호환 엔드포인트를 추가하세요.',
+      emptyTitle: '사용자 지정 엔드포인트 없음',
+      endpointReachable: '엔드포인트에 연결할 수 있습니다.',
+      endpointReachableModels: (reachable, count) => `${reachable} 모델 ${count}개를 찾았습니다.`,
+      endpointReachableTransport: transport => `엔드포인트에 연결할 수 있습니다(${transport} 경로로 응답).`,
+      endpointSaved: '사용자 지정 엔드포인트를 저장했습니다.',
+      endpointValidationFailed: '엔드포인트 검증에 실패했습니다.',
+      fields: {
+        apiKey: 'API 키',
+        apiKeyNewPlaceholder: '현재 키를 유지하려면 비워 두세요',
+        apiKeyPlaceholder: '선택 사항',
+        context: '컨텍스트',
+        defaultModel: '기본 모델',
+        discoverModels: '모델 찾기',
+        endpointUrl: '엔드포인트 URL',
+        name: '이름',
+        providerId: '제공업체 ID',
+        useNewChats: '새 대화에 사용'
+      },
+      namePlaceholder: 'Axet Proxy',
+      newEndpoint: '새 엔드포인트',
+      save: '저장',
+      saveFailed: '저장 실패',
+      test: '시험',
+      title: '사용자 지정 엔드포인트',
+      use: '사용',
+      validationFailed: '검증 실패'
+    },
+    hudModifier: {
+      description:
+        'Mac에서는 ⌘ + Option, Windows/Linux에서는 Ctrl + Alt를 눌렀다 떼면 어느 앱에서든 HUD를 앞으로 불러옵니다. 기본값은 꺼짐이며 이 기기에만 적용됩니다.',
+      missingHelper:
+        '이 Hermes 설치에는 HUD 제스처 도우미가 없습니다. Hermes를 업데이트하거나 다시 설치한 뒤 다시 시도하세요.',
+      permission:
+        '시스템 설정 → 개인정보 보호 및 보안 → 입력 모니터링에서 Hermes를 허용한 뒤 다시 시도하세요. 이 제스처는 키 입력을 기록하거나 화면을 캡처하지 않습니다.',
+      title: '눌러서 HUD 불러오기',
+      unavailable:
+        'HUD 제스처 도우미를 시작하지 못했거나 예기치 않게 멈췄습니다. 다시 시도하거나 Hermes를 다시 시작하세요. 기존 HUD 단축키는 Hermes 안에서 계속 작동합니다.',
+      unsupportedSession:
+        '이 데스크톱 세션은 전역 보조 키 입력을 지원하지 않습니다. Linux는 X11이 필요하며 Wayland는 지원하지 않습니다.'
+    },
+    mcp: {
+      allServers: '모든 서버',
+      authenticate: '인증',
+      authenticatedMessage: (server, count) => `${server}: 도구 ${count}개`,
+      authenticatedTitle: '인증됨',
+      capabilitySummary: (tools, prompts, resources) =>
+        `${[
+          `도구 ${tools}개`,
+          ...(prompts ? [`프롬프트 ${prompts}개`] : []),
+          ...(resources ? [`리소스 ${resources}개`] : [])
+        ].join(', ')} 사용 중`,
+      catalogEnvRequired: '설치하기 전에 필수 값을 입력하세요.',
+      catalogInstallFailed: name => `${name}을(를) 설치하지 못했습니다`,
+      catalogLoading: 'MCP 카탈로그 불러오는 중...',
+      costTokens: tokens => `호출당 약 ${tokens} 토큰`,
+      deepLinkConfirm: '서버 추가',
+      deepLinkDescription:
+        '링크가 이 MCP 서버를 Hermes에 추가하라고 요청했습니다. 아래 구성을 정확히 확인하세요. 이 구성은 Hermes가 아니라 링크에서 온 것입니다.',
+      deepLinkErrorConfig: '링크의 구성이 올바른 base64 인코딩 JSON이 아닙니다.',
+      deepLinkErrorName: '링크의 서버 이름이 없거나 올바르지 않습니다.',
+      deepLinkErrorShape: '구성은 문자열 `url` 또는 `command` 필드가 있는 JSON 객체여야 합니다.',
+      deepLinkErrorTitle: 'MCP 설치 링크가 거부되었습니다',
+      deepLinkErrorTooLarge: '구성 데이터가 32KB 한도를 넘습니다.',
+      deepLinkErrorUrl: 'http://와 https:// 서버 URL만 허용됩니다.',
+      deepLinkNameConflict: name => `${name}(이)라는 서버가 이미 있습니다. 다른 이름을 고르거나 취소하세요.`,
+      deepLinkNameInvalid: '이름은 영문자, 숫자, 점, 대시, 밑줄로 1~64자여야 합니다.',
+      deepLinkStdioWarning:
+        '이 서버는 아래 명령으로 내 컴퓨터에서 로컬 프로세스를 실행합니다. 출처를 신뢰할 때만 계속하세요.',
+      deepLinkTitle: 'MCP 서버를 추가할까요?',
+      disabled: '비활성화됨',
+      invalidJson: '잘못된 MCP JSON',
+      loading: 'MCP 서버 불러오는 중...',
+      name: '이름',
+      noOutput: '아직 출력이 없습니다.',
+      reloadFailed: 'MCP를 다시 불러오지 못했습니다',
+      remove: '제거',
+      removeFailed: '제거 실패',
+      saveFailed: '저장 실패',
+      savedMessage: name => `${name}은(는) MCP를 다시 불러온 뒤 적용됩니다.`,
+      savedTitle: 'MCP 서버를 저장했습니다',
+      serverJson: '서버 JSON',
+      statusConnecting: '연결 중…',
+      statusError: '오류',
+      statusNeedsAuth: '인증 필요',
+      statusOff: '꺼짐',
+      test: '연결 시험',
+      usage30d: uses => `30일간 ${uses}회 사용`
+    },
+    pluginPages: {
+      agentSettings: '에이전트 설정',
+      blurb:
+        '설치된 플러그인이 추가한 옵션입니다. 플러그인마다 자체 페이지가 있고, 일부는 그 아래 하위 페이지를 추가합니다.',
+      empty: '아직 설정이 있는 플러그인이 없습니다.',
+      manage: '플러그인 관리',
+      missing: '그 플러그인에는 설정 페이지가 없습니다. 비활성화되었거나 제거되었을 수 있습니다.',
+      pageCount: n => (n === 1 ? '페이지 1개' : `페이지 ${n}개`)
+    },
+    screenshot: {
+      captureFailed: '맨 앞 창을 캡처하지 못했습니다. 아무것도 첨부하거나 보내지 않았습니다.',
+      checking: '스크린샷 단축키 확인 중…',
+      contextChanged: '캡처하는 동안 현재 초안이 바뀌었습니다. 스크린샷을 첨부하거나 보내지 않았습니다.',
+      disabled: '스크린샷 단축키가 꺼져 있습니다.',
+      enabledDesc:
+        '어느 앱에서든 양쪽 Command 키를 함께 누르면 맨 앞 창을 캡처해 현재 Hermes 초안에 첨부합니다. 자동으로 보내지는 않습니다. 기본값은 꺼짐이며 이 Mac에만 적용됩니다. 창 내용이 민감할 수 있으니 보내기 전에 첨부 파일을 확인하세요.',
+      enabledTitle: '스크린샷 단축키',
+      errorTitle: '스크린샷 단축키 오류',
+      inputPermission:
+        '입력 모니터링 권한이 있어야 다른 앱이 활성일 때 Hermes가 양쪽 Command 키를 감지할 수 있습니다. 시스템 설정 → 개인정보 보호 및 보안 → 입력 모니터링에서 Hermes를 허용한 뒤 여기로 돌아와 다시 시도하세요.',
+      loadFailed: '단축키 상태를 읽지 못했습니다. 다시 시도해 현재 설정을 확인하세요.',
+      openSettings: '시스템 설정 열기',
+      permissionFailed: '시스템 설정을 열지 못했습니다. 개인정보 보호 및 보안을 직접 연 뒤 다시 시도하세요.',
+      ready: '단축키가 준비되었습니다. 스크린샷은 보내지 않고 현재 초안에 첨부됩니다.',
+      retry: '다시 시도',
+      saveFailed: '단축키 변경을 확인하지 못했습니다. 다시 시도해 현재 설정을 확인하세요.',
+      screenPermission:
+        '화면 기록 권한이 있어야 이 단축키를 쓸 때 Hermes가 맨 앞 앱 창을 캡처할 수 있습니다. 시스템 설정 → 개인정보 보호 및 보안 → 화면 기록에서 Hermes를 허용한 뒤 여기로 돌아와 다시 시도하세요. macOS가 요청하면 Hermes를 다시 시작하세요.',
+      starting: '단축키 감지를 시작하는 중입니다. 아직 준비되지 않았습니다.',
+      statusTitle: '스크린샷 단축키 상태',
+      unavailable: '스크린샷 단축키를 사용할 수 없습니다. 다시 시도하거나 끄세요.'
+    },
+    subpages: {
+      advancedDelegation: '하위 에이전트',
+      advancedDesktop: '데스크톱 및 시작',
+      advancedOutput: '출력 한도',
+      advancedRuntime: '에이전트 한도',
+      advancedTerminal: '터미널 백엔드',
+      advancedTools: '도구 접근',
+      appUpdates: '버전 및 업데이트',
+      appearanceChatDisplay: '채팅 표시',
+      appearanceGeneral: '일반',
+      appearancePet: '펫',
+      appearanceTheme: '테마',
+      appearanceTypography: '글꼴',
+      appearanceWindowLayout: '창 및 레이아웃',
+      archivedSessions: '보관 및 보존',
+      billingOverview: '개요',
+      billingPlans: '요금제',
+      browserNetwork: '로컬 및 사설 URL',
+      browserProfile: '브라우저 프로필',
+      chatAttachments: '첨부 파일',
+      chatBehavior: '동작',
+      defaultDirectory: '기본 프로젝트 폴더',
+      gatewayConnection: '이 창',
+      gatewayDevices: '저장된 연결',
+      gatewayManagedUpdates: '원격 업데이트',
+      gatewayManagedUpdatesEmpty: '여기서 업데이트를 관리하려면 저장된 연결에 SSH 연결을 추가하세요.',
+      gatewayManagedUpdatesUnavailable: '원격 업데이트에는 관리형 SSH 업데이트를 지원하는 데스크톱 버전이 필요합니다.',
+      hudGesture: 'HUD 제스처',
+      keyboardShortcuts: '키 바인딩',
+      memoryContext: '컨텍스트 및 압축',
+      memoryPersistent: '영구 메모리',
+      modelAuxiliary: '보조 모델',
+      modelFallbacks: '대체 모델',
+      modelMain: '기본 모델',
+      modelMoa: 'Mixture of Agents',
+      notificationAlerts: '데스크톱 알림',
+      notificationSounds: '소리',
+      safetyApprovals: '승인',
+      safetyCheckpoints: '체크포인트',
+      safetyPrivacy: '개인정보 및 네트워크',
+      screenCapture: '화면 캡처',
+      uninstall: '제거',
+      vaultCredentials: '저장된 자격 증명',
+      vaultSources: '암호 관리자',
+      voiceConversation: '음성 대화',
+      voiceSpeech: '음성 합성',
+      voiceTranscription: '음성 인식',
+      workspaceFiles: '파일 및 실행',
+      workspaceProjects: '프로젝트 및 탐색',
+      workspaceShell: '셸 환경'
+    },
+    uninstallSection: {
+      appLabel: '앱:',
+      checkingInstalled: '설치된 항목 확인 중…',
+      chooseHowMuch:
+        '얼마나 제거할지 고르세요. 마무리하려면 앱이 닫히며, 돌아오려면 언제든 설치 프로그램을 다시 여세요.',
+      confirmBody: what => `${what}을(를) 제거합니다. 되돌릴 수 없습니다.`,
+      confirmUninstall: '제거 확인',
+      couldNotStart: '제거를 시작하지 못했습니다.',
+      dangerZone: '위험 구역',
+      dataKept: path => `구성, 대화, 비밀 값은 ${path}에 있습니다. 앱을 제거해도 삭제되지 않습니다.`,
+      managedBody: '이 설치는 시스템이 관리하므로 Hermes가 스스로 제거할 수 없습니다.',
+      openAppsSettings: '앱 설정 열기',
+      options: {
+        full: {
+          consequence: '모든 것 — 채팅 GUI, Hermes 에이전트, 그리고 구성·대화·비밀 값·로그 전부',
+          description: '앱, 에이전트, 모든 사용자 데이터(구성, 대화, 예약 작업, 비밀 값, 로그)를 제거합니다.',
+          title: '모두 제거'
+        },
+        gui: {
+          consequence: '데스크톱 채팅 GUI(이 앱과 그 데이터)',
+          description: '이 데스크톱 앱만 제거합니다. Hermes 에이전트, 구성, 대화는 모두 남습니다.',
+          title: '채팅 GUI만 제거'
+        },
+        lite: {
+          consequence: '채팅 GUI와 Hermes 에이전트(구성, 대화, 비밀 값은 유지)',
+          description: '앱과 Hermes 에이전트를 제거하되 나중에 다시 설치할 수 있도록 구성, 대화, 비밀 값은 남깁니다.',
+          title: 'GUI + 에이전트 제거, 데이터 유지'
+        }
+      },
+      uninstallHermes: 'Hermes 제거',
+      uninstalling: '제거 중…',
+      yesUninstall: '예, 제거합니다'
+    },
+    vault: {
+      add: '추가',
+      addConfirm: '저장',
+      addDescription: '이 컴퓨터에 암호화되어 저장됩니다. 에이전트는 암호를 보지 못합니다.',
+      addTitle: '로그인, 카드 또는 주소 추가',
+      added: '저장했습니다.',
+      adding: '저장 중…',
+      addressLine1Field: '주소 1',
+      addressLine2Field: '주소 2',
+      blurb:
+        '"GitHub에 로그인해 줘"라고 말하면 에이전트가 대신 로그인합니다. 로그인 페이지를 처음 만나면 그 자리에서 로그인 정보를 물어보고, 그 뒤로는 바로 작동합니다. 암호는 이 컴퓨터에 암호화되어 페이지에 바로 채워지며, 모델은 암호를 보지 못합니다.',
+      cardNameField: '카드 소유자 이름',
+      cardNumberField: '카드 번호',
+      cityField: '시/군/구',
+      count: n => `${n}개 저장됨`,
+      countryField: '국가',
+      createdOn: date => `${date}에 추가`,
+      cvcField: 'CVC',
+      deleteAction: '저장된 항목 제거',
+      deleteConfirm: '삭제',
+      deleteDescription: label => `"${label}" 항목이 제거됩니다. 되돌릴 수 없습니다.`,
+      deleteTitle: '이 항목을 삭제할까요?',
+      empty: '아직 저장된 항목이 없습니다',
+      emptyDesc:
+        '여기에 아무것도 추가하지 않아도 됩니다. 에이전트에게 사이트 로그인을 요청하면 그 자리에서 로그인 정보를 한 번 물어봅니다. 미리 입력해 두고 싶다면 추가를 사용하세요.',
+      expMonthField: '만료 월',
+      expYearField: '만료 연도',
+      identifierField: '식별자',
+      identifierShown: identifier => identifier,
+      identifierTypeField: '식별자 유형',
+      identifierTypes: {
+        email: '이메일',
+        phone: '전화번호',
+        username: '사용자 이름'
+      },
+      kindField: '종류',
+      kinds: {
+        address: '주소',
+        login: '로그인',
+        payment: '결제 카드'
+      },
+      labelField: '라벨',
+      labelPlaceholder: '예: GitHub 회사 계정',
+      labelRequired: '라벨이 필요합니다.',
+      loadFailed: '보관함 항목을 불러오지 못했습니다',
+      loginFieldsRequired: '식별자와 암호가 필요합니다.',
+      optional: '(선택 사항)',
+      originField: '사이트 출처',
+      originInvalid: 'https://example.com 같은 올바른 URL을 입력하세요.',
+      originPlaceholder: 'https://github.com',
+      originPlaceholderCheckout: 'https://shop.example.com',
+      otpField: '인증 키',
+      otpHint: '2단계 인증을 켤 때 사이트가 보여 주는 "설정 키"입니다. 저장해 두면 Hermes가 코드를 직접 생성합니다.',
+      otpPlaceholder: 'Base32 비밀 값 또는 otpauth:// 링크',
+      passwordField: '암호',
+      postalField: '우편번호',
+      sources: {
+        blurb:
+          '설치된 암호 관리자는 자동으로 감지됩니다. 에이전트가 처음 그 관리자의 로그인이 필요할 때 잠금 해제를 요청합니다(대화마다 한 번). 메모리에는 세션 토큰만 남으며, 에이전트는 마스터 암호나 로그인 정보를 보지 못합니다.',
+        disabledDesc: '감지되었지만 Hermes에서는 꺼져 있습니다.',
+        lock: '잠그기',
+        lockedDesc: '감지됨. 로그인이 필요할 때 에이전트가 잠금 해제를 요청합니다. 지금 잠금을 해제할 수도 있습니다.',
+        masterPasswordPlaceholder: '마스터 암호',
+        notInstalled: name => `감지되지 않음. ${name} 명령줄 도구를 설치하고 로그인하면 Hermes가 자동으로 감지합니다.`,
+        statusLocked: '잠김',
+        statusNotDetected: '감지되지 않음',
+        statusOff: '꺼짐',
+        statusUnlocked: '잠금 해제됨',
+        title: '암호 관리자',
+        toggleFailed: '암호 관리자를 업데이트하지 못했습니다',
+        unlock: '잠금 해제',
+        unlockDescription:
+          '마스터 암호를 입력하세요. 이 컴퓨터의 암호 관리자에 전달된 뒤 버려지며, 저장되거나 기록되거나 에이전트에 보이지 않습니다.',
+        unlockTitle: name => `${name} 잠금 해제`,
+        unlocked: name => `이 대화에서 ${name} 잠금을 해제했습니다.`,
+        unlockedDesc: '이 대화에서 잠금 해제됨. 30분 동안 사용하지 않거나 Hermes를 닫으면 자동으로 잠깁니다.',
+        unlocking: '잠금 해제 중…'
+      },
+      stateField: '시/도',
+      title: '암호 및 로그인',
+      twoFactorBadge: '2단계 인증 자동'
     }
   },
   skillDeepLink: {
@@ -1756,8 +2568,104 @@ export const ko = defineLocale({
       loadFailed: '스킬 허브를 불러오지 못했습니다',
       previewFailed: '스킬을 미리 보지 못했습니다',
       scanFailed: '보안 검사에 실패했습니다',
-      searchFailed: '허브 검색에 실패했습니다'
-    }
+      searchFailed: '허브 검색에 실패했습니다',
+      installBlockedMessage: (findings, unverified) =>
+        `보안 검사에서 검토가 필요한 ${findings > 0 ? `항목 ${findings}개를` : '위험한 패턴을'} 찾았습니다${unverified ? '. 또한 이 스킬은 확인되지 않은 출처에서 왔습니다' : ''}. 작성자를 신뢰할지 정하기 전에 검사 결과를 읽어 보세요.`,
+      installBlockedTitle: name => `${name}을(를) 설치하지 못했습니다`,
+      openLog: '로그 열기',
+      viewScan: '검사 결과 보기'
+    },
+    plugins: {
+      agentBlurb: '선택한 프로필의 에이전트를 확장합니다(도구, 훅, 제공업체). 게이트웨이를 다시 시작하면 적용됩니다.',
+      agentTitle: '에이전트 플러그인',
+      alreadyInstalled: name => `${name}은(는) 이미 이 프로필에 설치되어 있습니다.`,
+      catalogBrowse: '둘러보기',
+      catalogHide: '카탈로그 둘러보기 숨기기',
+      catalogHint:
+        '플러그인에서 "+ 이 에이전트에 추가"를 누르세요. 검토된 항목은 고정된 커밋으로 선택한 프로필에 설치됩니다. 에이전트+데스크톱 묶음 플러그인은 양쪽 모두 제공합니다.',
+      catalogProvenance: sha => `Hermes 카탈로그에서 설치함${sha ? `(고정 ${sha})` : ''}.`,
+      catalogTitle: '플러그인 카탈로그',
+      deepLinkCatalogInvalidName: '링크의 카탈로그 이름이 없거나 올바르지 않습니다.',
+      deepLinkCatalogUnavailable: 'Hermes 플러그인 카탈로그를 불러오지 못했습니다. 연결을 확인하고 링크를 다시 여세요.',
+      deepLinkCatalogUnknown: name =>
+        `“${name}”은(는) Hermes 플러그인 카탈로그에 없습니다. 아무것도 설치하지 않았습니다.`,
+      deepLinkErrorTitle: '플러그인 설치 링크가 거부되었습니다',
+      defaultProfile: 'Hermes(기본)',
+      desktopHalfPending: '복사 중…',
+      desktopHalfPendingTip:
+        '이 패키지에는 아직 앱에 복사되지 않은 데스크톱 부분이 있습니다. 다시 검색을 누르거나 앱을 다시 시작하세요.',
+      desktopHalfRemote: '사용할 수 없음(원격 백엔드)',
+      desktopHalfRemoteTip:
+        '이 패키지의 데스크톱 부분은 원격 백엔드의 디스크에 있어 이 앱이 읽을 수 없습니다. 여기서 쓰려면 패키지 저장소 URL로 Git에서 설치를 실행하고 데스크톱 대상을 선택하세요. 그러면 데스크톱 부분이 이 컴퓨터로 복제됩니다.',
+      empty: '이 프로필에 설치된 에이전트 플러그인이 없습니다.',
+      emptyAll: '아직 플러그인이 없습니다.',
+      emptyHint: '아래 카탈로그를 둘러보고 검토된 플러그인을 클릭 한 번으로 설치하세요.',
+      halfAgent: '에이전트',
+      halfAgentIn: profile => `${profile}의 에이전트`,
+      halfDesktop: '데스크톱',
+      halfDesktopHint: '이 앱, 모든 프로필에 공통',
+      installAgentHere: '여기에 설치',
+      installAgentHereNoOrigin:
+        '에이전트 부분이 이 프로필에 설치되어 있지 않고, 이 패키지는 직접 복사해 넣은 것이라(카탈로그 항목이나 git 원격 없음) 여기서 설치할 수 없습니다. 폴더를 프로필에 복사하거나 Git에서 다시 설치하세요.',
+      installAgentHereTip: profile =>
+        `데스크톱 부분은 이 앱에 불러왔지만 에이전트 부분은 ${profile}에 설치되어 있지 않습니다. 그곳에 설치하세요.`,
+      kindAgent: '에이전트',
+      kindBoth: '에이전트 + 데스크톱',
+      kindDesktop: '데스크톱',
+      legacyBackend: '이 백엔드는 키 기반 플러그인 전환보다 오래되었습니다. 여기서 관리하려면 Hermes를 업데이트하세요.',
+      loadFailed: '에이전트 플러그인을 불러오지 못했습니다',
+      pageBlurb: '플러그인은 이 앱, 에이전트, 또는 둘 다를 확장할 수 있으며 각 부분에 별도 스위치가 있습니다.',
+      pinnedBadge: sha => `고정 @ ${sha}`,
+      pinnedProvenance: sha => `커밋 ${sha}에 고정됨. 새 고정 값으로 다시 설치할 때까지 업데이트가 거부됩니다.`,
+      portableBadge: '이식 가능',
+      serverStates: {
+        app_not_running: '앱이 실행 중이 아님',
+        connected: '연결됨',
+        endpoint_unavailable: '엔드포인트를 사용할 수 없음',
+        hermes_not_connected: 'MCP 연결 없음',
+        missing_app: '앱 없음',
+        no_interactive_session: '대화형 세션 없음',
+        unknown: '상태 알 수 없음',
+        unsupported_gpu: '지원되지 않는 GPU',
+        version_too_old: '버전이 너무 오래됨'
+      },
+      settingsForm: {
+        required: '필수',
+        save: '설정 저장',
+        saveFailed: name => `${name} 설정을 저장하지 못했습니다`,
+        saved: name => `${name} 설정을 저장했습니다.`,
+        secretSet: '••••••••(설정됨)',
+        secretStoredAs: env =>
+          `config.yaml이 아니라 프로필의 .env에 ${env}(으)로 저장됩니다. 현재 값을 유지하려면 비워 두세요.`
+      },
+      settingsToggle: name => `설정: ${name}`,
+      tierCommunity: '커뮤니티',
+      tierOfficial: '공식',
+      toggleFailed: name => `${name}을(를) 전환하지 못했습니다`,
+      toolsetOff: (name, profile) => `${profile}에서 ${name} 에이전트 도구를 비활성화했습니다`,
+      toolsetOn: (name, profile) => `${profile}에서 ${name} 에이전트 도구를 활성화했습니다`,
+      toolsetToggleFailed: name => `${name} 에이전트 도구를 전환하지 못했습니다. 데스크톱 패널은 바꾸지 않았습니다`,
+      uninstall: '제거',
+      uninstallConfirmBody: (name, profile) =>
+        `${profile} 프로필에서 ${name} 플러그인 파일을 삭제합니다. 함께 제공된 데스크톱 부분도 같이 제거됩니다. 언제든 카탈로그나 Git에서 다시 설치할 수 있습니다.`,
+      uninstallConfirmTitle: name => `${name}을(를) 제거할까요?`,
+      uninstallDesktopConfirmBody: name =>
+        `이 컴퓨터의 desktop-plugins 폴더에서 ${name}을(를) 삭제하고 지금 바로 언로드합니다. 언제든 Git에서 다시 설치하거나 폴더를 다시 넣을 수 있습니다.`,
+      uninstallDesktopTip: name => `이 앱에서 ${name} 제거`,
+      uninstallFailed: name => `${name}을(를) 제거하지 못했습니다`,
+      uninstallTip: (name, profile) => `${profile}에서 ${name} 제거`,
+      uninstalled: name => `${name}을(를) 제거했습니다. 언로드하려면 게이트웨이를 다시 시작하세요.`,
+      uninstalledDesktop: name => `${name}을(를) 제거했습니다.`,
+      updateConsentBody: (name, sha) =>
+        `${name}의 새 카탈로그 고정 값(${sha})은 설치된 버전에 없는 기능 영역을 추가합니다. 신뢰할 때만 적용하세요:`,
+      updateConsentConfirm: '업데이트 적용',
+      updateConsentTitle: name => `${name}이(가) 추가 권한을 요청합니다`,
+      updateFailed: name => `${name}을(를) 업데이트하지 못했습니다`,
+      updateToPin: sha => `${sha}(으)로 업데이트`,
+      updated: name =>
+        `${name}을(를) 현재 카탈로그 고정 값으로 업데이트했습니다. 적용하려면 게이트웨이를 다시 시작하세요.`
+    },
+    tabPlugins: '플러그인'
   },
 
   starmap: {
@@ -1816,7 +2724,18 @@ export const ko = defineLocale({
     ageDays: days => `${days}일 전`,
     durationSeconds: seconds => `${seconds}초`,
     durationMinutes: (minutes, seconds) => `${minutes}분 ${seconds}초`,
-    tokens: value => `${value} 토큰`
+    tokens: value => `${value} 토큰`,
+    extendedTranscript: '확장 기록',
+    moreAgents: count => `에이전트 ${count}개 더 있음`,
+    queued: '대기 중',
+    requestRejected: '하위 에이전트가 요청을 받아들이지 않았습니다',
+    steer: '지시 전달',
+    steerPlaceholder: '이 하위 에이전트에 줄 지시',
+    steerQueued: '다음 체크포인트에 전달하도록 대기 중',
+    stopRequested: '중지 요청됨',
+    transcriptTruncated: '최근 16 KiB만 표시합니다',
+    transcriptUnavailable: '실시간 기록을 사용할 수 없습니다',
+    waitingActivity: '활동을 기다리는 중'
   },
 
   commandCenter: {
@@ -1999,7 +2918,12 @@ export const ko = defineLocale({
       actionFailed: name => `시작하지 못했습니다: ${name}`,
       running: '실행 중...',
       viewLog: '작업 로그'
-    }
+    },
+    sharedGatewayRestartConfirm: '모두 다시 시작',
+    sharedGatewayRestartDescription: bots => `이 기기의 모든 봇이 다시 연결됩니다: ${bots}`,
+    sharedGatewayRestartTitle: '공유 게이트웨이를 다시 시작할까요?',
+    sharedGatewayRestarted: count => `공유 게이트웨이를 다시 시작했습니다(봇 ${count}개)`,
+    toggleBrowser: '브라우저 전환'
   },
 
   messaging: {
@@ -2156,7 +3080,57 @@ export const ko = defineLocale({
         help: '권장 사항입니다. 전화번호나 WhatsApp ID를 쉼표로 구분하세요.'
       }
     },
-    platformIntro: {}
+    platformIntro: {},
+    addListEntry: '하나 더 추가',
+    appliedLive: '실행 중인 게이트웨이에 적용했습니다.',
+    connectingLive: '실행 중인 게이트웨이가 새 자격 증명으로 연결하는 중입니다.',
+    listEntryPlaceholder: 'ID 입력',
+    openLogs: '로그 열기',
+    removeListEntry: '제거',
+    restartAgain: '다시 재시작',
+    restartFailedManual: 'Hermes가 메시징 설정을 적용하려고 다시 시작하지 못했습니다',
+    restartFailedManualDetail: '다시 재시작을 눌러 보고, 그래도 실패하면 로그를 열고 진단 정보를 보내 주세요.',
+    restartNeeded: '저장했습니다. 새 설정을 적용하려면 메시징 게이트웨이를 다시 시작하세요.',
+    restartNow: '지금 다시 시작',
+    restarting: '다시 시작하는 중…',
+    sharedListenerUrl: '공유 게이트웨이 수신기에서 제공되는 주소:',
+    statusFilter: {
+      all: '전체',
+      bad: '오류',
+      good: '연결됨',
+      muted: '비활성',
+      warn: '확인 필요'
+    },
+    telegramQr: {
+      add: '추가',
+      addAtLeastOne: 'Telegram 사용자 ID를 하나 이상 추가하세요.',
+      allowedUsers: '허용된 사용자',
+      applying: '저장 중…',
+      createWithQr: 'QR로 만들기',
+      expired: '만료됨',
+      expiresIn: remaining => `${remaining} 뒤 만료`,
+      numericOnly: '허용할 Telegram 사용자 ID는 숫자여야 합니다.',
+      openTelegram: 'Telegram 열기',
+      ownerDetected: '소유자 확인됨',
+      pairingExpired: 'Telegram 연결 시간이 만료되었습니다. 새 QR 설정을 시작해 다시 시도하세요.',
+      quickHelp:
+        'QR 코드를 스캔하고 Telegram에서 확인하세요. Hermes가 봇을 만들고 Telegram 사용자 ID를 자동으로 알아냅니다.',
+      quickSetup: '빠른 설정',
+      ready: '봇을 만들었습니다',
+      recommended: '권장',
+      replaceWarning:
+        'Telegram 자격 증명이 이미 설정되어 있습니다. 새 QR 설정이나 봇 토큰을 저장하면 현재 봇을 대체합니다.',
+      saveAndRestart: '저장 후 다시 시작',
+      savedRestartFailed: detail => `Telegram을 저장했지만 게이트웨이를 다시 시작하지 못했습니다${detail}`,
+      savedRestarting: 'Telegram을 저장했습니다. 게이트웨이를 다시 시작하는 중…',
+      scanHint: '휴대폰의 Telegram 앱으로 스캔하거나 이 컴퓨터에서 링크를 여세요.',
+      starting: '시작하는 중…',
+      stillWaiting: detail => `아직 Telegram을 기다리는 중입니다. 다시 시도 전 사유: ${detail}`,
+      subtitle: '두 방법 모두 내가 관리하는 봇을 연결하고 자격 증명은 이 Hermes 설치에만 저장합니다.',
+      title: 'Telegram 봇 연결 방법 선택',
+      userIdPlaceholder: 'Telegram 사용자 ID',
+      waiting: 'Telegram을 기다리는 중…'
+    }
   },
 
   webhooks: {
@@ -2252,7 +3226,16 @@ export const ko = defineLocale({
       gatewayUnreachable: gateway => `${gateway} · 연결할 수 없음`,
       onGateway: (name, gateway) => `${name} · ${gateway}`,
       switchTo: (name, gateway) => `${name} 프로필로 전환 — ${gateway}`,
-      deleteOn: gateway => `(${gateway})`
+      deleteOn: gateway => `(${gateway})`,
+      connectExistingInstead: '대신 기존 항목에 연결',
+      installDeviceConfirm: '로컬에 설치',
+      installDeviceDesc:
+        'Hermes를 로컬에 설치한 뒤 이 컴퓨터에서 새 대화를 엽니다. 확인하기 전에는 아무것도 설치하지 않습니다.',
+      installDeviceTitle: '이 기기로 전환할까요?',
+      localDevice: '이 기기(로컬 백엔드 — Hermes가 없으면 설치하고, 있으면 새 대화를 엽니다)',
+      switchDeviceConfirm: '전환',
+      switchDeviceDesc: '이 컴퓨터에서 새 대화를 엽니다. 지금 있는 대화는 다른 게이트웨이에 그대로 남습니다.',
+      switchDeviceTitle: '이 기기로 전환할까요?'
     },
     remoteOverride: {
       menuItem: '원격 호스트에 연결…',
@@ -2353,7 +3336,20 @@ export const ko = defineLocale({
     failedLoadSoul: 'SOUL.md를 불러오지 못했습니다',
     failedSaveSoul: 'SOUL.md를 저장하지 못했습니다',
     failedCreate: '프로필을 만들지 못했습니다',
-    failedRename: '프로필 이름을 변경하지 못했습니다'
+    failedRename: '프로필 이름을 변경하지 못했습니다',
+    defaultDescription: 'Hermes를 열 때와 새 대화에 사용됩니다. 기존 대화는 원래 프로필에 그대로 남습니다.',
+    defaultProfile: '기본 프로필',
+    defaultSet: name => `이제 ${name}이(가) 기본 프로필입니다`,
+    failedSetDefault: '기본 프로필을 설정하지 못했습니다',
+    openInNewWindow: '새 창에서 열기',
+    setAsDefault: '기본값으로 설정',
+    soulMissing:
+      '이 프로필에는 아직 SOUL.md 파일이 없습니다. 아래에 지침을 쓰고 저장하면 만들어집니다. config.yaml의 성격 프리셋은 따로 관리됩니다.',
+    status: {
+      needsInput: count => (count === 1 ? '답이 필요한 대화 1개' : `답이 필요한 대화 ${count}개`),
+      unread: count => (count === 1 ? '읽지 않은 대화 1개' : `읽지 않은 대화 ${count}개`),
+      working: count => (count === 1 ? '실행 중인 대화 1개' : `실행 중인 대화 ${count}개`)
+    }
   },
 
   modelAssignment: {
@@ -2497,7 +3493,14 @@ export const ko = defineLocale({
       failedLoad: '청사진을 불러오지 못했습니다',
       emptyTitle: '사용할 수 있는 청사진이 없습니다',
       emptyDesc: '이 백엔드에는 사용할 수 있는 자동화 청사진이 없습니다.'
-    }
+    },
+    editJob: '작업 편집',
+    lastRunFailed: '마지막 실행 실패:',
+    overdueSince: '지연 시작 시각:',
+    queuedRun: '대기 중인 실행',
+    runAgain: '다시 실행',
+    scriptBadge: '스크립트',
+    scriptLabel: '스크립트'
   },
 
   artifacts: {
@@ -2657,7 +3660,14 @@ export const ko = defineLocale({
       enter: label => `${label} 열기`,
       reorder: label => `${label} 순서 변경`,
       toggle: (label, open) => `${open ? '표시' : '숨기기'}: ${label} 대화`,
-      back: '모든 프로젝트'
+      back: '모든 프로젝트',
+      autoDiscovered: '자동 발견됨',
+      createdInPreviousContext:
+        '이전 연결이나 프로필에서 만든 프로젝트입니다. 찾으려면 다시 전환하세요. IDEA.md는 작성되지 않았습니다.',
+      hiddenFromSidebar: '사이드바에서 숨김',
+      showAllCount: count => `대화 ${count}개 모두 보기`,
+      showAllSessions: '모든 대화 보기',
+      undoHide: '실행 취소'
     },
     newSessionIn: label => `${label}에서 새 대화`,
     showMoreIn: (count, label) => `${count}개 더 보기 — ${label}`,
@@ -2707,7 +3717,9 @@ export const ko = defineLocale({
       ageNow: '방금',
       ageDay: '일',
       ageHour: '시간',
-      ageMin: '분'
+      ageMin: '분',
+      continuationOrigin: '자동 이어 가기 — 이 대화는 압축된 뒤 이어서 진행되었습니다',
+      unarchive: '보관 해제'
     },
     dateDivider: {
       today: '오늘',
@@ -2720,7 +3732,62 @@ export const ko = defineLocale({
       working: '작업 중',
       done: '완료'
     },
-    markAllRead: '모두 읽음으로 표시'
+    markAllRead: '모두 읽음으로 표시',
+    files: '파일',
+    filter: {
+      archived: '보관됨',
+      closed: '닫힘',
+      collapseAll: '모두 접기',
+      cost: '비용',
+      created: '만든 날짜',
+      draft: '초안',
+      expandAll: '모두 펼치기',
+      filters: '필터',
+      grouping: '묶기',
+      idle: '유휴',
+      inboxStyle: '받은편지함 스타일',
+      manual: '수동',
+      merged: '병합됨',
+      needsInput: '입력 필요',
+      noPR: 'PR 없음',
+      open: '열림',
+      ordering: '정렬',
+      pr: 'PR',
+      preview: '미리보기',
+      profile: '프로필',
+      project: '프로젝트',
+      pullRequest: '풀 리퀘스트',
+      resetToDefaults: '기본값으로 재설정',
+      show: '표시',
+      status: '상태',
+      tokens: '토큰',
+      unread: '읽지 않음',
+      updated: '업데이트 날짜',
+      working: '작업 중'
+    },
+    gatewayGroups: {
+      actions: '그룹 작업',
+      aliasHint: '표시 이름만 바뀌며 게이트웨이와 프로필 이름은 그대로입니다.',
+      aliasLabel: '표시 이름',
+      grouping: '게이트웨이 및 프로필',
+      moveDown: '아래로 이동',
+      moveUp: '위로 이동',
+      rename: '그룹 이름 바꾸기',
+      reorder: '그룹 순서 바꾸기',
+      resetName: '이름 재설정'
+    },
+    logs: '로그',
+    profileRail: '프로필 레일',
+    projectLoadFailed: '대화를 불러오지 못했습니다',
+    review: '검토',
+    storageCorrupt: {
+      action: '이 프로필의 Hermes를 종료한 뒤 파일을 바꾸지 말고 살펴보거나 스냅샷을 복원하세요:',
+      body: profiles =>
+        `Hermes가 ${profiles}의 대화 기록을 모두 읽을 수 없습니다. 이 목록에서 빠진 대화는 삭제된 것이 아니라 저장된 파일이 손상된 것입니다.`,
+      guide: '복구 안내',
+      title: '대화 데이터베이스가 손상되었습니다'
+    },
+    terminal: '터미널'
   },
 
   composer: {
@@ -2787,7 +3854,72 @@ export const ko = defineLocale({
       '/resume': '이전 대화 재개',
       '/details': '대화 기록의 상세 수준 조절',
       '/copy': '선택 영역 또는 마지막 어시스턴트 메시지 복사',
-      '/quit': 'Hermes 종료'
+      '/quit': 'Hermes 종료',
+      '/agents': '활동 중인 에이전트와 실행 중인 작업 표시',
+      '/approvals': '위험 명령 승인 모드를 보거나 영구 설정',
+      '/battery': '상태 표시줄의 색상별 배터리 표시 켜기/끄기',
+      '/bg': '별도의 백그라운드 대화에서 프롬프트 실행',
+      '/blueprint': '청사진 템플릿으로 자동화 설정',
+      '/branch': '마지막 메시지를 새 채팅으로 분기',
+      '/browser': '에이전트 브라우저 관리 [connect|disconnect|status|use]',
+      '/btw': '대화를 끊지 않고 이 대화에 대한 곁가지 질문하기',
+      '/bundles': '스킬 묶음 목록(여러 스킬을 /<name> 하나로 부르는 별칭)',
+      '/codex-runtime': 'OpenAI/Codex 모델용 codex app-server 실행 환경 켜기/끄기',
+      '/compress': '이 대화의 컨텍스트 압축',
+      '/context': '사용량 게이지, 분류별 내역, 압축 통계, 처리량을 담은 상세 컨텍스트 창 보기',
+      '/debug': '디버그 보고서(시스템 정보 + 로그)를 올리고 공유 링크 받기',
+      '/diff': '작업 디렉터리의 git 변경 사항 표시',
+      '/egress': 'Docker 외부 송신 프록시 상태 표시',
+      '/export': '프로필(구성, 스킬, 테마)을 공유용 압축 파일로 내보내기',
+      '/focus': '집중 보기 켜기/끄기 — 내 프롬프트와 최종 응답만 표시',
+      '/goal': '달성될 때까지 Hermes가 여러 턴에 걸쳐 추진할 상시 목표 설정',
+      '/handoff': '이 대화를 메시징 플랫폼으로 넘기기',
+      '/hatch': '새 펫 만들기(펫 생성기 열기)',
+      '/heartbeat': '유휴 상태일 때 이 대화로 다시 들어오는 반복 프롬프트 설정',
+      '/import': '공유된 프로필 압축 파일을 새 프로필로 가져오기',
+      '/init': '저장소를 살펴 AGENTS.md 프로젝트 지침을 만들거나 업데이트',
+      '/journey': '메모리 그래프 열기 — 시간에 따른 스킬과 메모리',
+      '/learn': '설명하는 무엇이든(디렉터리, URL, 이 채팅, 메모)에서 재사용 스킬 배우기',
+      '/loop': '이 대화에서 정해진 간격으로 프롬프트 반복 실행',
+      '/memory': '대기 중인 메모리 쓰기 검토 / 승인 관문 켜기·끄기',
+      '/moa': '기본 Mixture of Agents 프리셋으로 프롬프트 하나를 실행한 뒤 모델 복원',
+      '/model': '이 대화의 모델 전환',
+      '/new': '새 데스크톱 채팅 시작',
+      '/palette': '퍼지 명령 팔레트 열기(Ctrl+P로도 가능)',
+      '/pause': "새 작업을 전체적으로 일시 중지(비상 정지). '/pause off'로 재개",
+      '/personality': '미리 정의된 성격 설정',
+      '/pet': 'petdex 마스코트 켜기/끄기 또는 입양(/pet, /pet list, /pet boba)',
+      '/plan': '아무것도 실행하지 않고 .hermes/plans/에 마크다운 구현 계획 작성',
+      '/platform': '문제가 있는 게이트웨이 플랫폼을 일시 중지, 재개하거나 목록 표시',
+      '/profile': '활성 Hermes 프로필 전환',
+      '/prompt': '$EDITOR에서 다음 프롬프트(마크다운)를 작성한 뒤 보내기',
+      '/queue': '다음 턴용 프롬프트를 대기열에 넣거나 대기 중인 프롬프트 list/edit/rm/move/clear',
+      '/reasoning': '추론 수준 또는 표시 방식 [<level> [--global]|show|hide|full|clamp]',
+      '/refine': '지금 이 대화를 돌아보고 교훈을 메모리/스킬에 저장',
+      '/retry': '마지막 메시지 다시 시도(에이전트에 다시 보내기)',
+      '/review': '방금 논의한 작업(PR, 코드, 문서)을 검토할 독립 하위 에이전트 실행',
+      '/rollback': '파일 시스템 체크포인트 목록 보기 또는 복원(직접 고친 내용은 유지, --all로 덮어쓰기)',
+      '/save': '현재 기록을 JSON으로 저장',
+      '/skin': '데스크톱 테마 전환 또는 다음 테마로 순환',
+      '/start': '플랫폼 시작 핑에 답하지 않고 확인만 하기',
+      '/status': '현재 대화 상태 표시',
+      '/steer': '중단하지 않고 다음 도구 호출 뒤에 메시지 끼워 넣기',
+      '/stop': '진행 중인 턴과 백그라운드 프로세스 중지',
+      '/subgoal': '진행 중인 목표에 추가 기준을 더하거나 관리',
+      '/subscription': 'Nous 요금제를 보고 브라우저에서 변경',
+      '/suggestions': '제안된 자동화 검토(수락/무시)',
+      '/timestamps': '메시지와 /history의 [HH:MM] 시각 표시 켜기/끄기',
+      '/title': '현재 대화 이름 바꾸기',
+      '/tools': '도구 관리: /tools [list|disable|enable] [name...]',
+      '/topic': 'Telegram DM 주제 대화를 켜거나 살펴보기',
+      '/topup': 'Nous 잔액을 보고 포털에서 결제 관리',
+      '/undo': '사용자 턴 N개를 되돌리고 다시 프롬프트(기본값 1)',
+      '/usage': '토큰 사용량과 속도 제한 표시. `reset`은 적립된 Codex 한도 초기화를 사용',
+      '/version': 'Hermes Agent 버전 표시',
+      '/wake': '데스크톱 호출어 감지 제어 [on|off|status]',
+      '/whoami': '내 슬래시 명령 권한 표시(admin / user)',
+      '/worktree': '격리된 git 작업트리 표시, 목록, 생성 또는 정리',
+      '/yolo': 'YOLO 켜기/끄기 — 위험 명령 자동 승인'
     },
     hotkeyDescs: {
       'composer.mention': '파일, 폴더, URL 및 Git 참조',
@@ -2904,7 +4036,28 @@ export const ko = defineLocale({
         description: '선택한 코드의 작동 방식을 차례로 설명하고 핵심 파일을 연결합니다.',
         text: '이 기능의 작동 방식을 설명하고 핵심 파일을 알려 주세요.'
       }
-    }
+    },
+    hiddenQueued: '설정 메모',
+    queueCollapse: '접기',
+    queueDroppedBody:
+      '여러 번 시도해도 대화를 재개할 수 없어 이 백그라운드 대기열 항목을 버렸습니다. 대기열의 다른 항목은 영향을 받지 않았습니다.',
+    queueDroppedTitle: '대기 중인 프롬프트를 버렸습니다',
+    queueExpand: '펼치기',
+    queuedTerminalSelectionExpiredBody:
+      '대기 중인 이 터미널 선택 영역을 더 이상 쓸 수 없습니다. 줄을 다시 선택(Ctrl/Cmd+L)한 뒤 메시지를 다시 대기열에 넣으세요.',
+    restoredDraftNotice: '보내지 않은 메시지를 복원했습니다',
+    restoredDraftUndo: '실행 취소',
+    terminalSelectionMissingBody:
+      '보내기 전에 터미널 줄을 다시 선택(Ctrl/Cmd+L)하세요. 이 칩에는 원본 텍스트가 없습니다.',
+    terminalSelectionMissingTitle: '터미널 선택 영역을 사용할 수 없습니다',
+    voiceEngine: '음성 대화 엔진',
+    voiceEngineChained: '음성 인식 + Hermes 음성',
+    voiceEngineChainedShort: '음성 인식',
+    voiceEngineChangeFailed: '음성 대화 엔진을 바꾸지 못했습니다',
+    voiceEngineLive: 'GPT-Live(전이중, Hermes에 위임)',
+    voiceEngineLiveNeedsKey: 'OpenAI API 키가 필요합니다',
+    voiceEngineLiveShort: 'GPT-Live',
+    wakeWord: phrase => `호출어 "${phrase}"`
   },
 
   statusStack: {
@@ -2964,8 +4117,103 @@ export const ko = defineLocale({
       branchOffFrom: base => `${base}에서 새 브랜치 만들기`,
       switchTo: branch => `${branch} 브랜치로 전환`,
       switchFailed: branch => `${branch} 브랜치로 전환하지 못했습니다`,
-      worktrees: '작업트리'
-    }
+      worktrees: '작업트리',
+      readOnlyScope: '읽기 전용 보기 — 스테이징, 되돌리기, 커밋은 커밋되지 않음 범위에 적용됩니다'
+    },
+    control: {
+      actionFailed: msg => `작업 실패: ${msg}`,
+      actionSucceeded: '작업 성공',
+      add: '추가',
+      addCriterion: '기준 추가',
+      addCriterionDialogTitle: '기준 추가',
+      addCriterionPlaceholder: '기준 내용을 입력하세요...',
+      clearCriteria: '모든 기준 지우기',
+      clearCriteriaConfirmBody: '이 목표에서 모든 기준을 제거할까요?',
+      clearCriteriaConfirmTitle: '모든 기준을 지울까요?',
+      clearGoal: '목표 지우기',
+      clearGoalConfirmBody: '진행 중인 목표를 지울까요? 되돌릴 수 없습니다.',
+      clearGoalConfirmTitle: '목표를 지울까요?',
+      clearHeartbeat: '하트비트 지우기',
+      clearHeartbeatConfirmBody: '이 하트비트를 지울까요?',
+      clearHeartbeatConfirmTitle: '하트비트를 지울까요?',
+      continuationBusy:
+        '목표를 재개했습니다 — 대화가 사용 중이니 계속하려면 먼저 현재 응답을 중지하세요(중지 버튼 또는 Esc)',
+      continuationFailed: '목표 이어 가기를 보내지 못했습니다',
+      continuationQueued: '목표를 재개했습니다 — 현재 턴이 끝날 때까지 이어 가기를 대기열에 둡니다',
+      contractBoundaries: '경계',
+      contractConstraints: '제약 조건',
+      contractOutcome: '결과',
+      contractStopWhen: '중지 조건',
+      contractVerification: '검증',
+      controlUnavailable: msg => `대화 제어를 사용할 수 없습니다: ${msg}`,
+      copyCriterion: index => `기준 ${index} 복사`,
+      copyFailure: '기준을 클립보드에 복사하지 못했습니다',
+      copySuccess: '기준을 클립보드에 복사했습니다',
+      criteriaHeader: count => `기준 · ${count}`,
+      criterionLabel: '기준',
+      dismissError: '오류 닫기',
+      dismissLoop: '루프 닫기',
+      gateAttempts: (attempts, max) => `${attempts}/${max}회 시도`,
+      gateCommand: '명령',
+      gateLastExit: code => (code === null ? '대기 중' : `종료 코드: ${code}`),
+      gateTimeout: seconds => `제한 시간 ${seconds}초`,
+      goalActions: '목표 작업',
+      goalActiveTurns: (turn, maxTurns) => `턴 ${turn}/${maxTurns}`,
+      goalDetailsTitle: '목표 세부 정보',
+      goalDoneTurns: turns => `${turns}턴`,
+      goalTurn: turn => `턴 ${turn}`,
+      heartbeatActions: '하트비트 작업',
+      heartbeatActive: '하트비트 활성',
+      heartbeatDueWaitingForIdle: '실행 시각 — 유휴 상태를 기다리는 중',
+      heartbeatEveryHours: hours => `${hours}시간마다`,
+      heartbeatEveryMinutes: minutes => `${minutes}분마다`,
+      heartbeatEverySeconds: seconds => `${seconds}초마다`,
+      heartbeatFiredCount: count => `${count}회 실행됨`,
+      heartbeatNext: time => `다음 ${time}`,
+      heartbeatPaused: '하트비트 일시 중지됨',
+      loopActions: '루프 작업',
+      loopActive: '루프 활성',
+      loopAwaitingResponse: '응답 대기 중',
+      loopCadenceLabel: '주기',
+      loopDeferred: '루프 보류됨',
+      loopDeferredNotice: '지금은 진행 중인 목표가 대화를 제어하고 있습니다.',
+      loopEveryHours: hours => `${hours}시간마다`,
+      loopEveryMinutes: minutes => `${minutes}분마다`,
+      loopEverySeconds: seconds => `${seconds}초마다`,
+      loopFinished: '루프 완료',
+      loopNext: time => `다음 ${time}`,
+      loopPaused: '루프 일시 중지됨',
+      loopPromptLabel: '프롬프트',
+      loopRunCount: (current, total) => `실행 ${current}/${total}`,
+      loopRuns: runs => `${runs}회 실행`,
+      loopSelfPaced: '자체 속도 조절',
+      loopUntilLabel: '종료 조건',
+      noCriteria: '기준 없음',
+      objectiveLabel: '목표',
+      pauseGoal: '목표 일시 중지',
+      pauseHeartbeat: '하트비트 일시 중지',
+      pauseLoop: '루프 일시 중지',
+      qualityGatesTitle: '품질 관문',
+      removeCriterion: index => `기준 ${index} 제거`,
+      removeCriterionConfirmBody: index => `기준 ${index}을(를) 제거할까요?`,
+      removeCriterionConfirmTitle: index => `기준 ${index}을(를) 제거할까요?`,
+      resumeGoal: '목표 재개',
+      resumeHeartbeat: '하트비트 재개',
+      resumeLoop: '루프 재개',
+      resumeNow: '지금 재개',
+      stopLoop: '루프 중지',
+      stopLoopConfirmBody: '이 루프를 중지할까요?',
+      stopLoopConfirmTitle: '루프를 중지할까요?',
+      viewDetails: '세부 정보 보기',
+      waitBarrierTitle: '대기 조건',
+      waitPid: pid => `프로세스 ${pid}을(를) 기다리는 중`,
+      waitSession: target => `대화 ${target}을(를) 기다리는 중`,
+      waitUntil: target => `${target}까지 기다리는 중`
+    },
+    goalBlocked: '목표 막힘',
+    hideStack: '상태 스택 숨기기',
+    previousTodos: (done, total) => `이전 작업 ${done}/${total}`,
+    showStack: '상태 스택 보기'
   },
 
   updates: {
@@ -3072,8 +4320,62 @@ export const ko = defineLocale({
       notAvailable: '이 백엔드에는 업데이트를 사용할 수 없습니다.',
       failed: '백엔드 업데이트에 실패했습니다.',
       noReturn:
-        '백엔드가 다시 온라인 상태가 되지 않았습니다. 업데이트가 완료되지 않았을 수 있으므로 백엔드 호스트를 확인하세요.'
-    }
+        '백엔드가 다시 온라인 상태가 되지 않았습니다. 업데이트가 완료되지 않았을 수 있으므로 백엔드 호스트를 확인하세요.',
+      owed: steps =>
+        `백엔드를 업데이트했지만 아직 남은 단계가 있습니다: ${steps}. 마치려면 \`hermes update\`를 다시 실행하세요.`
+    },
+    appName: 'Hermes',
+    applyingBodyAppInstaller:
+      'Hermes가 닫히고 Windows가 업데이트를 마무리합니다. 끝나면 Hermes가 다시 열리니 따로 하실 일은 없습니다.',
+    applyingCloseAppInstaller: '이 창이 닫히고 Windows가 업데이트를 마치면 Hermes가 스스로 다시 열립니다.',
+    availableBodyAppInstaller:
+      '새 버전의 Hermes가 준비되었습니다. Hermes가 닫히고 Windows가 업데이트를 마치면 Hermes가 스스로 다시 열립니다.',
+    availableBodyRelease: tag => `${tag} 버전을 설치할 준비가 되었습니다.`,
+    changeLogFallbackItem: '개선 및 수정',
+    changeLogFallbackLabel: '이번 업데이트 내용',
+    changeLogFaster: '더 빨라짐',
+    changeLogFixed: '수정됨',
+    changeLogImproved: '개선됨',
+    changeLogNew: '새로운 기능',
+    changeLogOther: '기타 개선',
+    channels: {
+      canary: 'Canary',
+      stable: '안정'
+    },
+    checkUnknownBodyAppInstaller:
+      '지금은 Windows가 업데이트를 확인하지 못했습니다. Hermes를 다시 시작하면 업데이트가 자동으로 설치되기도 합니다.',
+    checkUnknownTitleAppInstaller: '업데이트를 확인하지 못했습니다',
+    checkingShort: '확인 중…',
+    connectionSettings: '연결 설정',
+    copyFullLog: '전체 변경 기록 복사',
+    discontinuedBody:
+      '이 Hermes 빌드는 더 이상 지원되지 않으며 고장 날 수 있으니 제거하세요. 데이터는 디스크에 남습니다.',
+    discontinuedTitle: '이 Hermes 빌드는 더 이상 지원되지 않습니다',
+    gitUnusable: 'Hermes가 이 컴퓨터에서 Git을 실행하지 못해 업데이트를 확인할 수 없었습니다.',
+    manualBodyBackend: 'Hermes 백엔드는 이 앱 밖에서 관리됩니다. 백엔드를 호스팅하는 서버에서 다음을 실행하세요:',
+    manualPickedUpBackend: '업데이트가 끝나면 백엔드가 새 버전을 적용합니다.',
+    manualUnavailableTitle: '여기서는 업데이트할 수 없습니다',
+    openDownloadPage: '다운로드 페이지 열기',
+    releaseAvailable: tag => `${tag} 버전을 사용할 수 있습니다.`,
+    versionDetailsBody: '이 설치는 앱 밖에서 관리됩니다. 설치할 때와 같은 방법으로 업데이트하세요.',
+    versionDetailsBuildOrigin: '빌드 출처',
+    versionDetailsCommit: '커밋',
+    versionDetailsDistribution: '배포 방식',
+    versionDetailsDistributionDesktop: '데스크톱 앱',
+    versionDetailsDistributionDesktopInstaller: '데스크톱 앱(설치 프로그램)',
+    versionDetailsDistributionDesktopMsix: '데스크톱 앱(MSIX)',
+    versionDetailsDistributionSource: '소스',
+    versionDetailsDistributionSourceDesktop: '소스 + hermes desktop',
+    versionDetailsDistributionSourceInstaller: '소스(설치 스크립트)',
+    versionDetailsDistributionSourceInstallerDesktop: '소스(설치 스크립트) + hermes desktop',
+    versionDetailsDistributionStore: 'Microsoft Store',
+    versionDetailsInstallId: '설치 ID',
+    versionDetailsRuntime: '실행 환경',
+    versionDetailsRuntimeEmbedded: '내장 실행 환경',
+    versionDetailsRuntimeExternal: '외부(컴퓨터의 실행 환경 사용)',
+    versionDetailsTitle: '버전 세부 정보',
+    versionDetailsUncommittedChanges: '커밋되지 않은 변경 사항',
+    versionDetailsVersion: '버전'
   },
   install: {
     stageStates: {
@@ -3145,7 +4447,14 @@ export const ko = defineLocale({
     transcriptSaved: '전체 기록 저장 위치',
     copiedOutput: '복사되었습니다!',
     copyOutput: '출력 복사',
-    reloadRetry: '다시 불러온 후 재시도'
+    reloadRetry: '다시 불러온 후 재시도',
+    bundledLocalDesc: '이 앱에 포함된 Hermes 실행 환경을 사용합니다. 함께 설치된 백엔드가 로컬 설치본입니다.',
+    openLogs: '로그 열기',
+    probeErrorDetails: '세부 정보',
+    setupChoiceDescLocal: '이 컴퓨터에 Hermes를 설치하거나 이미 실행 중인 Hermes 게이트웨이에 연결하세요.',
+    useLocalDesc:
+      '이 컴퓨터에 Hermes 실행 환경이 이미 설치되어 있습니다. 클릭 한 번으로 시작하세요. 다운로드는 없습니다.',
+    useLocalTitle: '이 컴퓨터의 Hermes 사용'
   },
 
   onboarding: {
@@ -3224,7 +4533,15 @@ export const ko = defineLocale({
     price: (input, output) => `Mtok당 입력 ${input} / 출력 ${output}`,
     change: '변경',
     startChatting: '시작',
-    docs: provider => `${provider} 문서`
+    docs: provider => `${provider} 문서`,
+    continueWithoutSetup: '설정 없이 계속',
+    errorDetails: '세부 정보',
+    setupSlowBody: 'Hermes가 아직 백그라운드에서 시작하는 중입니다.',
+    setupSlowTitle: '설정이 평소보다 오래 걸리고 있습니다.',
+    signInDidNotFinish: provider =>
+      `${provider} 로그인이 끝나지 않았습니다. 인터넷 연결을 확인하고 다시 시도하거나 다른 제공업체를 고르세요.`,
+    tryAgain: '다시 시도',
+    useApiKeyInstead: 'API 키 사용'
   },
 
   modelPicker: {
@@ -3244,14 +4561,24 @@ export const ko = defineLocale({
     free: '무료',
     freeTier: '무료 등급',
     priceTitle: '백만 토큰당 입력 및 출력 가격',
-    wasPrice: '이전 가격'
+    wasPrice: '이전 가격',
+    addCustomModelAction: '사용자 지정 모델 추가…',
+    customModel: '사용자 지정 모델',
+    customModelPlaceholder: '모델 ID 입력, 예: openai/gpt-5'
   },
 
   modelVisibility: {
     title: '모델',
     search: '모델 검색',
     noAuthenticatedProviders: '인증된 제공업체가 없습니다.',
-    addProvider: '제공업체 추가…'
+    addProvider: '제공업체 추가…',
+    addCustomModel: '사용자 지정 모델 추가',
+    removeCustomModel: '사용자 지정 모델 제거',
+    resetAction: '재설정',
+    resetConfirm: '모델 표시 설정을 기본값으로 재설정할까요?',
+    resetDescription:
+      '모델 표시·숨김 선택이 지워지고 모든 제공업체의 기본 목록이 돌아옵니다. 직접 추가한 사용자 지정 모델은 유지되며 표시됩니다.',
+    resetToDefaults: '기본값으로 재설정'
   },
 
   shell: {
@@ -3264,7 +4591,38 @@ export const ko = defineLocale({
       editModels: '모델 편집…',
       followDefault: '설정의 기본값 사용',
       refreshModels: '모델 새로 고침',
-      fast: '빠르게'
+      fast: '빠르게',
+      addFavorite: '즐겨찾기에 추가',
+      cacheRead: '캐시 읽기',
+      favoriteShortcut: '⇧ 클릭',
+      favorites: '즐겨찾기',
+      free: '무료',
+      limited: '제한됨',
+      limitedTip: (provider, time) =>
+        time
+          ? `${provider}이(가) 사용 한도에 도달했습니다. ${time}에 초기화되며, 그 뒤에 쓸 모델은 지금 골라 둘 수 있습니다.`
+          : `${provider}이(가) 사용 한도에 도달했습니다. 초기화된 뒤에 쓸 모델은 지금 골라 둘 수 있습니다.`,
+      limitedUntil: time => `${time}까지 제한됨`,
+      localSetup: {
+        action: '설정',
+        text: (model, size) => `${model}이(가) 이 컴퓨터에 맞습니다 · ${size} 다운로드`,
+        title: '로컬에서 실행 · 무료, 비공개'
+      },
+      modelLimitedTip: time =>
+        `이 모델이 자체 한도에 도달했으며 ${time}에 초기화됩니다. 여기 있는 다른 모델은 계속 쓸 수 있습니다.`,
+      modelResets: time => `${time}에 초기화`,
+      poolAccount: number => `계정 ${number}`,
+      poolAccounts: count => `계정 ${count}개`,
+      poolLimited: (limited, total) => `계정 ${total}개 중 ${limited}개 제한됨`,
+      poolUnavailable: '다시 로그인',
+      poolUnknown: '사용량을 알 수 없음',
+      priceTitle: (input, output, cache) =>
+        `입력 ${input}/Mtok · 출력 ${output}/Mtok` + (cache ? ` · 캐시 읽기 ${cache}/Mtok` : ''),
+      removeFavorite: '즐겨찾기에서 제거',
+      usageLeft: (percent, time) => (time ? `${percent}% 남음 · ${time}에 초기화` : `${percent}% 남음`),
+      usageTip: provider => `${provider}이(가) 사용 한도에 가까워졌습니다.`,
+      usageWindow: (label, percent, time) =>
+        time ? `${label}: ${percent}% 남음, ${time}에 초기화` : `${label}: ${percent}% 남음`
     },
     modelOptions: {
       noOptions: '이 모델에는 선택 사항이 없습니다',
@@ -3280,7 +4638,10 @@ export const ko = defineLocale({
       max: '최대',
       ultra: '울트라',
       updateFailed: '모델 선택 사항을 업데이트하지 못했습니다',
-      fastFailed: '빠른 모드를 업데이트하지 못했습니다'
+      fastFailed: '빠른 모드를 업데이트하지 못했습니다',
+      sendsOnRoute: level => `이 경로에서는 ${level}(으)로 보냅니다`,
+      ultrafast: '초고속',
+      useStandardSpeed: '표준 속도 사용'
     },
     gatewayMenu: {
       gateway: '게이트웨이',
@@ -3403,7 +4764,15 @@ export const ko = defineLocale({
       openModelPicker: '모델 선택기 열기',
       modelPinned: '사용자가 고정함. 새 채팅에서는 설정의 기본 모델 대신 이 모델을 사용합니다',
       modelTitle: (provider, model) => `모델 · ${provider}: ${model}`,
-      providerModelTitle: (provider, model) => `${provider} · ${model}`
+      providerModelTitle: (provider, model) => `${provider} · ${model}`,
+      backend: '백엔드',
+      compressions: count => `압축: ${count}회`,
+      focusedSince: '집중한 시간',
+      focusedSinceTitle: '이 채팅에 집중한 뒤 지난 시간입니다. 턴이 실행된 시간이 아닙니다.',
+      messagingDegraded: name => `${name} 중단됨`,
+      messagingStopped: '메시징 중지됨',
+      releaseAvailable: tag => `${tag} 버전을 사용할 수 있습니다.`,
+      toggleFreeTier: '무료 등급'
     }
   },
 
@@ -3441,7 +4810,18 @@ export const ko = defineLocale({
     terminalNew: '새 터미널',
     terminalCloseOthers: '다른 터미널 닫기',
     terminalCloseAll: '모두 닫기',
-    addToChat: '채팅에 추가'
+    addToChat: '채팅에 추가',
+    hideIgnored: 'gitignore된 파일 숨기기',
+    remotePickerCreateFolder: '폴더 만들기',
+    remotePickerCreateFolderFailed: error => `폴더를 만들지 못했습니다(${error}).`,
+    remotePickerFolderName: '폴더 이름',
+    remotePickerInvalidFolderName: '슬래시 없이 폴더 이름 하나만 입력하세요.',
+    remotePickerNewFolder: '새 폴더',
+    showIgnored: 'gitignore된 파일 보기',
+    terminalOpenInteractive: '새 터미널 열기',
+    terminalReadOnly: '읽기 전용 출력',
+    terminalReadOnlyHelp:
+      '입력 요청에 답하려면 백그라운드 명령을 중지하고 새 터미널에서 실행하세요. 새 터미널은 별도의 셸을 열며 이 프로세스에 연결되지 않습니다.'
   },
 
   preview: {
@@ -3552,7 +4932,14 @@ export const ko = defineLocale({
       commentTitle: n => `댓글 ${n}`,
       saveComment: '저장',
       cancelComment: '댓글 취소'
-    }
+    },
+    missingBody: label =>
+      `${label}이(가) 삭제되었거나 옮겨졌거나 임시 위치가 비워졌습니다. 다음 실행 때 이 탭은 복원되지 않습니다.`,
+    missingTarget: '그 경로는 이 컴퓨터에 없습니다',
+    missingTitle: '파일이 더 이상 없습니다',
+    pin: '작업공간에 고정',
+    saveScopeChanged: '이 초안을 저장하려면 원래 연결과 프로필로 다시 전환하세요.',
+    unpin: '작업공간에서 고정 해제'
   },
 
   zones: {
@@ -3602,7 +4989,8 @@ export const ko = defineLocale({
     saveApply: '저장 후 적용',
     notExpressible: '이 배치는 맞물린 바람개비 형태이므로 아직 중첩 분할로 표현할 수 없습니다',
     zoneCount: count => `영역 ${count}개`,
-    tabCount: count => `탭 ${count}개`
+    tabCount: count => `탭 ${count}개`,
+    zoneMenuLabel: title => `${title} 영역 옵션`
   },
 
   contextMenu: {
@@ -3688,7 +5076,187 @@ export const ko = defineLocale({
       restoreNext: '다음 체크포인트 복원',
       goForward: '앞으로 이동',
       sendEdited: '편집한 메시지 보내기',
-      attachingFile: '첨부 중…'
+      attachingFile: '첨부 중…',
+      copyFullResponse: '전체 응답 복사',
+      errorAuthKinds: {
+        api_key: {
+          body: provider =>
+            `${provider}에 저장된 키가 잘못되었거나 취소되었습니다. 키를 업데이트한 뒤 다시 시도하세요.`,
+          title: provider => `${provider}이(가) API 키를 거부했습니다`
+        },
+        oauth: {
+          title: provider => `${provider} 로그인이 만료되었습니다`
+        }
+      },
+      errorChooseModel: '모델 선택',
+      errorCodes: {
+        SESSION_NOT_OWNED: {
+          body: '이 대화는 지금 다른 Hermes 창이나 터미널에서 열려 있습니다. 그곳에서 닫은 뒤 메시지를 다시 보내거나 여기서 새 대화를 시작하세요.',
+          title: '이 대화가 다른 곳에서 열려 있습니다'
+        },
+        auth: {
+          body: provider =>
+            `${provider}에 저장된 자격 증명이 받아들여지지 않았습니다. 설정에서 고치거나 제공업체를 바꾼 뒤 메시지를 다시 보내세요.`,
+          title: provider => `${provider}이(가) 로그인을 거부했습니다`
+        },
+        auth_permanent: {
+          body: provider =>
+            `${provider}에 저장된 자격 증명이 잘못되었거나 취소되었습니다. 자격 증명을 업데이트하거나 제공업체를 바꾼 뒤 메시지를 다시 보내세요.`,
+          title: provider => `${provider}이(가) 로그인을 거부했습니다`
+        },
+        billing: {
+          body: provider => `${provider} 계정에 남은 크레딧이 없습니다. 충전하거나 제공업체를 바꾼 뒤 다시 보내세요.`,
+          title: '크레딧 부족'
+        },
+        content_policy_blocked: {
+          body: provider => `${provider}이(가) 이 메시지에 답하지 않으려 합니다. 메시지를 고쳐 다시 보내세요.`,
+          title: 'AI 서비스가 이 요청을 거절했습니다'
+        },
+        context_overflow: {
+          body: '대화가 더 이상 모델에 들어가지 않습니다. 대화를 압축하거나 새 대화를 시작한 뒤 다시 보내세요.',
+          title: '대화가 너무 깁니다'
+        },
+        disk_full: {
+          body: '디스크가 가득 차서 Hermes가 이 대화를 저장하지 못했습니다. 공간을 확보한 뒤 다시 시도하세요.',
+          title: '디스크 가득 참'
+        },
+        empty_response: {
+          body: provider => `${provider}이(가) 이 메시지에 아무것도 돌려주지 않았습니다. 잠시 뒤 다시 시도하세요.`,
+          title: 'AI 서비스가 빈 응답을 보냈습니다'
+        },
+        format_error: {
+          body: provider =>
+            `${provider}이(가) 이 요청의 구성 방식을 받아들이지 않았습니다. 제공업체를 바꾸거나 진단 정보를 보내 주시면 살펴보겠습니다.`,
+          title: 'AI 서비스가 요청을 거부했습니다'
+        },
+        free_tier_at_capacity: {
+          body: '무료 로그인으로 대기열을 건너뛰거나 잠시 뒤 다시 시도하세요.',
+          title: '지금은 로그인 없이 대화하는 사용자가 매우 많습니다'
+        },
+        free_tier_disabled: {
+          body: '계속 대화하려면 Nous 계정으로 로그인하세요. 무료입니다.',
+          title: '지금은 로그인 없이 Hermes를 사용할 수 없습니다'
+        },
+        free_tier_model_not_free: {
+          body: '지금은 Hermes가 무료 모델을 사용합니다. 더 많은 모델을 쓰려면 Nous 계정으로 로그인하세요. 무료입니다.',
+          title: '그 모델은 로그인 없이 사용할 수 없습니다'
+        },
+        free_tier_outage: {
+          body: '1분 뒤 메시지를 다시 보내 보세요.',
+          title: '무료 모델이 지금 응답에 문제를 겪고 있습니다'
+        },
+        free_tier_rate_limited: {
+          body: '곧 다시 채워집니다. 더 넉넉한 사용량을 원하면 Nous 계정으로 로그인하세요. 무료입니다.',
+          title: '로그인 없이 쓸 수 있는 사용량을 모두 썼습니다'
+        },
+        free_tier_refused: {
+          body: 'Nous 계정 로그인은 무료입니다.',
+          title: '로그인 없이는 Hermes가 이 메시지를 보낼 수 없습니다'
+        },
+        free_tier_route: {
+          body: 'Nous 계정으로 로그인하거나(무료) NOUS_INFERENCE_BASE_URL 설정을 확인하세요.',
+          title: '이 경로로는 Hermes가 무료 모델에 연결할 수 없습니다'
+        },
+        invalid_response: {
+          body: provider => `${provider}이(가) Hermes가 읽을 수 없는 응답을 돌려주었습니다. 잠시 뒤 다시 시도하세요.`,
+          title: 'AI 서비스가 읽을 수 없는 응답을 보냈습니다'
+        },
+        loop_error: {
+          body: '응답이 같은 단계를 계속 되풀이해 Hermes가 중지했습니다. 다시 시도하고, 또 일어나면 새 대화를 시작하세요.',
+          title: 'Hermes가 같은 동작을 반복했습니다'
+        },
+        model_not_found: {
+          body: provider =>
+            `${provider}이(가) 내 계정에서 이 모델을 제공하지 않습니다. 다른 모델을 고른 뒤 메시지를 다시 보내세요.`,
+          title: '이 모델을 사용할 수 없습니다'
+        },
+        no_reply: {
+          body: 'Hermes가 응답 없이 이번 턴을 끝냈습니다. 다시 시도하면 다시 보냅니다.',
+          title: '응답이 끝나지 않았습니다'
+        },
+        overloaded: {
+          body: provider => `${provider}에 지금 문제가 있습니다. 잠시 뒤 다시 시도하거나 제공업체를 바꾸세요.`,
+          title: 'AI 서비스가 과부하 상태입니다'
+        },
+        payload_too_large: {
+          body: '요청이 모델에 비해 너무 큽니다. 대화를 압축하거나 새 대화를 시작한 뒤 다시 보내세요.',
+          title: '메시지가 너무 큽니다'
+        },
+        provider_policy_blocked: {
+          body: provider =>
+            `${provider}이(가) 계정의 데이터·개인정보 설정 때문에 이 요청을 처리하지 않습니다. 다른 모델을 고르거나 제공업체를 바꾸세요.`,
+          title: '계정 설정 때문에 이 모델이 차단되었습니다'
+        },
+        rate_limit: {
+          body: provider => `${provider}이(가) 지금 요청을 제한하고 있습니다. 1분쯤 기다린 뒤 다시 시도하세요.`,
+          title: 'AI 서비스가 바쁩니다'
+        },
+        server_error: {
+          body: provider =>
+            `${provider}이(가) 서버 오류를 돌려주었습니다. 잠시 뒤 다시 시도하거나 제공업체를 바꾸세요.`,
+          title: 'AI 서비스에 문제가 생겼습니다'
+        },
+        ssl_cert_verification: {
+          body: provider =>
+            `Hermes가 ${provider}과(와)의 보안 연결을 확인하지 못했습니다. 네트워크나 프록시 설정을 확인하거나 제공업체를 바꾼 뒤 메시지를 다시 보내세요.`,
+          title: '보안 연결 실패'
+        },
+        stream_drop: {
+          body: '응답이 끝나기 전에 연결이 끊어졌습니다. 다시 시도하면 다시 보냅니다.',
+          title: '응답이 끊겼습니다'
+        },
+        timeout: {
+          body: provider =>
+            `${provider}에 연결할 수 없거나 제시간에 응답하지 않았습니다. 인터넷 연결을 확인한 뒤 다시 시도하세요.`,
+          title: 'AI 서비스에 연결할 수 없습니다'
+        },
+        truncated: {
+          body: '모델이 끝까지 답하기 전에 멈췄습니다. 다시 시도하면 완전한 응답을 받을 수 있습니다.',
+          title: '응답이 중간에 끊겼습니다'
+        },
+        upstream_blocked: {
+          body: provider =>
+            `${provider} 앞단의 방화벽이나 CDN이 요청이 모델에 닿기 전에 막았습니다. 키는 아마 정상입니다. 설정에서 제공업체의 extra_headers로 User-Agent 헤더를 지정하거나 제공업체를 바꾼 뒤 메시지를 다시 보내세요.`,
+          title: '방화벽이 요청을 막았습니다'
+        },
+        upstream_rate_limit: {
+          body: provider => `${provider}이(가) 지금 요청을 제한하고 있습니다. 1분쯤 기다린 뒤 다시 시도하세요.`,
+          title: 'AI 서비스가 바쁩니다'
+        }
+      },
+      errorCompressConversation: '대화 압축',
+      errorCompressFailed: '대화를 압축하지 못했습니다',
+      errorDetails: '세부 정보',
+      errorGenericProvider: 'AI 서비스',
+      errorLayerBodies: {
+        auth: 'AI 서비스가 로그인을 거부했습니다. 이 제공업체의 자격 증명을 확인한 뒤 메시지를 다시 보내세요.',
+        billing: '이 제공업체에 쓸 크레딧이 계정에 남아 있지 않습니다. 충전하거나 제공업체를 바꾼 뒤 다시 보내세요.',
+        disk: '디스크가 가득 차서 Hermes가 이 대화를 저장하지 못했습니다. 공간을 확보한 뒤 다시 시도하세요.',
+        endpoint:
+          'Hermes가 사용자 지정 모델 서버에 연결할 수 없습니다. 서버가 실행 중인지 확인한 뒤 메시지를 다시 보내세요.',
+        gateway:
+          'Hermes가 이 응답을 시작하다 내부 문제를 만났습니다. 메시지를 다시 보내고, 계속 일어나면 진단 정보를 보내 주세요.',
+        generic: 'Hermes가 응답하는 중 문제가 생겼습니다. 다시 시도하고, 계속 일어나면 세부 정보를 복사하세요.',
+        provider: 'AI 서비스가 이 요청을 끝내지 못했습니다. 잠시 뒤 다시 시도하거나 제공업체를 바꾸세요.',
+        runtime:
+          'Hermes가 이 응답을 시작하다 내부 문제를 만났습니다. 메시지를 다시 보내고, 계속 일어나면 진단 정보를 보내 주세요.',
+        streaming: '응답이 끝나기 전에 연결이 끊어졌습니다. 다시 시도하면 다시 보냅니다.'
+      },
+      errorLimitResets: time => `${time}에 한도가 초기화됩니다`,
+      errorOauthExpired: provider =>
+        `${provider} 로그인이 만료되었거나 취소되었습니다. 계속 대화하려면 다시 로그인하세요.`,
+      errorOpenHermesFolder: 'Hermes 폴더 열기',
+      errorOpenHermesFolderFailed: 'Hermes 폴더를 열 수 없습니다',
+      errorRetryAtReset: time => `한도가 초기화되면 다시 시도(${time})`,
+      errorRetryScheduled: (time, wait) => `${time}에 다시 시도합니다 — ${wait} 후`,
+      errorRetryScheduledCancel: '취소',
+      errorSignInAgain: provider => `${provider}에 다시 로그인`,
+      errorSignInFreeTier: 'Nous 계정으로 로그인',
+      errorStartNewSession: '새 대화 시작',
+      errorToastTitle: 'Hermes가 응답을 끝내지 못했습니다',
+      errorUpdateApiKey: 'API 키 업데이트',
+      readAloudFullResponseHint: 'Shift+클릭: 전체 응답 읽기',
+      responseStopped: '응답이 중지되었습니다'
     },
     approval: {
       gatewayDisconnected: 'Hermes 게이트웨이가 연결되어 있지 않습니다',
@@ -3704,7 +5272,11 @@ export const ko = defineLocale({
       alwaysTitle: '이 명령을 항상 허용할까요?',
       alwaysDescription: pattern =>
         `“${pattern}” 패턴을 영구 허용 목록(~/.hermes/config.yaml)에 추가합니다. 이 대화와 이후 모든 대화에서 Hermes가 이와 같은 명령에 대해 다시 묻지 않습니다.`,
-      alwaysAllow: '항상 허용'
+      alwaysAllow: '항상 허용',
+      openSafetySettings: '안전 설정 열기',
+      reconnect: '다시 연결',
+      timedOutSystemLine:
+        '승인 시간이 초과되어 명령을 실행하지 않았습니다. Hermes에게 다시 시도해 달라고 하거나 설정 → 안전 → 승인 제한 시간에서 한도를 늘리세요.'
     },
     clarify: {
       notReady: '아직 확인 요청이 준비되지 않았습니다',
@@ -3837,6 +5409,66 @@ export const ko = defineLocale({
         web_extract: { done: '웹페이지를 읽음', pending: '웹페이지 읽는 중', pendingAction: '읽는 중' },
         web_search: { done: '웹을 검색함', pending: '웹 검색 중', pendingAction: '검색 중' },
         write_file: { done: '파일을 편집함', pending: '파일 편집 중', pendingAction: '편집 중' }
+      },
+      failedCalls: count => `도구 호출 ${count}개 실패`,
+      resultInterrupted: '중단됨',
+      resultUnavailable: '결과를 사용할 수 없음',
+      skillActivity: {
+        listFailed: '스킬 목록을 가져오지 못함',
+        listed: '스킬 목록을 가져옴',
+        listing: '스킬 목록을 가져오는 중',
+        loadFailed: '스킬을 불러오지 못함',
+        loaded: '스킬을 불러옴',
+        loading: '스킬을 불러오는 중',
+        readResource: '스킬 리소스를 읽음',
+        readingResource: '스킬 리소스를 읽는 중',
+        resourceFailed: '스킬 리소스를 읽지 못함',
+        unavailable: '스킬 결과를 사용할 수 없음'
+      }
+    },
+    catalogInstall: {
+      advanced: '고급',
+      alreadyInstalled: '이미 설치되어 있어 그대로 두었습니다',
+      commitLabel: '커밋',
+      credentialsHeading: '자격 증명',
+      envVar: name => `${name} 환경 변수`,
+      failed: '실패',
+      hideNames: '이름 숨기기',
+      install: '설치',
+      installed: '설치됨',
+      installing: '설치 중…',
+      kind: {
+        plugin: '플러그인',
+        skill: '스킬'
+      },
+      missingEnv: names => `설정을 마치려면 ${names}을(를) 설정하세요`,
+      notEnabled: '설치했지만 켜지 않음',
+      notInstalled: '설치되지 않음',
+      phase: {
+        downloading: '다운로드 중…',
+        loading_tools: '도구를 불러오는 중…',
+        python_packages: 'Python 패키지 설치 중…'
+      },
+      preparing: '설치 준비 중…',
+      requirementsLabel: '필요 조건',
+      requiresHermes: range => `Hermes ${range}`,
+      scan: {
+        failed: '검사 실패',
+        passed: '검사 통과',
+        warnings: '검사에서 경고가 발견됨'
+      },
+      securityHeading: '보안',
+      sendFailed: '답변을 보내지 못했습니다. 다시 시도하세요.',
+      serverNotConnected: (server, reason) =>
+        `MCP 서버 ${server}이(가) 연결되지 않았습니다${reason ? `: ${reason}` : ''}`,
+      showNames: '이름 표시',
+      skill: name => `스킬 ${name}`,
+      skip: '건너뛰기',
+      subdirLabel: '폴더',
+      targetProfile: profile => `${profile} 프로필에 설치합니다`,
+      tier: {
+        community: '커뮤니티',
+        official: '공식'
       }
     }
   },
@@ -3850,7 +5482,37 @@ export const ko = defineLocale({
     sudoPlaceholder: 'sudo 암호',
     secretTitle: '비밀 값이 필요합니다',
     secretDesc: '계속하려면 Hermes에 자격 증명이 필요합니다.',
-    secretPlaceholder: '비밀 값'
+    secretPlaceholder: '비밀 값',
+    reconnect: '다시 연결',
+    sudoCommandUnavailable: '이 에이전트가 명령을 알려 주지 않았습니다. 대화에서 확인할 수 없다면 취소하세요.',
+    sudoInstallDesc:
+      '게이트웨이 호스트에 봇 화면 패키지(TigerVNC + Xfce)를 설치하려면 Hermes에 sudo 암호가 필요합니다. 암호는 그 호스트에만 전송됩니다.',
+    vaultCodeConfirm: '코드 입력',
+    vaultCodeDesc: site =>
+      `${site}에서 일회용 코드(문자, 이메일 또는 인증 앱)를 요구합니다. 여기에 입력하면 Hermes가 페이지에 입력하며, 모델은 코드를 보지 못합니다.`,
+    vaultCodeFootnote:
+      '팁: 설정 → 암호 및 로그인에서 이 로그인과 함께 인증 키를 저장하면 Hermes가 코드를 대신 입력합니다.',
+    vaultCodeLabel: '코드',
+    vaultCodeSendFailed: '코드를 보내지 못했습니다',
+    vaultCodeSkip: '건너뛰기',
+    vaultCodeTitle: site => `${site} 인증 코드`,
+    vaultSaveConfirm: '저장 후 로그인',
+    vaultSaveDecline: '저장 안 함',
+    vaultSaveDesc: origin =>
+      `Hermes가 ${origin}의 로그인 페이지에 도착했지만 저장된 로그인 정보가 없습니다. 여기에 한 번 입력하면 이 컴퓨터에 암호화되어 저장되고, 모델이 암호를 보지 않은 채 페이지에 채워집니다.`,
+    vaultSaveFootnote: '저장된 로그인은 설정 → 암호 및 로그인에서 관리하세요.',
+    vaultSaveIdentifierLabel: '이메일 또는 사용자 이름',
+    vaultSaveIdentifierPlaceholder: 'you@example.com',
+    vaultSavePasswordPlaceholder: '암호',
+    vaultSaveSendFailed: '로그인 정보를 저장하지 못했습니다',
+    vaultSaveTitle: site => `${site} 로그인 정보를 저장할까요?`,
+    vaultUnlockConfirm: '잠금 해제',
+    vaultUnlockDesc: name =>
+      `에이전트가 ${name}에 저장된 로그인으로 사이트에 로그인하려고 합니다. 이 대화에서 잠금을 해제하려면 마스터 암호를 입력하세요. 암호는 이 컴퓨터의 ${name}(으)로 바로 전달되며 저장되거나 에이전트에 보이지 않습니다.`,
+    vaultUnlockKeepLocked: '잠근 상태 유지',
+    vaultUnlockPlaceholder: '마스터 암호',
+    vaultUnlockSendFailed: '마스터 암호를 보내지 못했습니다',
+    vaultUnlockTitle: name => `${name} 잠금 해제`
   },
 
   desktop: {
@@ -3927,8 +5589,28 @@ export const ko = defineLocale({
       success: platform => `${platform}(으)로 전달했습니다. 언제든 여기서 다시 시작할 수 있습니다.`,
       systemNote: platform => `↻ ${platform}(으)로 전달함 — 언제든 여기서 다시 시작할 수 있습니다.`,
       failed: error => `전달하지 못했습니다: ${error}`,
-      timedOut: '게이트웨이를 기다리다 시간이 초과되었습니다. `hermes gateway`가 실행 중인가요?'
-    }
+      timedOut: '게이트웨이를 기다리다 시간이 초과되었습니다. `hermes gateway`가 실행 중인가요?',
+      startMessaging: '메시징 시작'
+    },
+    modelSwitchConfirmBody: '이 모델 전환은 확인이 필요합니다.',
+    modelSwitchConfirmLabel: '그래도 전환',
+    modelSwitchConfirmTitle: model => `${model}(으)로 전환할까요?`,
+    modelSwitchConfirmTitleFallback: '모델을 전환할까요?',
+    modelSwitchKeepLabel: '현재 모델 유지',
+    modelSwitchStaleNotice: '선택이 바뀌어 모델 전환을 적용하지 않았습니다.',
+    pasteAttachFailed: '붙여넣은 텍스트를 첨부하지 못했습니다',
+    pastedContent: '붙여넣은 내용',
+    poolSlotTimeoutBody:
+      '이 컴퓨터의 한도에 비해 동시에 실행 중인 봇이 너무 많습니다. 설정 → 고급에서 한도를 늘리거나, 하나가 끝나길 기다렸다가 다시 시도하세요.',
+    poolSlotTimeoutOpenSettings: '고급 설정 열기',
+    resetZoom: '확대/축소 초기화',
+    restored: '복원됨',
+    slashCommandIgnoredBody:
+      '슬래시 명령은 첨부 파일과 함께 보낼 수 없습니다. 첨부 파일을 제거하거나 명령을 따로 보내세요.',
+    slashCommandIgnoredTitle: '명령을 보내지 않았습니다',
+    unarchiveFailed: '보관 해제에 실패했습니다',
+    zoomIn: '확대',
+    zoomOut: '축소'
   },
 
   tips: {
@@ -3983,7 +5665,9 @@ export const ko = defineLocale({
     boundaryTitle: '인터페이스에 문제가 발생했습니다',
     boundaryDesc: '화면에 예기치 않은 오류가 발생했습니다. 채팅과 설정은 안전하게 보존됩니다.',
     reloadWindow: '창 다시 불러오기',
-    openLogs: '로그 열기'
+    openLogs: '로그 열기',
+    boundaryDetails: '세부 정보',
+    sendDiagnostics: '진단 정보 보내기'
   },
 
   ui: {
@@ -4001,6 +5685,548 @@ export const ko = defineLocale({
       title: '사이드바',
       description: '모바일 사이드바를 표시합니다.',
       toggle: open => `${open ? '보기' : '숨기기'} 사이드바`
+    },
+    logs: {
+      bottom: '로그 맨 아래',
+      search: '로그 검색…',
+      top: '로그 맨 위'
     }
+  },
+  appTour: {
+    capabilities: {
+      text: 'Hermes가 쓸 수 있는 스킬, 도구, 플러그인입니다. 여기서 더 추가하세요.',
+      title: '기능'
+    },
+    composer: {
+      text: '원하는 일을 말해 주세요. @를 입력하면 파일을 가져올 수 있습니다.',
+      title: '여기서 요청하기'
+    },
+    messaging: {
+      text: 'Telegram, Slack, Discord 등에서 Hermes를 부를 수 있습니다.',
+      title: '메시징'
+    },
+    model: {
+      text: '어떤 모델이 답할지 고릅니다.',
+      title: '모델 선택기'
+    },
+    modelLocal: '이 컴퓨터에서 모델을 직접 실행할 수 있습니다: 설정 > 제공업체 > 로컬 모델.',
+    newSession: {
+      text: '새 대화는 자체 컨텍스트를 가집니다. 작업마다 하나씩 쓰세요.',
+      title: '새로 시작하기'
+    },
+    rightPane: {
+      text: '오른쪽에서 파일, 터미널, 검토, 앱 내 브라우저를 엽니다.',
+      title: '작업 창'
+    },
+    sessions: {
+      text: '모든 대화가 여기에 있습니다. 검색하거나 고정하거나 다시 열 수 있습니다.',
+      title: '내 대화'
+    }
+  },
+  butterbar: {
+    goTo: (index, total) => `알림 ${total}개 중 ${index}번째 보기`,
+    legal: {
+      after: '이 적용됩니다.',
+      before: 'Hermes Agent 사용에는 ',
+      between: ' 및 ',
+      privacy: '개인정보 처리방침',
+      terms: '서비스 약관'
+    }
+  },
+  connectors: {
+    authorizedToolsUnavailable: '승인되었지만 도구를 사용할 수 없습니다.',
+    cancel: '기다리기 중지',
+    checking: '앱 확인 중…',
+    connect: '연결',
+    connectError: '승인을 시작하지 못했습니다. 다시 시도하세요.',
+    connectErrorFor: app => `${app} 승인을 시작하지 못했습니다.`,
+    connected: '연결됨',
+    directory: {
+      allApps: '모든 앱',
+      finishInBrowser: '브라우저에서 마무리하세요',
+      receiptConnected: apps => `연결됨: ${apps}`,
+      receiptNone: '새로 연결된 앱이 없습니다',
+      receiptTimedOut: '5분이 지나 닫았습니다',
+      signInFailed: '연결하지 못했습니다. 클릭하여 다시 시도',
+      suggested: '추천'
+    },
+    disabled: '사용할 수 없음',
+    disclaimer: '연결은 선택 사항입니다. Hermes가 사용하길 원하는 앱만 승인하세요.',
+    empty: '일치하는 앱이 없습니다',
+    execution: '커넥터 도구',
+    failed: '연결하지 못함',
+    grant: '다시 연결',
+    namedAccount: (app, alias) => `Hermes가 이 ${app} 계정의 이름을 ${alias}(으)로 정했습니다.`,
+    needsAuth: '접근 권한 만료',
+    notConnected: '연결되지 않음',
+    openInBrowser: '브라우저에서 열기',
+    opening: '로그인 여는 중…',
+    ownerMissing: '연결을 관리하려면 이 대화를 다시 여세요.',
+    refresh: '상태 새로 고침',
+    renameAccount: '이름 바꾸기',
+    required: '필수',
+    retry: '다시 시도',
+    search: '앱 찾기',
+    setup: server => `${server} 설정`,
+    setupCancel: '취소',
+    skip: '나중에',
+    skipped: '건너뜀',
+    timeout: '아직 승인을 기다리고 있습니다.',
+    title: '앱 연결',
+    unavailable: '이 대화에서는 커넥터를 사용할 수 없습니다.',
+    waiting: '브라우저를 기다리는 중…'
+  },
+  connectorsPage: {
+    accounts: {
+      add: '연결',
+      addAnother: '다른 계정 추가',
+      aliasHint: '영문 소문자, 숫자, 대시로 최대 32자입니다. 예: work, home',
+      aliasInvalid: '영문 소문자, 숫자, 대시를 쓰고 영문자나 숫자로 시작하세요.',
+      aliasLabel: '계정 이름',
+      aliasTaken: '이미 사용 중인 이름입니다.',
+      count: count => `계정 ${count}개`,
+      heading: '계정',
+      remove: '제거',
+      removeBody: 'Hermes가 더 이상 이 계정으로 작업하지 않습니다. 다른 계정은 계속 연결되어 있습니다.',
+      removeTitle: (app, name) => `${app} 계정 ${name}을(를) 제거할까요?`,
+      rename: '이름 바꾸기',
+      renameGone: '그 계정이 더 이상 없습니다. 제거되었거나 다시 연결하면서 교체되었습니다.',
+      renameLabel: name => `${name}의 새 이름`,
+      retiredCount: count => `${count}개 교체됨`,
+      status: {
+        expired: '접근 권한 만료',
+        failed: '연결하지 못함',
+        inactive: '비활성',
+        pending: '로그인 대기 중',
+        retired: '다시 연결하면서 교체됨',
+        revoked: '접근 권한 취소됨'
+      }
+    },
+    add: {
+      action: '직접 추가',
+      addArg: '+ 인수 추가',
+      addEnvVar: '+ 환경 변수 추가',
+      addHeader: '+ 헤더 추가',
+      addPassthrough: '+ 변수 추가',
+      args: '인수',
+      auth: '인증',
+      authBearer: 'Bearer 토큰',
+      authNone: '없음',
+      authOauth: 'OAuth',
+      command: '실행할 명령',
+      cwd: '작업 디렉터리',
+      editJson: 'mcp.json 편집',
+      envVars: '환경 변수',
+      headers: '헤더',
+      hint: '이 기기의 mcp.json에 새 항목 하나',
+      keyPlaceholder: 'KEY',
+      name: '이름',
+      nameTaken: '이미 사용 중인 이름입니다.',
+      passthrough: '환경 변수 전달',
+      pasteLabel: '명령이나 코드 조각 붙여넣기',
+      pasteNoMatch: '서버로 읽을 수 있는 내용이 없습니다. 대신 아래 칸을 채우세요.',
+      pastePlaceholder: 'npx -y @modelcontextprotocol/server-filesystem /path/to/dir',
+      removeRow: '이 행 제거',
+      saveFailed: '서버를 저장하지 못했습니다.',
+      title: '사용자 지정 MCP에 연결',
+      type: '유형',
+      typeHttp: 'Streamable HTTP',
+      typeStdio: 'STDIO',
+      url: 'URL',
+      valuePlaceholder: '값'
+    },
+    card: {
+      alsoLocal: '이 기기에서도 실행됨',
+      fact: {
+        tools: count => `도구 ${count}개`,
+        toolsOff: count => `도구 ${count}개 꺼짐`,
+        toolsOn: count => `도구 ${count}개 켜짐`,
+        toolsSomeOn: (total, on) => `도구 ${total}개 중 ${on}개 켜짐`
+      },
+      hostedTwin: '관리형 버전 있음',
+      inCatalog: 'Hermes 카탈로그에 있음',
+      kindCatalog: 'MCP · 카탈로그',
+      kindCustom: 'MCP · 사용자 지정',
+      kindManaged: '관리형',
+      kindPlugin: plugin => `MCP · 플러그인 ${plugin}`,
+      open: name => `${name} 열기`,
+      reason: {
+        finishSignIn: '브라우저에서 로그인을 마치세요.',
+        reconnect: '이 앱을 계속 쓰려면 다시 연결하세요.',
+        serverError: '서버가 연결을 거부했습니다.',
+        serverNeedsAuth: '이 서버가 응답하도록 로그인하세요.'
+      },
+      state: {
+        accessExpired: '접근 권한 만료',
+        available: '사용 가능',
+        connected: '연결됨',
+        connecting: '연결 중',
+        connectionUnknown: '상태 알 수 없음',
+        couldNotConnect: '연결하지 못함',
+        offByYourOrganisation: '조직에서 끔',
+        offForYou: '내 계정에서 꺼짐',
+        serverConnecting: '연결 중…',
+        serverError: '오류',
+        serverNeedsAuth: '인증 필요',
+        serverOff: '꺼짐',
+        serverOn: '켜짐',
+        serverOnUnused: '켜짐, 사용 안 함'
+      },
+      turnServerOff: name => `${name} 끄기`,
+      turnServerOn: name => `${name} 켜기`,
+      verb: {
+        authenticate: '인증',
+        connect: '연결',
+        install: '설치',
+        openLogs: '로그 열기',
+        reconnect: '다시 연결',
+        stopWaiting: '기다리기 중지',
+        tryAgain: '다시 시도',
+        turnBackOn: '다시 켜기'
+      }
+    },
+    categoryAll: '모든 분류',
+    dialog: {
+      advanced: '고급',
+      advancedHint: 'mcp.json 항목과 로그',
+      appSwitch: name => `Hermes가 ${name}을(를) 사용할 수 있음`,
+      bothOn: name => `둘 다 켜져 있어 Hermes에 ${name} 도구가 모두 두 번씩 보입니다.`,
+      connectEnded: '로그인이 끝나지 않았습니다.',
+      connectOpenAgain: '링크 다시 열기',
+      disconnect: '연결 해제',
+      disconnectBody: 'Hermes가 더 이상 이 계정으로 작업하지 않습니다. 언제든 다시 연결할 수 있습니다.',
+      disconnectTitle: name => `${name} 연결을 해제할까요?`,
+      menuRefreshTools: '도구 새로 고침',
+      moreActions: '추가 작업',
+      nousLine: 'Nous 앱은 프로필이 아니라 계정을 따릅니다.',
+      openPlugins: '플러그인 탭 열기',
+      orgLink: '커넥터 관리자 열기',
+      orgNote: count => `조직에서 도구 ${count}개를 껐습니다.`,
+      providedByPlugin: plugin => `플러그인 ${plugin}이(가) 제공`,
+      removeServerBody: '이 컴퓨터의 mcp.json에서 항목이 빠집니다. 다른 것은 삭제되지 않습니다.',
+      removeServerTitle: name => `${name}을(를) 제거할까요?`,
+      rulesAppOff: name => `도구를 바꾸려면 ${name}을(를) 켜세요.`,
+      rulesReadOnly: '지금은 규칙을 바꿀 수 없습니다.',
+      rulesSignIn: '여기서 Hermes가 할 수 있는 일을 바꾸려면 로그인하세요.',
+      tokensPerCall: '호출당 토큰',
+      turnOffLocal: '로컬 서버 끄기',
+      usesPerMonth: '30일간 사용 횟수',
+      wayHosted: '관리형',
+      wayNotConnected: name => `아직 연결되지 않았습니다. 브라우저에서 ${name}에 로그인하세요.`,
+      waysTitle: name => `${name} 실행 위치`
+    },
+    filterCategory: '분류',
+    group: {
+      available: '사용 가능',
+      connected: '연결됨',
+      connectedNote: '끊어진 연결이 먼저 표시됩니다.',
+      off: '꺼짐',
+      offNote: '로그인 정보는 유지됩니다.'
+    },
+    page: {
+      clearSearch: '검색 지우기',
+      disconnectNoAccount: '여기서 연결을 해제할 계정이 없습니다. 페이지를 새로 고친 뒤 다시 시도하세요.',
+      disconnectRefused:
+        '지금은 Nous가 이 로그인을 제거할 수 없습니다. 대신 스위치로 앱을 끄거나 나중에 다시 시도하세요.',
+      emptyTitle: '아직 앱이 없습니다. 이 컴퓨터에 서버를 추가해 시작하세요.',
+      freeTierNote: '로그인하기 전까지 연결은 이 컴퓨터에만 남습니다.',
+      hostedFailedBody: '이 컴퓨터의 서버는 영향을 받지 않고 계속 실행 중입니다. 꺼진 것은 없습니다.',
+      hostedFailedTitle: '호스팅된 앱에 연결할 수 없습니다.',
+      loading: '카탈로그와 이 컴퓨터의 서버를 읽는 중',
+      managedUnavailable: '이 계정에서는 아직 관리형 앱을 사용할 수 없습니다.',
+      matchesElsewhere: count => `다른 그룹에 일치하는 항목이 ${count}개 더 있습니다.`,
+      noMatchBody: '일치하는 항목이 없습니다. 직접 운영하는 MCP 서버를 Hermes에 연결해 추가하세요.',
+      noMatchTitle: '일치하는 앱이 없습니다',
+      refreshFailed: '도구 목록을 새로 고치지 못했습니다.',
+      retry: '다시 시도',
+      segmentNoMatch: segment => `${segment}에 일치하는 항목이 없어 일치하는 항목을 모두 표시합니다.`,
+      showAllMatches: '일치 항목 모두 보기',
+      signIn: '로그인',
+      signInLine: '관리형 앱을 쓰려면 Nous에 로그인하세요.',
+      writeFailed: '변경 사항을 저장하지 못했습니다.'
+    },
+    residencyLocal: '이 기기에서',
+    searchPlaceholder: count => `앱 ${count}개 검색`,
+    segment: {
+      all: '전체',
+      available: '사용 가능',
+      connected: '연결됨',
+      off: '꺼짐'
+    },
+    title: '커넥터',
+    tools: {
+      allToolsSwitch: '모든 도구 켜기/끄기',
+      categorySelect: count => `분류 ${count}개`,
+      conflictBody: (theyOff, theyOn) => {
+        const off = theyOff > 0 ? `내가 켠 도구 ${theyOff}개를 껐` : ''
+        const on = theyOn > 0 ? `내가 끈 도구 ${theyOn}개를 켜 두었` : ''
+
+        const they =
+          off && on ? `다른 사용자가 ${off}고 ${on}습니다. ` : off || on ? `다른 사용자가 ${off || on}습니다. ` : ''
+
+        return `${they}편집 내용은 화면에 그대로 있으며 아무것도 저장되지 않았습니다.`
+      },
+      conflictReload: '상대 버전 다시 불러오기',
+      conflictSave: '상대 버전 위에 저장',
+      conflictTitle: '편집하는 동안 다른 사용자가 이 규칙을 바꿨습니다.',
+      discard: '버리기',
+      facetSwitch: facet => `${facet} 도구 켜기/끄기`,
+      footerDirty: (off, backOn) => `도구 ${off}개 끔, ${backOn === 0 ? '다시 켠 도구 없음' : `${backOn}개 다시 켬`}`,
+      goneBody:
+        'Hermes가 더 이상 호출할 수 없습니다. 아무것도 갑자기 사라지지 않도록 제거할 때까지 행이 남아 있습니다.',
+      goneTitle: name => `${name}이(가) 카탈로그에서 빠졌습니다.`,
+      hideDeprecated: count => `지원 중단 ${count}개 숨기기`,
+      hideDetails: tool => `${tool} 설명 숨기기`,
+      loading: '도구 목록 읽는 중',
+      lockedHint: '조직에서 끔',
+      moreHints: count => `+${count}`,
+      needsAuthBody: '로그인 정보는 이 컴퓨터에 남고 밖으로 나가지 않습니다.',
+      needsAuthTitle: name => `도구를 읽으려면 ${name}에 로그인하세요.`,
+      noMatch: '이 필터에 맞는 도구가 없습니다.',
+      notInstalledBody: '이 기기에 설치하면 제공하는 도구를 볼 수 있습니다.',
+      offBody: '위 스위치로 켜면 제공하는 도구를 읽어 옵니다.',
+      offTitle: name => `${name}이(가) 꺼져 있습니다.`,
+      quickEverythingOn: '모두 켜기',
+      quickNoDestructive: '파괴적 도구 끄기',
+      quickReadOnly: '읽기 전용',
+      remove: '제거',
+      retry: '다시 시도',
+      save: '변경 사항 저장',
+      saveFailed: '도구 규칙을 저장하지 못했습니다.',
+      saving: '저장 중...',
+      searchCountPlaceholder: count => `도구 ${count}개 검색`,
+      showAllTools: count => `도구 ${count}개 모두 보기`,
+      showDeprecated: count => `지원 중단 ${count}개 보기`,
+      showDetails: tool => `${tool} 설명 보기`,
+      showSummary: '요약 보기',
+      signedOutBody: '이 컴퓨터의 서버는 영향을 받지 않습니다.',
+      signedOutTitle: '도구 목록을 읽으려면 Nous에 로그인하세요.',
+      staleSignIn: '최신 도구 목록을 읽으려면 로그인하세요.',
+      summaryAllOn: '모두 켜짐',
+      summaryAllTools: '모든 도구',
+      summaryCount: count => `도구 ${count}개`,
+      summaryOff: '꺼짐',
+      summaryOther: '기타',
+      summaryPreviewTitle: name => `연결하면 Hermes가 ${name}으로 할 수 있는 일`,
+      summarySomeOn: (on, total) => `${total}개 중 ${on}개 켜짐`,
+      summaryTitle: name => `Hermes가 ${name}으로 할 수 있는 일`,
+      title: '도구',
+      toolList: name => `${name} 도구`,
+      turnToolOff: tool => `${tool} 끄기`,
+      turnToolOn: tool => `${tool} 켜기`,
+      unavailableLine: '도구 목록을 사용할 수 없습니다.'
+    },
+    uncategorised: '분류 없음',
+    vocabulary: {
+      facetDestructive: {
+        label: '파괴적',
+        long: '이 앱에서 무언가를 영구히 지울 수 있습니다.'
+      },
+      facetRead: {
+        label: '읽기',
+        long: '이 앱에서 데이터를 읽기만 하고 아무것도 바꾸지 않습니다.'
+      },
+      facetUnclassified: {
+        label: '효과 알 수 없음',
+        long: '이 도구가 무엇을 하는지 앱이 밝히지 않았습니다.'
+      },
+      facetWrite: {
+        label: '쓰기',
+        long: '이 앱에서 무언가를 만들거나 바꿉니다.'
+      },
+      hintCreate: {
+        label: '생성',
+        long: '새로운 것을 만듭니다.'
+      },
+      hintDelete: {
+        label: '삭제',
+        long: '무언가를 제거합니다.'
+      },
+      hintDestructive: {
+        label: '파괴적',
+        long: '이 도구가 만든 변경은 여기서 되돌릴 수 없습니다.'
+      },
+      hintIdempotent: {
+        label: '반복 안전',
+        long: '두 번 실행해도 한 번 실행한 것과 결과가 같습니다.'
+      },
+      hintOpenWorld: {
+        label: '외부',
+        long: '이 앱 바깥의 무언가에 접근합니다.'
+      },
+      hintReadOnly: {
+        label: '읽기 전용',
+        long: '도구가 읽기만 한다고 밝혔습니다.'
+      },
+      hintUpdate: {
+        label: '업데이트',
+        long: '이미 있는 것을 바꿉니다.'
+      }
+    }
+  },
+  externalOpenFailed: {
+    close: '닫기',
+    copyUrl: '링크 복사',
+    message: '이 주소를 열 브라우저가 등록되어 있지 않습니다. 링크를 복사해 직접 여세요.',
+    missing: {
+      message: '이 파일이 없습니다. 삭제되었거나 옮겨졌거나 다른 컴퓨터에 있을 수 있습니다.',
+      title: '파일을 찾을 수 없습니다'
+    },
+    title: '이 링크를 열 수 없습니다'
+  },
+  freeTier: {
+    alreadySignedInBody: '이 Hermes는 이미 Nous 계정에 로그인되어 있습니다.',
+    alreadySignedInHeading: '이미 로그인되어 있습니다.',
+    begin: '시작',
+    busyBody: wait =>
+      `Nous 서비스가 바빠 Hermes가 로그인을 마치지 못했습니다. ${wait} 뒤 다시 시도하세요. 그동안 대화는 그대로 남아 있습니다.`,
+    busyHeading: '거의 다 됐습니다',
+    change: '변경',
+    codeBody: '로그인을 마치려면 브라우저에 이 코드를 입력하세요.',
+    completedBody: '이제 계정으로 추론과 도구를 사용할 수 있습니다.',
+    copyLink: '링크 복사',
+    defaultModel: '기본 모델',
+    didNotComplete: '로그인이 끝나지 않았습니다',
+    dismiss: '닫기',
+    doNotShare: '이 코드를 공유하지 마세요.',
+    done: '완료',
+    errorBody: '로그인이 끝나지 않았습니다. 준비되면 언제든 다시 시도하세요.',
+    finishingBody: '브라우저에서 승인되었습니다. 계정 토큰을 받는 중입니다.',
+    finishingHeading: '로그인 마무리 중…',
+    notNow: '나중에',
+    offer: {
+      body: '지금은 무료 사용량을 쓰고 있습니다. Hermes를 계속 쓰면 한도에 걸리기 시작합니다. 무료 Nous 계정으로 로그인하면 사용량이 늘어납니다.',
+      heading: 'Hermes 계속 사용하기',
+      notNow: '나중에',
+      signIn: '로그인'
+    },
+    openModelPicker: '모델 선택기 열기',
+    otherProviders: '다른 제공업체',
+    providerName: 'Nous',
+    providerRowPitch: 'Nous 계정으로 로그인하면 더 많은 모델과 도구를 쓸 수 있습니다.',
+    providerRowTitle: 'Nous · 무료 등급',
+    readyCaption: '무료 · 커넥터 포함',
+    readyTitle: 'Hermes가 준비되었습니다.',
+    rejectedBody: '괜찮습니다. 계속 무료 Nous 서비스를 쓰고 있습니다. 준비되면 언제든 로그인하세요.',
+    retiredBody:
+      '로그인이 끝나기 전에 대화가 끝났습니다. Hermes가 새 대화를 시작하니, 준비되면 언제든 다시 로그인하세요.',
+    settingUp: '무료 추론 설정 중…',
+    setupFailed: {
+      gateClosed:
+        '이 버전의 Hermes는 Nous 계정 없이 시작할 수 없습니다. 로그인하거나 계정을 만드세요. 무료이며 1분이면 됩니다.',
+      generic: 'Hermes가 로그인 없이 무료 이용을 설정하지 못했습니다. 무료로 로그인하거나 다른 제공업체를 연결하세요.',
+      locked: '이 대화는 로그인 없이 계속할 수 없습니다. 계속하려면 로그인하거나 무료 Nous 계정을 만드세요.',
+      paused:
+        '로그인 없이 Hermes를 쓰는 기능이 잠시 멈췄습니다. Hermes가 계속 확인합니다. 무료로 로그인하면 바로 이어서 쓸 수 있습니다.',
+      powRequired:
+        'Nous 서버가 작업 증명을 요구했지만 이 Agent에는 아직 구현되어 있지 않습니다. 계속하려면 로그인하거나 무료 Nous 계정을 만드세요.',
+      rateLimited: wait =>
+        `지금 시작하는 사람이 많아 Hermes가 ${wait} 뒤 다시 시도합니다. 무료로 로그인하면 기다리지 않아도 됩니다.`,
+      retrying: '다시 시도하는 중…',
+      serverError:
+        'Nous 서비스에 잠깐 문제가 생겼습니다. 잠시 뒤 다시 시도를 누르거나 우선 다른 제공업체를 연결하세요.',
+      signInBelow: '로그인은 무료입니다. 아래에서 Nous를 고르세요.',
+      tryAgain: '다시 시도',
+      unreachable:
+        'Hermes가 Nous 서비스에 연결하지 못했습니다. 인터넷 연결을 확인한 뒤 다시 시도를 누르거나 우선 다른 제공업체를 연결하세요.'
+    },
+    signIn: '로그인',
+    signInHeading: 'Nous 계정으로 로그인하면 더 많은 모델과 도구를 쓸 수 있습니다.',
+    signInInstead: '대신 Nous 계정으로 로그인',
+    signedIn: '로그인했습니다.',
+    signedInAs: email => `${email}(으)로 로그인됨`,
+    startAgain: '다시 시작',
+    statusLabel: model => `Nous · ${model}`,
+    stripBody: '모델 선택기를 열어 써 보거나 Nous 계정으로 로그인하세요.',
+    stripTitle: '이제 무료 Nous 추론과 커넥터를 사용할 수 있습니다.',
+    supersededBody: '새 로그인 코드가 이 코드를 대체했습니다. 가장 최근 코드를 쓰거나 다시 시작하세요.',
+    timedOutBody: '준비되면 언제든 다시 시작하세요. 계속 무료 Nous 서비스를 쓰고 있습니다.',
+    timedOutHeading: '로그인 링크가 만료되었습니다',
+    tryAgain: '다시 시도',
+    unreachableBody:
+      'Hermes가 로그인을 마치려고 Nous 서비스에 연결하지 못했습니다. 인터넷 연결을 확인한 뒤 다시 시도하세요. 대화는 그대로 남아 있습니다.',
+    waiting: '로그인 기다리는 중…'
+  },
+  interfaceMode: {
+    advanced: {
+      description: '개발자용. 터미널, 파일, 변경 비교, 상태 표시줄, 레이아웃을 설정한 대로 보여 줍니다.',
+      label: '고급'
+    },
+    hint: 'Hermes가 할 수 있는 일이 아니라 화면에 보이는 것만 바뀝니다.',
+    sessionNote:
+      '간단 모드가 정한 값입니다. 여기서 바꾸면 이 대화에만 적용됩니다. 내 설정으로 삼으려면 고급으로 전환하세요.',
+    simple: {
+      description: 'Hermes와 대화하는 용도. 사이드바와 채팅만 있고 터미널, 파일, 변경 비교 창은 없습니다.',
+      label: '간단'
+    },
+    title: '인터페이스 모드'
+  },
+  sessionImport: {
+    action: '대화 가져오기',
+    all: '전체',
+    choose: '이어 갈 만한 대화',
+    chooseHelp: 'Hermes로 가져오기 전에 대화를 골라 기록을 읽어 보세요.',
+    connectedComputer: '연결된 컴퓨터',
+    continue: 'Hermes에서 계속',
+    copyNotice: '대화 텍스트를 복사합니다. 원본 파일은 바뀌지 않습니다. 도구 출력과 추론은 옮겨지지 않습니다.',
+    destination: '가져올 위치',
+    empty: '대화를 찾지 못했습니다',
+    emptyHelp: '이 백엔드의 Claude Code와 Codex 대화가 여기에 표시됩니다.',
+    importError: '이 대화를 가져오지 못했습니다.',
+    importing: '가져오는 중…',
+    messages: '메시지',
+    more: '대화 더 불러오기',
+    noMatches: '일치하는 대화가 없습니다',
+    open: 'Hermes에서 열기',
+    previewError: '미리보기를 사용할 수 없습니다',
+    previewHelp: '원본이 옮겨졌거나 바뀌었을 수 있습니다. 목록을 새로 고친 뒤 다시 시도하세요.',
+    previewLimit: '읽기 쉽도록 미리보기를 줄였습니다. 가져올 때는 대화 전체를 가져옵니다.',
+    previewLoading: '미리보기 여는 중',
+    readingFrom: '읽는 위치',
+    scanError: '대화를 찾지 못했습니다',
+    scanHelp: '백엔드 연결을 확인한 뒤 다시 시도하세요. 오래된 백엔드는 업데이트가 필요할 수 있습니다.',
+    scanning: '대화 찾는 중',
+    search: '불러온 대화 검색',
+    searchHelp: '다른 제목이나 폴더로 찾거나 대화를 더 불러오세요.',
+    skipped: '일부 로그는 비어 있거나 읽을 수 없거나 미리 보기에는 너무 큽니다.',
+    snapshot: '이 대화는 이미 Hermes에 있습니다. 이어 가려면 기존 사본을 여세요.',
+    subtitle: '대화를 Hermes로 가져와 멈춘 곳에서 이어 가세요.',
+    title: '다른 앱에서 이어 가기',
+    you: '나'
+  },
+  sharedMetrics: {
+    collectDesc: '횟수만 세며 이 컴퓨터에 보관합니다. 메시지, 파일, 경로, 오류 텍스트는 절대 수집하지 않습니다.',
+    collectLabel: '사용 통계 수집',
+    collectedActivity: '대화: 길이, 결과, 오류 유형, 하루 활동 시간',
+    collectedMachine: '컴퓨터: OS, RAM 범위, GPU 종류, Hermes 버전, 로컬 모델 사용 여부',
+    collectedMilestones: '설정: 완료한 단계, 제공업체 연결, 스킬·플러그인·작업 수',
+    collectedModels: '모델: 사용한 모델, 토큰 합계',
+    collectedNames: '기능: 사용하거나 끈 기본 도구, 명령, 앱 영역, 설정',
+    collectedReliability: '앱 상태: 충돌, 시작·응답 속도, 업데이트, 메시징 연결',
+    collectedUsage: '에이전트 품질: 놓친 편집, 잘못된 도구 호출, 멈춘 루프, 작업당 비용',
+    consentBody:
+      'Hermes는 사용 방식을 셀 수 있습니다: 대화 길이, 실행된 모델과 도구, 실패한 시점. 메시지, 파일, 경로, 오류 텍스트는 절대 기록하지 않습니다.',
+    consentTitle: '사용 통계를 공유할까요?',
+    dialogTitle: '사용 통계',
+    local: '이 컴퓨터에만 보관',
+    off: '사용 안 함',
+    readDocs: '자세한 내용 읽기',
+    saveFailed: '선택을 저장하지 못했습니다',
+    sendDesc:
+      '이 프로필의 임의 ID와 함께 하루 한 번 Nous에 통계를 보냅니다. 일회성 설치 기록을 빼면 동의하기 전의 통계는 절대 보내지 않습니다. 수집이 켜져 있어야 합니다.',
+    sendLabel: 'Nous와 사용 통계 공유',
+    sending:
+      '공유를 고르지 않는 한 통계는 이 컴퓨터에만 남습니다. 공유한 통계는 이 프로필의 임의 ID와 함께 하루 한 번 Nous로 전송됩니다. 동의한 뒤에만 세는 일회성 설치 기록을 빼면 동의하기 전의 통계는 절대 보내지 않습니다. 설정에서 언제든 바꿀 수 있습니다.',
+    share: 'Nous와 공유',
+    stripBody: '횟수만 셉니다. 메시지나 파일은 절대 수집하지 않습니다.',
+    stripChoices: {
+      local: '이 컴퓨터에만 보관',
+      off: '사용 안 함',
+      share: 'Nous와 공유'
+    },
+    stripDetails: '세부 정보',
+    stripReaskBody: '한 번 더 여쭙습니다: 이전 버전은 이 안내를 보기 전에 “사용 안 함”을 저장했을 수 있습니다.',
+    unavailable: '이 설정을 바꾸려면 Hermes 백엔드를 업데이트하세요.',
+    whatIsCollected: '세는 항목'
   }
 })
