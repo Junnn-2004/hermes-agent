@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import contextlib
 import dataclasses
+import threading
 
 _COUNTERS = (("input_tokens", "session_input_tokens"), ("output_tokens", "session_output_tokens"),
              ("cache_read_tokens", "session_cache_read_tokens"),
@@ -19,6 +20,9 @@ _COUNTERS = (("input_tokens", "session_input_tokens"), ("output_tokens", "sessio
              ("api_calls", "session_api_calls"))
 # The output-token count at the start of the viewer's current turn (``↓ N tok`` on main's spinner).
 TURN_BASE_ATTR = "_viewer_turn_output_base"
+# Captured at import time: tests stub ``threading.Thread`` with a synchronous runner, and the ticker only
+# exits once ``stop`` is set AFTER the turn returns -- inline it would spin forever (sidecar parity).
+_RealThread = threading.Thread
 
 
 def _finite(value):
@@ -107,10 +111,24 @@ def seed_compression_count(live, agent) -> None:
             compressor.compression_count = carried_compression_count(live, agent)
 
 
-def tui_usage(stats: dict) -> dict:
+def velocity_fields(agent) -> dict:
+    """The live output-rate readout of the ``StreamVelocity`` tracker the agent keeps while a reply
+    streams (``streaming``, ``live_tps``, ``live_tps_estimated``): what the TUI sidecar's ``_get_usage``
+    merged into every usage tick. ``{}`` for an agent that never streamed -- absent, never fabricated."""
+    velocity = getattr(agent, "_stream_velocity", None)
+    if velocity is None:
+        return {}
+    with contextlib.suppress(Exception):
+        snapshot = velocity.snapshot()
+        return dict(snapshot) if isinstance(snapshot, dict) else {}
+    return {}
+
+
+def tui_usage(stats: dict, velocity: dict | None = None) -> dict:
     """``stats`` in main's TUI ``Usage`` shape (``tui_gateway/server.py::_get_usage``): the fields its
     status bar (context used/max/bar, ``◷`` latency, ``t/s``, ``cmp`` badge, cache hit) and ``/usage``
-    read off ``message.complete.usage``. Absent figures are omitted, never fabricated as zeros."""
+    read off ``message.complete.usage``. Absent figures are omitted, never fabricated as zeros.
+    ``velocity`` (``velocity_fields``) adds the live stream rate the Desktop paints mid-turn."""
     usage = {"model": stats.get("model") or "", "input": stats.get("input_tokens") or stats.get("prompt_tokens") or 0,
              "output": stats.get("output_tokens") or stats.get("completion_tokens") or 0,
              "reasoning": stats.get("reasoning_tokens") or 0, "prompt": stats.get("prompt_tokens") or 0,
@@ -134,23 +152,72 @@ def tui_usage(stats: dict) -> dict:
             usage[key] = round(float(stats[source_key]), 1)
     if isinstance(stats.get("active_subagents"), int):
         usage["active_subagents"] = stats["active_subagents"]
+    if velocity:
+        usage.update(velocity)
     return usage
+
+
+def usage_frame(agent) -> dict:
+    """The ``session.usage`` payload: ``usage_stats`` at the top level (what ``session.stats`` returns)
+    plus ``usage`` in main's TUI shape with the live stream rate. The Desktop's status bar (context
+    meter, cache hit, ``t/s``) reads ONLY ``payload.usage`` -- the sidecar's ticker shape -- so a frame
+    without it leaves every readout at ``--`` for the whole turn."""
+    stats = usage_stats(agent)
+    return {**stats, "usage": tui_usage(stats, velocity_fields(agent))}
 
 
 def publish_usage(turn, agent, *, record: bool = False) -> None:
     """One ``session.usage`` frame on the viewer's stream; never breaks the turn. At turn end
-    (``record``) the same dict rides the captured execution result, so the turn's
+    (``record``) the same frame rides the captured execution result, so the turn's
     ``message.complete`` carries main's ``usage`` (``session_settlement_recovery.completion_payload``)."""
     if agent is None:
         return
     with contextlib.suppress(Exception):
-        stats = usage_stats(agent)
-        turn._publish_execution("session.usage", stats)
+        frame = usage_frame(agent)
+        turn._publish_execution("session.usage", frame)
         if record:
             from gateway.session_results import execution_result
             captured = execution_result.get()
             if captured is not None:
-                captured["session_usage"] = stats
+                captured["session_usage"] = frame
+
+
+def start_usage_ticker(turn, agent, interval: float = 1.0):
+    """Push a ``session.usage`` frame every ``interval`` s while a local viewer's turn runs -- the
+    sidecar's ``_start_usage_ticker``. The step callback fires only between API calls, so without
+    this the live ``t/s`` and the context meter freeze for the whole of a streamed reply. Frozen
+    counters (one long call in flight, no stream yet) publish nothing. Returns ``(stop, thread)``;
+    ``stop_usage_ticker`` must run before the turn-end ``publish_usage`` -- a late tick would roll
+    the final usage back."""
+    stop = threading.Event()
+    baseline = None
+    with contextlib.suppress(Exception):
+        baseline = usage_frame(agent)
+
+    def _loop() -> None:
+        last = baseline
+        while not stop.wait(interval):
+            with contextlib.suppress(Exception):
+                frame = usage_frame(agent)
+                if frame == last:
+                    continue
+                last = frame
+                if stop.is_set():
+                    break  # the turn ended while snapshotting; the final frame is authoritative
+                turn._publish_execution("session.usage", frame)
+    thread = _RealThread(target=_loop, name="local-viewer-usage-ticker", daemon=True)
+    thread.start()
+    return stop, thread
+
+
+def stop_usage_ticker(ticker, timeout: float = 2.0) -> None:
+    """Set the ticker's stop flag and join it, so no tick follows the turn-end frame."""
+    if ticker is None:
+        return
+    stop, thread = ticker
+    stop.set()
+    with contextlib.suppress(Exception):
+        thread.join(timeout)
 
 
 async def stats(connection, ref, params):

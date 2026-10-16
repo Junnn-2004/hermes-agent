@@ -61,7 +61,7 @@ def test_each_api_step_publishes_usage_only_for_local_viewers(platform):
     kinds = [kind for kind, _ in published]
     if platform == Platform.LOCAL:
         usage = next(payload for kind, payload in published if kind == 'session.usage')
-        assert set(usage) == FIELDS and usage['api_calls'] == 2
+        assert set(usage) == FIELDS | {'usage'} and usage['api_calls'] == 2
     else:
         assert 'session.usage' not in kinds
 

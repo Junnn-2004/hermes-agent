@@ -57,7 +57,10 @@ def completion_payload(row, settled, response, captured):
     # main's TUI read ``message.complete.usage`` for its status bar and ``/usage`` totals.
     if isinstance((captured or {}).get('session_usage'), dict):
         from gateway.session_usage import tui_usage
-        complete['usage'] = tui_usage(captured['session_usage'])
+        recorded = captured['session_usage']
+        # The turn-end frame already carries the TUI shape with the stream rate cleared
+        # (``usage_frame``); a bare stats dict (an older receipt) is projected here.
+        complete['usage'] = recorded['usage'] if isinstance(recorded.get('usage'), dict) else tui_usage(recorded)
     if isinstance(captured_result.get('persisted_turn'), dict):
         complete['persisted_turn'] = {**captured_result['persisted_turn'],
                                       'submission_id': row['request_id']}

@@ -1240,12 +1240,15 @@ class TurnRunner(GatewayTurnProgressMixin, GatewaySessionAgentMixin):
         self._wire_turn_agent_callbacks(agent, turn_route, reasoning_config, stream_delta_cb, interim_cb, want_interim)
         from gateway.run_turn_progress import local_viewer_turn
         local_sinks = None
+        usage_ticker = None
         if local_viewer_turn(self) and not ctx.mute_notification_reply:
             # Per turn on the shared cached agent: installed here, restored when the run returns.
             from gateway import local_viewer_events
             local_sinks = local_viewer_events.wire(self, agent)
-            from gateway.session_usage import TURN_BASE_ATTR
+            from gateway.session_usage import TURN_BASE_ATTR, start_usage_ticker
             setattr(agent, TURN_BASE_ATTR, int(getattr(agent, "session_output_tokens", 0) or 0))
+            # Live status-bar ticks (context meter, cache hit, t/s) while a reply streams.
+            usage_ticker = start_usage_ticker(self, agent)
         try:
             agent_history, observed_group_context, history_media_paths = self._load_turn_history(agent, reused_cached_agent)
             persist_msg, persist_ts = self._prepare_turn_message(agent_history)
@@ -1260,7 +1263,8 @@ class TurnRunner(GatewayTurnProgressMixin, GatewaySessionAgentMixin):
             if local_sinks is not None:
                 from gateway import local_viewer_events
                 local_viewer_events.restore(agent, local_sinks)
-                from gateway.session_usage import publish_usage
+                from gateway.session_usage import publish_usage, stop_usage_ticker
+                stop_usage_ticker(usage_ticker)  # joined first: no tick may follow the final frame
                 publish_usage(self, agent, record=True)  # turn end: the final API call's counters
                 from gateway.session_local_inventory import publish_settled_info
                 publish_settled_info(self, agent)
