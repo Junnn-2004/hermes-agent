@@ -326,6 +326,10 @@ export const ko = defineLocale({
   promptNotices: {
     legacySendUnconfirmed:
       '이 서버가 이 메시지의 이전 전송을 확인하지 못했습니다. 이미 실행되었을 수 있으니 다시 보내기 전에 대화를 확인하세요.',
+    mcpReloadDeferred:
+      '이 대화는 작업 중입니다. 현재 턴이 끝나고 MCP가 다시 로드되거나 대화를 다시 열면 MCP 변경 사항이 적용됩니다',
+    mcpReloadNotInChat: server => `이 대화에서는 ${server}이(가) 활성화되어 있지 않습니다`,
+    mcpReloadUnavailable: servers => `연결하지 못함: ${servers}`,
     sessionCommands: {
       undoUsage: '사용법: /undo [N]',
       undoNothing: '되돌릴 내용이 없습니다',
@@ -342,6 +346,13 @@ export const ko = defineLocale({
       countOne: count => `대기 중인 메시지 ${count}개`,
       countOther: count => `대기 중인 메시지 ${count}개`
     }
+  },
+
+  keepAwakeOffer: {
+    title: 'Hermes가 작업하는 동안 컴퓨터가 절전 모드로 전환되었습니다',
+    message:
+      '작업이 실행되는 동안 Hermes가 컴퓨터를 깨어 있게 유지할 수 있습니다. 화면은 그대로 꺼지며, 배터리 사용 중에는 컴퓨터가 절전 모드로 전환될 수 있습니다.',
+    action: '작업 중 절전 방지'
   },
 
   billingBlock: {
@@ -2639,8 +2650,6 @@ export const ko = defineLocale({
           `config.yaml이 아니라 프로필의 .env에 ${env}(으)로 저장됩니다. 현재 값을 유지하려면 비워 두세요.`
       },
       settingsToggle: name => `설정: ${name}`,
-      tierCommunity: '커뮤니티',
-      tierOfficial: '공식',
       toggleFailed: name => `${name}을(를) 전환하지 못했습니다`,
       toolsetOff: (name, profile) => `${profile}에서 ${name} 에이전트 도구를 비활성화했습니다`,
       toolsetOn: (name, profile) => `${profile}에서 ${name} 에이전트 도구를 활성화했습니다`,
@@ -4164,7 +4173,7 @@ export const ko = defineLocale({
       goalTurn: turn => `턴 ${turn}`,
       heartbeatActions: '하트비트 작업',
       heartbeatActive: '하트비트 활성',
-      heartbeatDueWaitingForIdle: '실행 시각 — 유휴 상태를 기다리는 중',
+      dueWaitingForIdle: '실행 시각 — 유휴 상태를 기다리는 중',
       heartbeatEveryHours: hours => `${hours}시간마다`,
       heartbeatEveryMinutes: minutes => `${minutes}분마다`,
       heartbeatEverySeconds: seconds => `${seconds}초마다`,
@@ -4611,6 +4620,7 @@ export const ko = defineLocale({
       modelLimitedTip: time =>
         `이 모델이 자체 한도에 도달했으며 ${time}에 초기화됩니다. 여기 있는 다른 모델은 계속 쓸 수 있습니다.`,
       modelResets: time => `${time}에 초기화`,
+      pickDeferred: model => `${model}은(는) 다음 메시지부터 적용됩니다`,
       poolAccount: number => `계정 ${number}`,
       poolAccounts: count => `계정 ${count}개`,
       poolLimited: (limited, total) => `계정 ${total}개 중 ${limited}개 제한됨`,
@@ -5468,7 +5478,8 @@ export const ko = defineLocale({
       targetProfile: profile => `${profile} 프로필에 설치합니다`,
       tier: {
         community: '커뮤니티',
-        official: '공식'
+        official: '공식',
+        verified: '검증됨'
       }
     }
   },
